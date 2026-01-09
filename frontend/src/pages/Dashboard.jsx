@@ -91,7 +91,7 @@ export default function Dashboard() {
             Welcome back, {user?.name?.split(" ")[0]}!
           </h1>
           <p className="text-slate-600 mt-1">
-            Here's how {business?.name} is performing today.
+            Here&apos;s how {business?.name} is performing today.
           </p>
         </div>
         <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 text-green-600 text-sm font-medium">

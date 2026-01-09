@@ -52,7 +52,25 @@ export default function Reviews() {
   });
 
   useEffect(() => {
-    fetchReviews();
+    const loadReviews = async () => {
+      try {
+        const params = new URLSearchParams();
+        if (filters.platform !== "all") params.append("platform", filters.platform);
+        if (filters.sentiment !== "all") params.append("sentiment", filters.sentiment);
+        if (filters.responded === "yes") params.append("responded", "true");
+        if (filters.responded === "no") params.append("responded", "false");
+
+        const response = await axios.get(`${API}/reviews?${params.toString()}`, {
+          withCredentials: true,
+        });
+        setReviews(response.data);
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadReviews();
   }, [filters]);
 
   const fetchReviews = async () => {

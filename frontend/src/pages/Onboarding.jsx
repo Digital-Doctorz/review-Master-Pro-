@@ -117,7 +117,7 @@ export default function Onboarding() {
               Welcome, {user?.name?.split(" ")[0]}!
             </h1>
             <p className="text-slate-600">
-              Let's set up your business profile in just a minute.
+              Let&apos;s set up your business profile in just a minute.
             </p>
           </div>
 

@@ -162,7 +162,7 @@ export default function Integrations() {
             </h3>
             <p className="text-slate-600 text-sm">
               Our MOCK integration allows you to see how ReviewFlow works without
-              connecting real accounts. Click "Connect" to simulate the OAuth
+              connecting real accounts. Click &quot;Connect&quot; to simulate the OAuth
               flow and generate demo reviews.
             </p>
           </div>
@@ -283,8 +283,8 @@ export default function Integrations() {
                 Google Business Integration
               </h4>
               <p className="text-sm text-slate-600">
-                Click "Connect" to simulate connecting your Google Business
-                Profile. In production, this would open Google's OAuth flow.
+                Click &quot;Connect&quot; to simulate connecting your Google Business
+                Profile. In production, this would open Google&apos;s OAuth flow.
               </p>
             </div>
             <div className="p-4 rounded-xl bg-slate-50">
@@ -292,7 +292,7 @@ export default function Integrations() {
                 Facebook Page Integration
               </h4>
               <p className="text-sm text-slate-600">
-                Click "Connect" to simulate connecting your Facebook Page. Demo
+                Click &quot;Connect&quot; to simulate connecting your Facebook Page. Demo
                 reviews will be generated automatically.
               </p>
             </div>

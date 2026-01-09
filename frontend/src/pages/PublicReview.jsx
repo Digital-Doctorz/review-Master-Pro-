@@ -33,7 +33,18 @@ export default function PublicReview() {
   const [hoveredStar, setHoveredStar] = useState(0);
 
   useEffect(() => {
-    fetchBusiness();
+    const loadBusiness = async () => {
+      try {
+        const response = await axios.get(`${API}/public/business/${qrCodeId}`);
+        setBusiness(response.data);
+      } catch (error) {
+        console.error("Error fetching business:", error);
+        setError("Business not found");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadBusiness();
   }, [qrCodeId]);
 
   const fetchBusiness = async () => {

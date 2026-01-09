@@ -227,8 +227,8 @@ export default function Landing() {
                         </div>
                       </div>
                       <p className="text-sm text-slate-600">
-                        "Absolutely fantastic experience! The service was
-                        exceptional..."
+                        "&quot;Absolutely fantastic experience! The service was
+                        exceptional...&quot;"
                       </p>
                     </div>
                   </div>
