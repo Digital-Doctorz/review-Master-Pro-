@@ -1,0 +1,157 @@
+{
+  "identity": {
+    "persona": "E1: The Anti-AI Designer",
+    "mission": "Create a zero-knowledge review platform that feels like a 'Zen Garden for Reputation'. Clean, airy, and trustworthy.",
+    "principles": [
+      "Fusion: Mix SaaS utility with 'Spa/Wellness' calmness.",
+      "Emotion: Trust and Clarity over data density.",
+      "Negative Space: Aggressive whitespace to reduce anxiety.",
+      "Glassmorphism: Use 'Crystal Glass' (high saturation blur) not just transparency."
+    ]
+  },
+  "typography": {
+    "fonts": {
+      "heading": {
+        "family": "Manrope",
+        "weights": ["600", "800"],
+        "usage": "Headings, Big Stats, Hero Text. Use tight tracking (-0.02em).",
+        "fallback": "sans-serif"
+      },
+      "body": {
+        "family": "Plus Jakarta Sans",
+        "weights": ["400", "500"],
+        "usage": "Paragraphs, UI labels, Inputs.",
+        "fallback": "sans-serif"
+      },
+      "mono": {
+        "family": "JetBrains Mono",
+        "usage": "API Keys, Code Snippets, IDs.",
+        "fallback": "monospace"
+      }
+    },
+    "rules": [
+      "Never use Inter for headings.",
+      "Headings > 32px must have tracking-tight.",
+      "Use font-light (300) for large display numbers to feel elegant."
+    ]
+  },
+  "colors": {
+    "palette_name": "Glacial Clarity",
+    "description": "A sophisticated take on the requested teal/blue. Avoids generic 'Bootstrap Teal' in favor of Deep Ocean and Ice.",
+    "theme": "light",
+    "tokens": {
+      "background": "#F8FAFC",
+      "foreground": "#0F172A",
+      "card": "#FFFFFF",
+      "card_foreground": "#1E293B",
+      "primary": "#0284C7",
+      "primary_foreground": "#FFFFFF",
+      "secondary": "#F1F5F9",
+      "secondary_foreground": "#334155",
+      "muted": "#F1F5F9",
+      "muted_foreground": "#64748B",
+      "accent": "#E0F2FE",
+      "accent_foreground": "#0284C7",
+      "destructive": "#EF4444",
+      "destructive_foreground": "#FFFFFF",
+      "border": "#E2E8F0",
+      "input": "#E2E8F0",
+      "ring": "#0EA5E9"
+    },
+    "gradients": {
+      "brand_gradient": "bg-gradient-to-br from-sky-500 to-teal-400",
+      "glass_gradient": "bg-gradient-to-b from-white/80 to-white/40"
+    }
+  },
+  "visual_enhancers": {
+    "glassmorphism": {
+      "crystal_glass": "backdrop-blur-xl bg-white/70 border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.04)]",
+      "frosted_glass": "backdrop-blur-md bg-white/50 border border-white/10"
+    },
+    "shadows": {
+      "soft_lift": "shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)]",
+      "glow": "shadow-[0_0_15px_rgba(14,165,233,0.3)]"
+    },
+    "borders": {
+      "subtle": "border-slate-100",
+      "highlight": "border-sky-100"
+    }
+  },
+  "layout_strategy": {
+    "dashboard": {
+      "grid": "grid-cols-1 md:grid-cols-12 gap-6",
+      "spacing": "p-6 md:p-8",
+      "structure": [
+        "Top: KPI Strip (Glass Cards)",
+        "Main Left (Span 8): Review Feed / Activity",
+        "Main Right (Span 4): Sentiment Orb / Quick Actions"
+      ]
+    },
+    "marketing": {
+      "grid": "grid-cols-1 md:grid-cols-12 gap-y-24",
+      "hero": "Centered but with asymmetric floating glass elements.",
+      "features": "Bento grid (Tetris Mode) - mix of 1x1, 2x1, and 2x2 blocks."
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "rounded-full px-8 py-6 font-semibold shadow-lg shadow-sky-500/20 hover:shadow-sky-500/40 transition-all hover:-translate-y-0.5",
+      "secondary": "rounded-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-700"
+    },
+    "cards": {
+      "dashboard_card": "rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-100 shadow-sm hover:shadow-md transition-all",
+      "feature_card": "rounded-3xl bg-white border border-slate-100 p-8 hover:border-sky-100 transition-colors"
+    },
+    "inputs": {
+      "style": "rounded-xl border-slate-200 bg-white/50 focus:bg-white transition-all focus:ring-2 focus:ring-sky-100 h-12"
+    },
+    "navigation": {
+      "sidebar": "hidden md:flex flex-col w-64 border-r border-slate-100 bg-white/50 backdrop-blur-xl h-screen sticky top-0",
+      "mobile_nav": "fixed bottom-4 left-4 right-4 bg-white/90 backdrop-blur-xl border border-slate-200 rounded-full p-4 shadow-2xl z-50 flex justify-around"
+    }
+  },
+  "images": {
+    "hero_bg": {
+      "url": "https://images.pexels.com/photos/7630329/pexels-photo-7630329.jpeg",
+      "alt": "Abstract blue glass geometric shapes",
+      "usage": "Hero background with low opacity overlay"
+    },
+    "social_proof": {
+      "url": "https://images.pexels.com/photos/7552373/pexels-photo-7552373.jpeg",
+      "alt": "Happy small business owner",
+      "usage": "Testimonial section or 'Welcome' dashboard widget"
+    },
+    "auth_bg": {
+      "url": "https://images.pexels.com/photos/33285/architect-graphics-abstract-building.jpg",
+      "alt": "Abstract architecture",
+      "usage": "Side panel in login/signup page"
+    }
+  },
+  "universal_guidelines": {
+    "anti_slop_rules": [
+      "Do not use generic gradients (e.g., top-to-bottom blue). Use mesh or corner blurs.",
+      "Do not center everything. Use asymmetry for interest.",
+      "Avoid 'Inter' font for headings. It looks like a template.",
+      "Never use pure black (#000000). Use Slate-900 (#0F172A)."
+    ],
+    "accessibility": {
+      "contrast": "Ensure text on glass backgrounds has sufficient contrast. Use darker text colors than usual.",
+      "focus": "Visible focus rings are mandatory for keyboard navigation."
+    },
+    "motion": {
+      "library": "framer-motion",
+      "defaults": {
+        "duration": 0.4,
+        "ease": [0.25, 0.4, 0.25, 1]
+      }
+    }
+  },
+  "instructions_to_main_agent": [
+    "1. Install 'framer-motion', 'lucide-react', 'recharts' immediately.",
+    "2. Update 'index.css' with the CSS variables provided in the 'colors' section.",
+    "3. Create a 'Layout' component that handles the sidebar/mobile-nav logic.",
+    "4. Use the 'glassmorphism' classes for all dashboard containers.",
+    "5. For the 'Sentiment Orb', use a simple CSS radial gradient animation or a lightweight library.",
+    "6. Mock the Google/Facebook integration with a simple 'Connect' button that toggles a state after 2 seconds."
+  ]
+}
