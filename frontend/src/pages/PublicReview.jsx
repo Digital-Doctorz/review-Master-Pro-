@@ -246,7 +246,6 @@ export default function PublicReview() {
                     className="h-12 rounded-xl border-slate-200 focus:ring-2 focus:ring-sky-100"
                     placeholder="John Doe"
                     data-testid="reviewer-name-input"
-                    required
                   />
                 </div>
 
@@ -264,7 +263,6 @@ export default function PublicReview() {
                     className="min-h-32 rounded-xl border-slate-200 focus:ring-2 focus:ring-sky-100"
                     placeholder="Tell us about your experience..."
                     data-testid="review-text-input"
-                    required
                   />
                 </div>
 
