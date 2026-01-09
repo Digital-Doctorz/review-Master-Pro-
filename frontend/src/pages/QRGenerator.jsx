@@ -282,7 +282,7 @@ export default function QRGenerator() {
                   Customer Experience
                 </h3>
                 <p className="text-sm text-slate-600">
-                  When customers scan the QR code, they'll see a beautiful,
+                  When customers scan the QR code, they&apos;ll see a beautiful,
                   branded page where they can leave their review with just a few
                   taps.
                 </p>
