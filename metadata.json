@@ -1,0 +1,8 @@
+{
+  "name": "Review Master Pro",
+  "description": "Premium multi-tenant review management platform with private feedback routing for negative ratings and AI-powered reply drafts.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}
