@@ -126,7 +126,20 @@ export default function Dashboard() {
             Here&apos;s how {business?.name} is performing today.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
+          {connectedPlatforms.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSyncReviews}
+              disabled={syncing}
+              className="rounded-full"
+              data-testid="sync-reviews-btn"
+            >
+              <Cloud className={`w-4 h-4 mr-2 ${syncing ? "animate-pulse" : ""}`} />
+              {syncing ? "Syncing..." : "Sync Reviews"}
+            </Button>
+          )}
           <Button
             variant="outline"
             size="sm"
@@ -137,10 +150,17 @@ export default function Dashboard() {
             <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
             Refresh
           </Button>
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 text-green-600 text-sm font-medium">
-            <span className="w-2 h-2 rounded-full bg-green-500 live-indicator" />
-            Live Dashboard
-          </div>
+          {integrationStatus?.overall_mode === "demo" ? (
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 text-amber-600 text-sm font-medium" data-testid="demo-mode-badge">
+              <CloudOff className="w-4 h-4" />
+              Demo Mode
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 text-green-600 text-sm font-medium">
+              <span className="w-2 h-2 rounded-full bg-green-500 live-indicator" />
+              Live Data
+            </div>
+          )}
         </div>
       </div>
 
