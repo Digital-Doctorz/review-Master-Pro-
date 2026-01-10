@@ -1,157 +1,152 @@
 {
   "identity": {
     "persona": "E1: The Anti-AI Designer",
-    "mission": "Create a zero-knowledge review platform that feels like a 'Zen Garden for Reputation'. Clean, airy, and trustworthy.",
+    "mission": "Create a 'Crystal Flow' aesthetic that feels premium, trustworthy, and magically effortless. Avoid generic SaaS tropes.",
     "principles": [
-      "Fusion: Mix SaaS utility with 'Spa/Wellness' calmness.",
-      "Emotion: Trust and Clarity over data density.",
-      "Negative Space: Aggressive whitespace to reduce anxiety.",
-      "Glassmorphism: Use 'Crystal Glass' (high saturation blur) not just transparency."
+      "Fusion over Imitation: Mix Swiss precision with Organic flow.",
+      "Emotion First: Every interaction must feel 'delightful' and 'magical'.",
+      "Content is King: Tell a story through the review journey.",
+      "Zoom In: Focus on the micro-interactions of rating and writing.",
+      "Negative Space: Use generous padding to create a 'luxury' feel."
     ]
   },
   "typography": {
-    "fonts": {
-      "heading": {
-        "family": "Manrope",
-        "weights": ["600", "800"],
-        "usage": "Headings, Big Stats, Hero Text. Use tight tracking (-0.02em).",
-        "fallback": "sans-serif"
-      },
-      "body": {
-        "family": "Plus Jakarta Sans",
-        "weights": ["400", "500"],
-        "usage": "Paragraphs, UI labels, Inputs.",
-        "fallback": "sans-serif"
-      },
-      "mono": {
-        "family": "JetBrains Mono",
-        "usage": "API Keys, Code Snippets, IDs.",
-        "fallback": "monospace"
-      }
+    "headings": {
+      "family": "Manrope, sans-serif",
+      "weights": ["600", "700", "800"],
+      "usage": "Use for all H1-H6. Tight tracking (-0.02em) for sizes > 32px."
     },
-    "rules": [
-      "Never use Inter for headings.",
-      "Headings > 32px must have tracking-tight.",
-      "Use font-light (300) for large display numbers to feel elegant."
-    ]
+    "body": {
+      "family": "Plus Jakarta Sans, sans-serif",
+      "weights": ["400", "500"],
+      "usage": "Use for all paragraphs, labels, and UI text. Relaxed leading."
+    },
+    "code": {
+      "family": "JetBrains Mono, monospace",
+      "usage": "Use for API keys, code snippets, and technical data."
+    }
   },
   "colors": {
-    "palette_name": "Glacial Clarity",
-    "description": "A sophisticated take on the requested teal/blue. Avoids generic 'Bootstrap Teal' in favor of Deep Ocean and Ice.",
-    "theme": "light",
-    "tokens": {
-      "background": "#F8FAFC",
-      "foreground": "#0F172A",
-      "card": "#FFFFFF",
-      "card_foreground": "#1E293B",
-      "primary": "#0284C7",
-      "primary_foreground": "#FFFFFF",
-      "secondary": "#F1F5F9",
-      "secondary_foreground": "#334155",
-      "muted": "#F1F5F9",
-      "muted_foreground": "#64748B",
-      "accent": "#E0F2FE",
-      "accent_foreground": "#0284C7",
-      "destructive": "#EF4444",
-      "destructive_foreground": "#FFFFFF",
-      "border": "#E2E8F0",
-      "input": "#E2E8F0",
-      "ring": "#0EA5E9"
+    "palette_name": "Crystal Flow",
+    "primary": {
+      "name": "Electric Azure",
+      "hex": "#0EA5E9",
+      "tailwind": "text-primary bg-primary"
     },
-    "gradients": {
-      "brand_gradient": "bg-gradient-to-br from-sky-500 to-teal-400",
-      "glass_gradient": "bg-gradient-to-b from-white/80 to-white/40"
+    "secondary": {
+      "name": "Soft Lilac",
+      "hex": "#F7FAFF",
+      "tailwind": "bg-secondary"
+    },
+    "accent": {
+      "name": "Magic Purple",
+      "hex": "#8B5CF6",
+      "tailwind": "text-accent bg-accent"
+    },
+    "background": {
+      "light": "linear-gradient(135deg, #F7FAFF 0%, #ECF3FF 100%)",
+      "tailwind": "bg-background"
+    },
+    "glass": {
+      "card": "bg-white/70 backdrop-blur-xl border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.04)]",
+      "nav": "bg-white/80 backdrop-blur-md border-b border-white/20",
+      "overlay": "bg-white/40 backdrop-blur-sm"
     }
   },
-  "visual_enhancers": {
-    "glassmorphism": {
-      "crystal_glass": "backdrop-blur-xl bg-white/70 border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.04)]",
-      "frosted_glass": "backdrop-blur-md bg-white/50 border border-white/10"
+  "layout": {
+    "spacing": {
+      "base": "Use 2-3x more spacing than typical. Minimum p-6 for cards.",
+      "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
     },
-    "shadows": {
-      "soft_lift": "shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)]",
-      "glow": "shadow-[0_0_15px_rgba(14,165,233,0.3)]"
-    },
-    "borders": {
-      "subtle": "border-slate-100",
-      "highlight": "border-sky-100"
-    }
-  },
-  "layout_strategy": {
-    "dashboard": {
-      "grid": "grid-cols-1 md:grid-cols-12 gap-6",
-      "spacing": "p-6 md:p-8",
-      "structure": [
-        "Top: KPI Strip (Glass Cards)",
-        "Main Left (Span 8): Review Feed / Activity",
-        "Main Right (Span 4): Sentiment Orb / Quick Actions"
-      ]
-    },
-    "marketing": {
-      "grid": "grid-cols-1 md:grid-cols-12 gap-y-24",
-      "hero": "Centered but with asymmetric floating glass elements.",
-      "features": "Bento grid (Tetris Mode) - mix of 1x1, 2x1, and 2x2 blocks."
+    "grids": {
+      "marketing": "Mode A: Tetris Grid. Mix col-span-full, col-span-4, col-span-8. Never equal columns.",
+      "dashboard": "Mode B: Control Room. Dense, gap-4, every pixel utilized."
     }
   },
   "components": {
     "buttons": {
-      "primary": "rounded-full px-8 py-6 font-semibold shadow-lg shadow-sky-500/20 hover:shadow-sky-500/40 transition-all hover:-translate-y-0.5",
-      "secondary": "rounded-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-700"
+      "primary": "rounded-full px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 active:translate-y-0",
+      "secondary": "rounded-full px-8 py-6 text-lg font-medium border border-slate-200 hover:bg-slate-50 transition-all"
     },
     "cards": {
-      "dashboard_card": "rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-100 shadow-sm hover:shadow-md transition-all",
-      "feature_card": "rounded-3xl bg-white border border-slate-100 p-8 hover:border-sky-100 transition-colors"
+      "marketing": "Use 'glass-card' utility. No solid white backgrounds unless necessary for contrast.",
+      "dashboard": "Flat white with subtle border (border-slate-100) and soft shadow (shadow-sm)."
     },
     "inputs": {
-      "style": "rounded-xl border-slate-200 bg-white/50 focus:bg-white transition-all focus:ring-2 focus:ring-sky-100 h-12"
+      "style": "bg-white/50 border-slate-200 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all rounded-xl h-12"
+    }
+  },
+  "visual_enhancers": {
+    "glassmorphism": {
+      "rules": [
+        "Always add a 1px semi-transparent border (border-white/40) to glass elements.",
+        "Use backdrop-blur-xl for 'deep' glass, backdrop-blur-md for 'frosted' glass.",
+        "Never use pure transparent backgrounds for text containers."
+      ]
     },
-    "navigation": {
-      "sidebar": "hidden md:flex flex-col w-64 border-r border-slate-100 bg-white/50 backdrop-blur-xl h-screen sticky top-0",
-      "mobile_nav": "fixed bottom-4 left-4 right-4 bg-white/90 backdrop-blur-xl border border-slate-200 rounded-full p-4 shadow-2xl z-50 flex justify-around"
+    "gradients": {
+      "usage": "Use subtle mesh gradients in the background. Avoid harsh linear gradients on UI elements."
+    },
+    "shadows": {
+      "usage": "Use colored shadows (shadow-blue-500/20) for primary actions to create a 'glow' effect."
     }
   },
   "images": {
-    "hero_bg": {
-      "url": "https://images.pexels.com/photos/7630329/pexels-photo-7630329.jpeg",
-      "alt": "Abstract blue glass geometric shapes",
-      "usage": "Hero background with low opacity overlay"
+    "hero_background": {
+      "url": "https://images.unsplash.com/photo-1763259012836-00ad2f1a8d87?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "alt": "Abstract fluid glass shapes",
+      "usage": "Hero section background with heavy blur and overlay."
     },
-    "social_proof": {
-      "url": "https://images.pexels.com/photos/7552373/pexels-photo-7552373.jpeg",
-      "alt": "Happy small business owner",
-      "usage": "Testimonial section or 'Welcome' dashboard widget"
-    },
-    "auth_bg": {
-      "url": "https://images.pexels.com/photos/33285/architect-graphics-abstract-building.jpg",
-      "alt": "Abstract architecture",
-      "usage": "Side panel in login/signup page"
-    }
-  },
-  "universal_guidelines": {
-    "anti_slop_rules": [
-      "Do not use generic gradients (e.g., top-to-bottom blue). Use mesh or corner blurs.",
-      "Do not center everything. Use asymmetry for interest.",
-      "Avoid 'Inter' font for headings. It looks like a template.",
-      "Never use pure black (#000000). Use Slate-900 (#0F172A)."
-    ],
-    "accessibility": {
-      "contrast": "Ensure text on glass backgrounds has sufficient contrast. Use darker text colors than usual.",
-      "focus": "Visible focus rings are mandatory for keyboard navigation."
-    },
-    "motion": {
-      "library": "framer-motion",
-      "defaults": {
-        "duration": 0.4,
-        "ease": [0.25, 0.4, 0.25, 1]
+    "business_owners": [
+      {
+        "url": "https://images.unsplash.com/photo-1753351052617-62818ffc9173?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Happy cafe owners",
+        "usage": "Testimonials or 'For Business' section."
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1758518730523-c9f6336ebdae?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Modern office team selfie",
+        "usage": "About Us or Team section."
       }
-    }
+    ]
+  },
+  "motion": {
+    "transitions": "transition-all duration-300 ease-out",
+    "hover": "hover:-translate-y-1 hover:shadow-lg",
+    "entrance": "animate-in fade-in slide-in-from-bottom-4 duration-700"
+  },
+  "accessibility": {
+    "contrast": "Ensure text is slate-900 or slate-700 on glass backgrounds. No light grey text.",
+    "focus": "Visible focus rings on all interactive elements.",
+    "reduced_motion": "Respect prefers-reduced-motion media query."
   },
   "instructions_to_main_agent": [
-    "1. Install 'framer-motion', 'lucide-react', 'recharts' immediately.",
-    "2. Update 'index.css' with the CSS variables provided in the 'colors' section.",
-    "3. Create a 'Layout' component that handles the sidebar/mobile-nav logic.",
-    "4. Use the 'glassmorphism' classes for all dashboard containers.",
-    "5. For the 'Sentiment Orb', use a simple CSS radial gradient animation or a lightweight library.",
-    "6. Mock the Google/Facebook integration with a simple 'Connect' button that toggles a state after 2 seconds."
+    "Implement the 'Crystal Flow' theme using the provided Tailwind config.",
+    "Use the 'glass-card' class for all major containers on the landing page.",
+    "Ensure the Review Flow feels 'magical' with smooth transitions between steps.",
+    "Use the provided images for the respective sections.",
+    "Do not use generic 'Inter' font. Enforce Manrope for headings.",
+    "Create a 'Bento' grid for the features section.",
+    "Use 'sonner' for all toast notifications."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy",
+    "Use glass-morphism effects with backdrop filters (12-24px blur)",
+    "You MUST NOT apply universal transition. Eg: transition: all. This results in breaking transforms. Always add transitions for specific interactive elements like button, input excluding transforms",
+    "You MUST NOT center align the app container, ie do not add .App { text-align: center; } in the css file. This disrupts the human natural reading flow of text",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations & color relevant to the app style",
+    "NEVER: use AI assistant Emoji characters like 🤖🧠💭💡🔮🎯📚🎭🎬🎪🎉🎊🎁🎀🎂🍰🎈🎨🎰💰💵💳🏦💎🪙💸🤑📊📈📉💹🔢🏆🥇 etc for icons.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations. Static = dead.",
+    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.",
+    "Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations: separates good from extraordinary.",
+    "Main agent relies on these image URLs. Missing categories (especially sponsor logos) = main agent will use placeholder text which is FORBIDDEN",
+    "Prioritize using pre-existing components from src/components/ui when applicable",
+    "Create new components that match the style and conventions of existing components when needed",
+    "Examine existing components to understand the project's component patterns before creating new ones",
+    "Components MUST use named exports (export const ComponentName = ...)",
+    "Pages MUST use default exports (export default function PageName() {...})",
+    "Use 'sonner' for toasts. Sonner component are located in /app/src/components/ui/sonner.tsx"
   ]
 }
