@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends, Query
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -65,6 +65,14 @@ class Business(BaseModel):
     website: Optional[str] = None
     logo_url: Optional[str] = None
     qr_code_id: str = Field(default_factory=lambda: uuid.uuid4().hex[:8])
+    # Google Business Integration
+    google_place_id: Optional[str] = None
+    google_business_name: Optional[str] = None
+    google_review_link: Optional[str] = None
+    # Facebook Integration
+    facebook_page_id: Optional[str] = None
+    facebook_page_name: Optional[str] = None
+    facebook_page_url: Optional[str] = None
     setup_completed: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -75,12 +83,29 @@ class BusinessCreate(BaseModel):
     phone: Optional[str] = None
     website: Optional[str] = None
 
+class BusinessUpdate(BaseModel):
+    name: Optional[str] = None
+    category: Optional[str] = None
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    website: Optional[str] = None
+    google_place_id: Optional[str] = None
+    google_business_name: Optional[str] = None
+    google_review_link: Optional[str] = None
+    facebook_page_id: Optional[str] = None
+    facebook_page_name: Optional[str] = None
+    facebook_page_url: Optional[str] = None
+
 class PlatformConnection(BaseModel):
     model_config = ConfigDict(extra="ignore")
     connection_id: str = Field(default_factory=lambda: f"conn_{uuid.uuid4().hex[:12]}")
     business_id: str
     platform: str  # "google" or "facebook"
     status: str = "disconnected"  # connected, disconnected, error
+    place_id: Optional[str] = None  # For Google
+    page_id: Optional[str] = None  # For Facebook
+    page_url: Optional[str] = None  # For Facebook
+    review_link: Optional[str] = None
     connected_at: Optional[datetime] = None
     last_sync: Optional[datetime] = None
 
@@ -90,22 +115,27 @@ class Review(BaseModel):
     business_id: str
     platform: str  # google, facebook, direct
     author_name: str
+    author_email: Optional[str] = None
+    author_phone: Optional[str] = None
     author_avatar: Optional[str] = None
     rating: int  # 1-5
     text: str
     sentiment: str = "neutral"  # positive, negative, neutral
     sentiment_score: float = 0.0
+    is_private: bool = False  # True for ratings < 4
     response: Optional[str] = None
     responded_at: Optional[datetime] = None
     is_read: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-class ReviewCreate(BaseModel):
+class PublicReviewCreate(BaseModel):
     business_id: str
-    platform: str = "direct"
     author_name: str
+    author_email: Optional[str] = None
+    author_phone: Optional[str] = None
     rating: int
     text: str
+    platform_choice: str = "direct"  # google, facebook, direct
 
 class AIResponseRequest(BaseModel):
     review_text: str
@@ -113,9 +143,24 @@ class AIResponseRequest(BaseModel):
     business_name: str
     tone: str = "professional"  # professional, friendly, apologetic
 
+class AIWriteAssistRequest(BaseModel):
+    rating: int
+    business_name: str
+    keywords: Optional[str] = None
+
 class ReviewResponse(BaseModel):
     review_id: str
     response_text: str
+
+class GooglePlaceSearch(BaseModel):
+    query: str
+
+class GooglePlaceResult(BaseModel):
+    place_id: str
+    name: str
+    address: str
+    rating: Optional[float] = None
+    review_link: str
 
 # ============ AUTH HELPERS ============
 
@@ -304,17 +349,16 @@ async def get_business(user: User = Depends(get_current_user)):
     return business
 
 @api_router.put("/business")
-async def update_business(business_data: BusinessCreate, user: User = Depends(get_current_user)):
+async def update_business(business_data: BusinessUpdate, user: User = Depends(get_current_user)):
     """Update the current user's business"""
+    update_dict = {k: v for k, v in business_data.model_dump().items() if v is not None}
+    
+    if not update_dict:
+        return {"message": "No updates provided"}
+    
     result = await db.businesses.update_one(
         {"user_id": user.user_id},
-        {"$set": {
-            "name": business_data.name,
-            "category": business_data.category,
-            "address": business_data.address,
-            "phone": business_data.phone,
-            "website": business_data.website
-        }}
+        {"$set": update_dict}
     )
     
     if result.matched_count == 0:
@@ -335,6 +379,146 @@ async def complete_setup(user: User = Depends(get_current_user)):
     
     return {"message": "Setup completed"}
 
+# ============ GOOGLE PLACES SEARCH (MOCK) ============
+
+# Mock Google Places data for demo
+MOCK_GOOGLE_BUSINESSES = [
+    {"place_id": "ChIJ_mock_001", "name": "The Coffee House", "address": "123 Main St, New York, NY 10001", "rating": 4.5},
+    {"place_id": "ChIJ_mock_002", "name": "Coffee & Co.", "address": "456 Broadway, New York, NY 10012", "rating": 4.2},
+    {"place_id": "ChIJ_mock_003", "name": "Sunrise Cafe", "address": "789 Park Ave, New York, NY 10021", "rating": 4.8},
+    {"place_id": "ChIJ_mock_004", "name": "Downtown Diner", "address": "321 5th Ave, New York, NY 10016", "rating": 4.0},
+    {"place_id": "ChIJ_mock_005", "name": "The Pizza Place", "address": "555 Houston St, New York, NY 10002", "rating": 4.6},
+    {"place_id": "ChIJ_mock_006", "name": "Pizza Paradise", "address": "777 Lexington Ave, New York, NY 10065", "rating": 4.3},
+    {"place_id": "ChIJ_mock_007", "name": "Bella Restaurant", "address": "888 Madison Ave, New York, NY 10021", "rating": 4.7},
+    {"place_id": "ChIJ_mock_008", "name": "Bella Italian Kitchen", "address": "999 Columbus Ave, New York, NY 10025", "rating": 4.4},
+    {"place_id": "ChIJ_mock_009", "name": "Fresh Sushi Bar", "address": "111 2nd Ave, New York, NY 10003", "rating": 4.9},
+    {"place_id": "ChIJ_mock_010", "name": "Golden Dragon Chinese", "address": "222 Canal St, New York, NY 10013", "rating": 4.1},
+]
+
+@api_router.get("/google/search")
+async def search_google_places(
+    query: str = Query(..., min_length=2),
+    user: User = Depends(get_current_user)
+):
+    """Search for Google Business profiles (MOCK implementation)"""
+    # Simulate API delay
+    import asyncio
+    await asyncio.sleep(0.3)
+    
+    # Filter mock data based on query
+    query_lower = query.lower()
+    results = []
+    
+    for business in MOCK_GOOGLE_BUSINESSES:
+        if query_lower in business["name"].lower() or query_lower in business["address"].lower():
+            results.append({
+                "place_id": business["place_id"],
+                "name": business["name"],
+                "address": business["address"],
+                "rating": business["rating"],
+                "review_link": f"https://search.google.com/local/writereview?placeid={business['place_id']}"
+            })
+    
+    # Also add a "custom" result that matches the query
+    if len(results) < 3:
+        custom_id = f"ChIJ_custom_{uuid.uuid4().hex[:6]}"
+        results.append({
+            "place_id": custom_id,
+            "name": query.title(),
+            "address": "Enter your business address",
+            "rating": None,
+            "review_link": f"https://search.google.com/local/writereview?placeid={custom_id}"
+        })
+    
+    return {"results": results[:5]}
+
+@api_router.post("/google/connect")
+async def connect_google_business(
+    data: dict,
+    user: User = Depends(get_current_user)
+):
+    """Connect a Google Business to the user's account"""
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    place_id = data.get("place_id")
+    name = data.get("name")
+    review_link = data.get("review_link") or f"https://search.google.com/local/writereview?placeid={place_id}"
+    
+    # Update business with Google info
+    await db.businesses.update_one(
+        {"user_id": user.user_id},
+        {"$set": {
+            "google_place_id": place_id,
+            "google_business_name": name,
+            "google_review_link": review_link
+        }}
+    )
+    
+    # Update platform connection
+    await db.platform_connections.update_one(
+        {"business_id": business["business_id"], "platform": "google"},
+        {"$set": {
+            "status": "connected",
+            "place_id": place_id,
+            "review_link": review_link,
+            "connected_at": datetime.now(timezone.utc).isoformat(),
+            "last_sync": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    # Generate mock reviews
+    await generate_mock_reviews(business["business_id"], "google")
+    
+    return {"message": "Google Business connected successfully", "review_link": review_link}
+
+# ============ FACEBOOK MOCK INTEGRATION ============
+
+@api_router.post("/facebook/connect")
+async def connect_facebook_page(
+    data: dict,
+    user: User = Depends(get_current_user)
+):
+    """Connect a Facebook Page (MOCK)"""
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    page_url = data.get("page_url", "")
+    page_name = data.get("page_name", business["name"])
+    
+    # Extract page ID from URL or generate mock
+    page_id = f"fb_page_{uuid.uuid4().hex[:8]}"
+    
+    # Update business with Facebook info
+    await db.businesses.update_one(
+        {"user_id": user.user_id},
+        {"$set": {
+            "facebook_page_id": page_id,
+            "facebook_page_name": page_name,
+            "facebook_page_url": page_url or f"https://facebook.com/{page_id}"
+        }}
+    )
+    
+    # Update platform connection
+    await db.platform_connections.update_one(
+        {"business_id": business["business_id"], "platform": "facebook"},
+        {"$set": {
+            "status": "connected",
+            "page_id": page_id,
+            "page_url": page_url or f"https://facebook.com/{page_id}/reviews",
+            "review_link": f"https://facebook.com/{page_id}/reviews",
+            "connected_at": datetime.now(timezone.utc).isoformat(),
+            "last_sync": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    # Generate mock reviews
+    await generate_mock_reviews(business["business_id"], "facebook")
+    
+    return {"message": "Facebook Page connected successfully"}
+
 # ============ PLATFORM CONNECTION ENDPOINTS ============
 
 @api_router.get("/platforms")
@@ -351,31 +535,6 @@ async def get_platforms(user: User = Depends(get_current_user)):
     
     return connections
 
-@api_router.post("/platforms/{platform}/connect")
-async def connect_platform(platform: str, user: User = Depends(get_current_user)):
-    """Mock connect a platform (simulates OAuth flow)"""
-    if platform not in ["google", "facebook"]:
-        raise HTTPException(status_code=400, detail="Invalid platform")
-    
-    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
-    if not business:
-        raise HTTPException(status_code=404, detail="Business not found")
-    
-    # Simulate connection (in real app, this would handle OAuth)
-    await db.platform_connections.update_one(
-        {"business_id": business["business_id"], "platform": platform},
-        {"$set": {
-            "status": "connected",
-            "connected_at": datetime.now(timezone.utc).isoformat(),
-            "last_sync": datetime.now(timezone.utc).isoformat()
-        }}
-    )
-    
-    # Generate mock reviews for this platform
-    await generate_mock_reviews(business["business_id"], platform)
-    
-    return {"message": f"{platform.capitalize()} connected successfully"}
-
 @api_router.post("/platforms/{platform}/disconnect")
 async def disconnect_platform(platform: str, user: User = Depends(get_current_user)):
     """Disconnect a platform"""
@@ -391,9 +550,33 @@ async def disconnect_platform(platform: str, user: User = Depends(get_current_us
         {"$set": {
             "status": "disconnected",
             "connected_at": None,
-            "last_sync": None
+            "last_sync": None,
+            "place_id": None,
+            "page_id": None,
+            "page_url": None,
+            "review_link": None
         }}
     )
+    
+    # Clear business platform info
+    if platform == "google":
+        await db.businesses.update_one(
+            {"user_id": user.user_id},
+            {"$set": {
+                "google_place_id": None,
+                "google_business_name": None,
+                "google_review_link": None
+            }}
+        )
+    else:
+        await db.businesses.update_one(
+            {"user_id": user.user_id},
+            {"$set": {
+                "facebook_page_id": None,
+                "facebook_page_name": None,
+                "facebook_page_url": None
+            }}
+        )
     
     return {"message": f"{platform.capitalize()} disconnected"}
 
@@ -432,6 +615,7 @@ async def generate_mock_reviews(business_id: str, platform: str):
             text=review_data["text"],
             sentiment=review_data["sentiment"],
             sentiment_score=random.uniform(0.3, 0.9) if review_data["sentiment"] == "positive" else (random.uniform(-0.9, -0.3) if review_data["sentiment"] == "negative" else random.uniform(-0.2, 0.2)),
+            is_private=review_data["rating"] < 4,
             created_at=datetime.now(timezone.utc) - timedelta(days=random.randint(0, 30), hours=random.randint(0, 23))
         )
         
@@ -445,6 +629,7 @@ async def get_reviews(
     sentiment: Optional[str] = None,
     rating: Optional[int] = None,
     responded: Optional[bool] = None,
+    is_private: Optional[bool] = None,
     limit: int = 50,
     user: User = Depends(get_current_user)
 ):
@@ -466,8 +651,24 @@ async def get_reviews(
             query["response"] = {"$ne": None}
         else:
             query["response"] = None
+    if is_private is not None:
+        query["is_private"] = is_private
     
     reviews = await db.reviews.find(query, {"_id": 0}).sort("created_at", -1).to_list(limit)
+    
+    return reviews
+
+@api_router.get("/reviews/private")
+async def get_private_feedback(user: User = Depends(get_current_user)):
+    """Get private feedback (ratings < 4)"""
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    reviews = await db.reviews.find(
+        {"business_id": business["business_id"], "is_private": True},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
     
     return reviews
 
@@ -570,6 +771,55 @@ Generate an appropriate response:"""
         
         return {"response": fallback, "tone": data.tone, "fallback": True}
 
+@api_router.post("/ai/write-assist")
+async def ai_write_assist(data: AIWriteAssistRequest, user: User = Depends(get_current_user)):
+    """AI assistant to help customers write reviews"""
+    from emergentintegrations.llm.chat import LlmChat, UserMessage
+    
+    rating_context = {
+        5: "exceptional, outstanding, best ever",
+        4: "great, very good, impressed",
+        3: "decent, okay, average",
+        2: "disappointing, below expectations",
+        1: "terrible, worst experience"
+    }
+    
+    system_message = f"""You are helping a customer write a review for {data.business_name}.
+The customer gave a {data.rating}-star rating, which means the experience was {rating_context.get(data.rating, 'neutral')}.
+Generate a natural, authentic-sounding review that reflects this rating.
+Keep it concise (2-4 sentences) and genuine.
+Do not use overly formal language or clichés."""
+
+    keywords_text = f"\nIncorporate these aspects the customer mentioned: {data.keywords}" if data.keywords else ""
+    
+    prompt = f"""Generate a {data.rating}-star review for {data.business_name}.{keywords_text}
+
+Write a natural review:"""
+
+    try:
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"write_assist_{uuid.uuid4().hex[:8]}",
+            system_message=system_message
+        ).with_model("gemini", "gemini-3-flash-preview")
+        
+        user_message = UserMessage(text=prompt)
+        response = await chat.send_message(user_message)
+        
+        return {"review_text": response}
+    except Exception as e:
+        logger.error(f"AI write assist error: {str(e)}")
+        # Fallback templates
+        templates = {
+            5: f"Had an amazing experience at {data.business_name}! Everything was perfect and the service was outstanding. Highly recommend!",
+            4: f"Really enjoyed my visit to {data.business_name}. Great quality and friendly staff. Would definitely come back!",
+            3: f"Visited {data.business_name} recently. It was okay - nothing too special but decent overall.",
+            2: f"My experience at {data.business_name} was disappointing. Expected better based on what I'd heard.",
+            1: f"Unfortunately, {data.business_name} did not meet my expectations at all. Would not recommend."
+        }
+        
+        return {"review_text": templates.get(data.rating, templates[3]), "fallback": True}
+
 # ============ ANALYTICS ENDPOINTS ============
 
 @api_router.get("/analytics/overview")
@@ -591,7 +841,9 @@ async def get_analytics_overview(user: User = Depends(get_current_user)):
             "sentiment_breakdown": {"positive": 0, "neutral": 0, "negative": 0},
             "rating_distribution": {1: 0, 2: 0, 3: 0, 4: 0, 5: 0},
             "response_rate": 0,
-            "platform_breakdown": {"google": 0, "facebook": 0, "direct": 0}
+            "platform_breakdown": {"google": 0, "facebook": 0, "direct": 0},
+            "private_feedback_count": 0,
+            "public_reviews_count": 0
         }
     
     total = len(reviews)
@@ -601,6 +853,7 @@ async def get_analytics_overview(user: User = Depends(get_current_user)):
     rating_distribution = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     platform_breakdown = {"google": 0, "facebook": 0, "direct": 0}
     responded_count = 0
+    private_count = 0
     
     for review in reviews:
         sentiment_breakdown[review.get("sentiment", "neutral")] += 1
@@ -608,6 +861,8 @@ async def get_analytics_overview(user: User = Depends(get_current_user)):
         platform_breakdown[review.get("platform", "direct")] += 1
         if review.get("response"):
             responded_count += 1
+        if review.get("is_private"):
+            private_count += 1
     
     return {
         "total_reviews": total,
@@ -615,7 +870,9 @@ async def get_analytics_overview(user: User = Depends(get_current_user)):
         "sentiment_breakdown": sentiment_breakdown,
         "rating_distribution": rating_distribution,
         "response_rate": round((responded_count / total) * 100, 1) if total > 0 else 0,
-        "platform_breakdown": platform_breakdown
+        "platform_breakdown": platform_breakdown,
+        "private_feedback_count": private_count,
+        "public_reviews_count": total - private_count
     }
 
 @api_router.get("/analytics/trends")
@@ -663,16 +920,34 @@ async def get_public_business(qr_code_id: str):
     """Get public business info for QR code landing page"""
     business = await db.businesses.find_one(
         {"qr_code_id": qr_code_id},
-        {"_id": 0, "business_id": 1, "name": 1, "category": 1, "logo_url": 1}
+        {"_id": 0, "business_id": 1, "name": 1, "category": 1, "logo_url": 1,
+         "google_place_id": 1, "google_review_link": 1,
+         "facebook_page_id": 1, "facebook_page_url": 1}
     )
     
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
     
-    return business
+    # Get platform connections
+    connections = await db.platform_connections.find(
+        {"business_id": business["business_id"], "status": "connected"},
+        {"_id": 0, "platform": 1, "review_link": 1, "page_url": 1}
+    ).to_list(10)
+    
+    platforms = {}
+    for conn in connections:
+        platforms[conn["platform"]] = {
+            "connected": True,
+            "review_link": conn.get("review_link") or conn.get("page_url")
+        }
+    
+    return {
+        **business,
+        "platforms": platforms
+    }
 
 @api_router.post("/public/review")
-async def submit_public_review(review_data: ReviewCreate):
+async def submit_public_review(review_data: PublicReviewCreate):
     """Submit a review from QR code landing page"""
     business = await db.businesses.find_one(
         {"business_id": review_data.business_id},
@@ -682,7 +957,9 @@ async def submit_public_review(review_data: ReviewCreate):
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
     
-    # Determine sentiment based on rating
+    # Determine sentiment and privacy based on rating
+    is_private = review_data.rating < 4
+    
     if review_data.rating >= 4:
         sentiment = "positive"
         sentiment_score = random.uniform(0.5, 0.9)
@@ -693,14 +970,20 @@ async def submit_public_review(review_data: ReviewCreate):
         sentiment = "negative"
         sentiment_score = random.uniform(-0.9, -0.5)
     
+    # For low ratings, always mark as private/direct
+    platform = "direct" if is_private else review_data.platform_choice
+    
     review = Review(
         business_id=review_data.business_id,
-        platform="direct",
+        platform=platform,
         author_name=review_data.author_name,
+        author_email=review_data.author_email,
+        author_phone=review_data.author_phone,
         rating=review_data.rating,
         text=review_data.text,
         sentiment=sentiment,
-        sentiment_score=sentiment_score
+        sentiment_score=sentiment_score,
+        is_private=is_private
     )
     
     doc = review.model_dump()
@@ -708,13 +991,26 @@ async def submit_public_review(review_data: ReviewCreate):
     
     await db.reviews.insert_one(doc)
     
-    return {"message": "Review submitted successfully", "review_id": review.review_id}
+    # Return different response based on rating
+    if is_private:
+        return {
+            "message": "Thank you for your feedback. We take all feedback seriously and will work to improve.",
+            "review_id": review.review_id,
+            "is_private": True
+        }
+    else:
+        return {
+            "message": "Review submitted successfully",
+            "review_id": review.review_id,
+            "is_private": False,
+            "platform_choice": platform
+        }
 
 # ============ ROOT & HEALTH ============
 
 @api_router.get("/")
 async def root():
-    return {"message": "ReviewFlow API", "version": "1.0.0"}
+    return {"message": "ReviewFlow API", "version": "2.0.0"}
 
 @api_router.get("/health")
 async def health_check():
