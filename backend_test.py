@@ -202,6 +202,17 @@ class ReviewFlowAPITester:
                      "Should return 401 without authentication" if success else "Unexpected response",
                      401, status)
 
+        # Test AI write assist without auth
+        write_assist_data = {
+            "rating": 5,
+            "business_name": "Test Restaurant",
+            "keywords": "great food, excellent service"
+        }
+        success, data, status = self.make_request('POST', 'ai/write-assist', data=write_assist_data, expected_status=401, auth_required=True)
+        self.log_test("POST /api/ai/write-assist (no auth)", success,
+                     "Should return 401 without authentication" if success else "Unexpected response",
+                     401, status)
+
     def test_analytics_endpoints(self):
         """Test analytics endpoints"""
         print("\n🔍 Testing Analytics Endpoints...")
