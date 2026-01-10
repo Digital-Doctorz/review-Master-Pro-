@@ -544,7 +544,7 @@ async def connect_facebook_page(
     data: dict,
     user: User = Depends(get_current_user)
 ):
-    """Connect a Facebook Page (MOCK)"""
+    """Connect a Facebook Page"""
     business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
@@ -577,10 +577,18 @@ async def connect_facebook_page(
         }}
     )
     
-    # Generate mock reviews
-    await generate_mock_reviews(business["business_id"], "facebook")
+    # Sync reviews using the service (real or mock)
+    await sync_platform_reviews(business["business_id"], "facebook", page_id, page_name)
     
-    return {"message": "Facebook Page connected successfully", "review_link": review_link}
+    # Get integration status
+    integration_status = facebook_reviews.get_integration_status()
+    
+    return {
+        "message": "Facebook Page connected successfully", 
+        "review_link": review_link,
+        "integration_mode": integration_status["status"],
+        "is_real_data": integration_status["real_api_enabled"]
+    }
 
 # ============ PLATFORM CONNECTION ENDPOINTS ============
 
