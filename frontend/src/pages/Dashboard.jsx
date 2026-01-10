@@ -32,22 +32,26 @@ export default function Dashboard() {
   const [reviews, setReviews] = useState([]);
   const [privateReviews, setPrivateReviews] = useState([]);
   const [platforms, setPlatforms] = useState([]);
+  const [integrationStatus, setIntegrationStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [syncing, setSyncing] = useState(false);
 
   const fetchDashboardData = useCallback(async () => {
     try {
-      const [analyticsRes, reviewsRes, privateRes, platformsRes] = await Promise.all([
+      const [analyticsRes, reviewsRes, privateRes, platformsRes, statusRes] = await Promise.all([
         axios.get(`${API}/analytics/overview`, { withCredentials: true }),
         axios.get(`${API}/reviews?limit=10&is_private=false`, { withCredentials: true }),
         axios.get(`${API}/reviews/private`, { withCredentials: true }),
         axios.get(`${API}/platforms`, { withCredentials: true }),
+        axios.get(`${API}/integration-status`, { withCredentials: true }).catch(() => ({ data: null })),
       ]);
 
       setAnalytics(analyticsRes.data);
       setReviews(reviewsRes.data);
       setPrivateReviews(privateRes.data);
       setPlatforms(platformsRes.data);
+      setIntegrationStatus(statusRes.data);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
