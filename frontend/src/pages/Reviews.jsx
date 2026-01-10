@@ -1,4 +1,5 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { toast } from "sonner";
@@ -22,6 +23,12 @@ import {
   DialogTitle,
 } from "../components/ui/dialog";
 import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
+import {
   Star,
   MessageSquare,
   ThumbsUp,
@@ -31,7 +38,11 @@ import {
   Filter,
   Sparkles,
   Send,
-  X,
+  Lock,
+  Globe,
+  Mail,
+  Phone,
+  User,
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -39,58 +50,47 @@ const API = `${BACKEND_URL}/api`;
 
 export default function Reviews() {
   const { business } = useContext(AuthContext);
+  const [searchParams] = useSearchParams();
   const [reviews, setReviews] = useState([]);
+  const [privateReviews, setPrivateReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedReview, setSelectedReview] = useState(null);
   const [responseText, setResponseText] = useState("");
   const [generatingAI, setGeneratingAI] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState(searchParams.get("filter") === "private" ? "private" : "public");
   const [filters, setFilters] = useState({
     platform: "all",
     sentiment: "all",
     responded: "all",
   });
 
-  useEffect(() => {
-    const loadReviews = async () => {
-      try {
-        const params = new URLSearchParams();
-        if (filters.platform !== "all") params.append("platform", filters.platform);
-        if (filters.sentiment !== "all") params.append("sentiment", filters.sentiment);
-        if (filters.responded === "yes") params.append("responded", "true");
-        if (filters.responded === "no") params.append("responded", "false");
-
-        const response = await axios.get(`${API}/reviews?${params.toString()}`, {
-          withCredentials: true,
-        });
-        setReviews(response.data);
-      } catch (error) {
-        console.error("Error fetching reviews:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadReviews();
-  }, [filters]);
-
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       const params = new URLSearchParams();
       if (filters.platform !== "all") params.append("platform", filters.platform);
       if (filters.sentiment !== "all") params.append("sentiment", filters.sentiment);
       if (filters.responded === "yes") params.append("responded", "true");
       if (filters.responded === "no") params.append("responded", "false");
+      params.append("is_private", "false");
 
-      const response = await axios.get(`${API}/reviews?${params.toString()}`, {
-        withCredentials: true,
-      });
-      setReviews(response.data);
+      const [publicRes, privateRes] = await Promise.all([
+        axios.get(`${API}/reviews?${params.toString()}`, { withCredentials: true }),
+        axios.get(`${API}/reviews/private`, { withCredentials: true }),
+      ]);
+
+      setReviews(publicRes.data);
+      setPrivateReviews(privateRes.data);
     } catch (error) {
       console.error("Error fetching reviews:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
 
   const generateAIResponse = async (tone = "professional") => {
     if (!selectedReview) return;
@@ -176,6 +176,114 @@ export default function Reviews() {
     );
   }
 
+  const ReviewCard = ({ review, index, isPrivate = false }) => (
+    <motion.div
+      key={review.review_id}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+    >
+      <Card
+        className={`glass-card border-0 hover:shadow-lg transition-all cursor-pointer ${
+          isPrivate ? "border-l-4 border-l-red-400" : ""
+        }`}
+        onClick={() => {
+          setSelectedReview(review);
+          setResponseText(review.response || "");
+        }}
+        data-testid={`review-card-${index}`}
+      >
+        <CardContent className="p-6">
+          <div className="flex items-start gap-4">
+            <Avatar className="w-12 h-12">
+              <AvatarImage src={review.author_avatar} />
+              <AvatarFallback className="bg-sky-100 text-sky-600">
+                {review.author_name?.charAt(0)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center flex-wrap gap-2 mb-2">
+                <span className="font-semibold text-slate-900">
+                  {review.author_name}
+                </span>
+                <Badge
+                  variant="secondary"
+                  className={`text-xs ${getPlatformBadge(review.platform)}`}
+                >
+                  {review.platform}
+                </Badge>
+                {isPrivate && (
+                  <Badge variant="secondary" className="bg-red-100 text-red-700 text-xs">
+                    <Lock className="w-3 h-3 mr-1" />
+                    Private
+                  </Badge>
+                )}
+                {getSentimentIcon(review.sentiment)}
+                {review.response && (
+                  <Badge
+                    variant="secondary"
+                    className="bg-green-100 text-green-700 text-xs"
+                  >
+                    Responded
+                  </Badge>
+                )}
+              </div>
+              <div className="flex gap-0.5 mb-3">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Star
+                    key={i}
+                    className={`w-4 h-4 ${
+                      i <= review.rating
+                        ? "fill-amber-400 text-amber-400"
+                        : "text-slate-200"
+                    }`}
+                  />
+                ))}
+              </div>
+              <p className="text-slate-700">{review.text}</p>
+              
+              {/* Contact info for private reviews */}
+              {isPrivate && (review.author_email || review.author_phone) && (
+                <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <p className="text-xs text-slate-500 font-medium mb-2">Customer Contact</p>
+                  <div className="space-y-1">
+                    {review.author_email && (
+                      <div className="flex items-center gap-2 text-sm text-slate-600">
+                        <Mail className="w-4 h-4 text-slate-400" />
+                        <a href={`mailto:${review.author_email}`} className="hover:text-sky-600">
+                          {review.author_email}
+                        </a>
+                      </div>
+                    )}
+                    {review.author_phone && (
+                      <div className="flex items-center gap-2 text-sm text-slate-600">
+                        <Phone className="w-4 h-4 text-slate-400" />
+                        <a href={`tel:${review.author_phone}`} className="hover:text-sky-600">
+                          {review.author_phone}
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+              
+              {review.response && (
+                <div className="mt-4 p-4 rounded-xl bg-slate-50 border-l-4 border-sky-400">
+                  <p className="text-sm font-medium text-slate-500 mb-1">
+                    Your Response:
+                  </p>
+                  <p className="text-slate-700 text-sm">
+                    {review.response}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+
   return (
     <div className="space-y-6" data-testid="reviews-page">
       {/* Header */}
@@ -188,164 +296,163 @@ export default function Reviews() {
             Manage and respond to all your reviews in one place.
           </p>
         </div>
-        <Badge variant="secondary" className="bg-sky-50 text-sky-600 w-fit">
-          {reviews.length} Reviews
-        </Badge>
+        <div className="flex gap-2">
+          <Badge variant="secondary" className="bg-sky-50 text-sky-600">
+            {reviews.length} Public
+          </Badge>
+          {privateReviews.length > 0 && (
+            <Badge variant="secondary" className="bg-red-50 text-red-600">
+              {privateReviews.length} Private
+            </Badge>
+          )}
+        </div>
       </div>
 
-      {/* Filters */}
-      <Card className="glass-card border-0">
-        <CardContent className="p-4">
-          <div className="flex flex-wrap items-center gap-4">
-            <Filter className="w-5 h-5 text-slate-400" />
-            <Select
-              value={filters.platform}
-              onValueChange={(value) =>
-                setFilters({ ...filters, platform: value })
-              }
-            >
-              <SelectTrigger className="w-36 h-10 rounded-xl" data-testid="filter-platform">
-                <SelectValue placeholder="Platform" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Platforms</SelectItem>
-                <SelectItem value="google">Google</SelectItem>
-                <SelectItem value="facebook">Facebook</SelectItem>
-                <SelectItem value="direct">Direct</SelectItem>
-              </SelectContent>
-            </Select>
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="w-full md:w-auto">
+          <TabsTrigger value="public" className="flex items-center gap-2">
+            <Globe className="w-4 h-4" />
+            Public Reviews
+            <Badge variant="secondary" className="ml-1 bg-slate-200">{reviews.length}</Badge>
+          </TabsTrigger>
+          <TabsTrigger value="private" className="flex items-center gap-2">
+            <Lock className="w-4 h-4" />
+            Private Feedback
+            {privateReviews.length > 0 && (
+              <Badge variant="secondary" className="ml-1 bg-red-100 text-red-700">{privateReviews.length}</Badge>
+            )}
+          </TabsTrigger>
+        </TabsList>
 
-            <Select
-              value={filters.sentiment}
-              onValueChange={(value) =>
-                setFilters({ ...filters, sentiment: value })
-              }
-            >
-              <SelectTrigger className="w-36 h-10 rounded-xl" data-testid="filter-sentiment">
-                <SelectValue placeholder="Sentiment" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Sentiment</SelectItem>
-                <SelectItem value="positive">Positive</SelectItem>
-                <SelectItem value="neutral">Neutral</SelectItem>
-                <SelectItem value="negative">Negative</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={filters.responded}
-              onValueChange={(value) =>
-                setFilters({ ...filters, responded: value })
-              }
-            >
-              <SelectTrigger className="w-36 h-10 rounded-xl" data-testid="filter-responded">
-                <SelectValue placeholder="Response" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="yes">Responded</SelectItem>
-                <SelectItem value="no">Not Responded</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Reviews List */}
-      <div className="space-y-4">
-        {reviews.length === 0 ? (
+        {/* Public Reviews Tab */}
+        <TabsContent value="public" className="space-y-4">
+          {/* Filters */}
           <Card className="glass-card border-0">
-            <CardContent className="p-12 text-center">
-              <MessageSquare className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">
-                No Reviews Found
-              </h3>
-              <p className="text-slate-500">
-                Connect your platforms to start collecting reviews, or adjust
-                your filters.
-              </p>
+            <CardContent className="p-4">
+              <div className="flex flex-wrap items-center gap-4">
+                <Filter className="w-5 h-5 text-slate-400" />
+                <Select
+                  value={filters.platform}
+                  onValueChange={(value) =>
+                    setFilters({ ...filters, platform: value })
+                  }
+                >
+                  <SelectTrigger className="w-36 h-10 rounded-xl" data-testid="filter-platform">
+                    <SelectValue placeholder="Platform" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Platforms</SelectItem>
+                    <SelectItem value="google">Google</SelectItem>
+                    <SelectItem value="facebook">Facebook</SelectItem>
+                    <SelectItem value="direct">Direct</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  value={filters.sentiment}
+                  onValueChange={(value) =>
+                    setFilters({ ...filters, sentiment: value })
+                  }
+                >
+                  <SelectTrigger className="w-36 h-10 rounded-xl" data-testid="filter-sentiment">
+                    <SelectValue placeholder="Sentiment" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Sentiment</SelectItem>
+                    <SelectItem value="positive">Positive</SelectItem>
+                    <SelectItem value="neutral">Neutral</SelectItem>
+                    <SelectItem value="negative">Negative</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  value={filters.responded}
+                  onValueChange={(value) =>
+                    setFilters({ ...filters, responded: value })
+                  }
+                >
+                  <SelectTrigger className="w-36 h-10 rounded-xl" data-testid="filter-responded">
+                    <SelectValue placeholder="Response" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="yes">Responded</SelectItem>
+                    <SelectItem value="no">Not Responded</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </CardContent>
           </Card>
-        ) : (
-          <AnimatePresence>
-            {reviews.map((review, index) => (
-              <motion.div
-                key={review.review_id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-              >
-                <Card
-                  className="glass-card border-0 hover:shadow-lg transition-all cursor-pointer"
-                  onClick={() => {
-                    setSelectedReview(review);
-                    setResponseText(review.response || "");
-                  }}
-                  data-testid={`review-card-${index}`}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
-                      <Avatar className="w-12 h-12">
-                        <AvatarImage src={review.author_avatar} />
-                        <AvatarFallback className="bg-sky-100 text-sky-600">
-                          {review.author_name?.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center flex-wrap gap-2 mb-2">
-                          <span className="font-semibold text-slate-900">
-                            {review.author_name}
-                          </span>
-                          <Badge
-                            variant="secondary"
-                            className={`text-xs ${getPlatformBadge(
-                              review.platform
-                            )}`}
-                          >
-                            {review.platform}
-                          </Badge>
-                          {getSentimentIcon(review.sentiment)}
-                          {review.response && (
-                            <Badge
-                              variant="secondary"
-                              className="bg-green-100 text-green-700 text-xs"
-                            >
-                              Responded
-                            </Badge>
-                          )}
-                        </div>
-                        <div className="flex gap-0.5 mb-3">
-                          {[1, 2, 3, 4, 5].map((i) => (
-                            <Star
-                              key={i}
-                              className={`w-4 h-4 ${
-                                i <= review.rating
-                                  ? "fill-amber-400 text-amber-400"
-                                  : "text-slate-200"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                        <p className="text-slate-700">{review.text}</p>
-                        {review.response && (
-                          <div className="mt-4 p-4 rounded-xl bg-slate-50 border-l-4 border-sky-400">
-                            <p className="text-sm font-medium text-slate-500 mb-1">
-                              Your Response:
-                            </p>
-                            <p className="text-slate-700 text-sm">
-                              {review.response}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        )}
-      </div>
+
+          {/* Reviews List */}
+          <div className="space-y-4">
+            {reviews.length === 0 ? (
+              <Card className="glass-card border-0">
+                <CardContent className="p-12 text-center">
+                  <MessageSquare className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                    No Public Reviews Found
+                  </h3>
+                  <p className="text-slate-500">
+                    Connect your platforms to start collecting reviews, or adjust
+                    your filters.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <AnimatePresence>
+                {reviews.map((review, index) => (
+                  <ReviewCard key={review.review_id} review={review} index={index} />
+                ))}
+              </AnimatePresence>
+            )}
+          </div>
+        </TabsContent>
+
+        {/* Private Feedback Tab */}
+        <TabsContent value="private" className="space-y-4">
+          {/* Info Banner */}
+          <Card className="border-2 border-amber-200 bg-amber-50/50">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <Lock className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium text-amber-800">Private Feedback</p>
+                  <p className="text-sm text-amber-700">
+                    These are reviews from customers who rated below 4 stars. 
+                    They were directed to provide private feedback instead of posting publicly.
+                    Use their contact info to follow up and resolve issues.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Private Reviews List */}
+          <div className="space-y-4">
+            {privateReviews.length === 0 ? (
+              <Card className="glass-card border-0">
+                <CardContent className="p-12 text-center">
+                  <Lock className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                    No Private Feedback
+                  </h3>
+                  <p className="text-slate-500">
+                    Great news! You don&apos;t have any private feedback from unhappy customers.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <AnimatePresence>
+                {privateReviews.map((review, index) => (
+                  <ReviewCard key={review.review_id} review={review} index={index} isPrivate />
+                ))}
+              </AnimatePresence>
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
 
       {/* Response Dialog */}
       <Dialog
@@ -359,7 +466,7 @@ export default function Reviews() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <MessageSquare className="w-5 h-5 text-sky-500" />
-              Respond to Review
+              {selectedReview?.is_private ? "Respond to Private Feedback" : "Respond to Review"}
             </DialogTitle>
           </DialogHeader>
 
@@ -393,6 +500,27 @@ export default function Reviews() {
                   </div>
                 </div>
                 <p className="text-slate-700">{selectedReview.text}</p>
+                
+                {/* Contact info for private */}
+                {selectedReview.is_private && (selectedReview.author_email || selectedReview.author_phone) && (
+                  <div className="mt-3 pt-3 border-t border-slate-200">
+                    <p className="text-xs text-slate-500 font-medium mb-2">Customer Contact</p>
+                    <div className="flex flex-wrap gap-4">
+                      {selectedReview.author_email && (
+                        <a href={`mailto:${selectedReview.author_email}`} className="flex items-center gap-2 text-sm text-sky-600 hover:underline">
+                          <Mail className="w-4 h-4" />
+                          {selectedReview.author_email}
+                        </a>
+                      )}
+                      {selectedReview.author_phone && (
+                        <a href={`tel:${selectedReview.author_phone}`} className="flex items-center gap-2 text-sm text-sky-600 hover:underline">
+                          <Phone className="w-4 h-4" />
+                          {selectedReview.author_phone}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* AI Generation Buttons */}
