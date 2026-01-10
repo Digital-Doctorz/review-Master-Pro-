@@ -475,6 +475,59 @@ async def connect_google_business(
 
 # ============ FACEBOOK MOCK INTEGRATION ============
 
+# Mock Facebook Pages data for demo
+MOCK_FACEBOOK_PAGES = [
+    {"page_id": "fb_mock_001", "name": "The Coffee House", "category": "Coffee Shop", "likes": 2500, "url": "https://facebook.com/thecoffeehouse"},
+    {"page_id": "fb_mock_002", "name": "Coffee & Co.", "category": "Cafe", "likes": 1800, "url": "https://facebook.com/coffeeandco"},
+    {"page_id": "fb_mock_003", "name": "Sunrise Cafe", "category": "Breakfast & Brunch", "likes": 3200, "url": "https://facebook.com/sunrisecafe"},
+    {"page_id": "fb_mock_004", "name": "Downtown Diner", "category": "American Restaurant", "likes": 4100, "url": "https://facebook.com/downtowndiner"},
+    {"page_id": "fb_mock_005", "name": "The Pizza Place", "category": "Pizza Place", "likes": 5600, "url": "https://facebook.com/thepizzaplace"},
+    {"page_id": "fb_mock_006", "name": "Pizza Paradise", "category": "Italian Restaurant", "likes": 2900, "url": "https://facebook.com/pizzaparadise"},
+    {"page_id": "fb_mock_007", "name": "Bella Restaurant", "category": "Italian Restaurant", "likes": 7200, "url": "https://facebook.com/bellarestaurant"},
+    {"page_id": "fb_mock_008", "name": "Bella Italian Kitchen", "category": "Italian Restaurant", "likes": 3400, "url": "https://facebook.com/bellaitaliankitchen"},
+    {"page_id": "fb_mock_009", "name": "Fresh Sushi Bar", "category": "Sushi Restaurant", "likes": 4800, "url": "https://facebook.com/freshsushibar"},
+    {"page_id": "fb_mock_010", "name": "Golden Dragon Chinese", "category": "Chinese Restaurant", "likes": 2100, "url": "https://facebook.com/goldendragonchi"},
+    {"page_id": "fb_mock_011", "name": "Optm Health Care", "category": "Health & Wellness", "likes": 1500, "url": "https://facebook.com/optmhealthcare"},
+    {"page_id": "fb_mock_012", "name": "Health First Clinic", "category": "Medical Center", "likes": 2800, "url": "https://facebook.com/healthfirstclinic"},
+]
+
+@api_router.get("/facebook/search")
+async def search_facebook_pages(
+    query: str = Query(..., min_length=2),
+    user: User = Depends(get_current_user)
+):
+    """Search for Facebook Pages (MOCK implementation)"""
+    import asyncio
+    await asyncio.sleep(0.3)
+    
+    query_lower = query.lower()
+    results = []
+    
+    for page in MOCK_FACEBOOK_PAGES:
+        if query_lower in page["name"].lower() or query_lower in page["category"].lower():
+            results.append({
+                "page_id": page["page_id"],
+                "name": page["name"],
+                "category": page["category"],
+                "likes": page["likes"],
+                "url": page["url"],
+                "review_link": f"{page['url']}/reviews"
+            })
+    
+    # Add a custom result matching the query
+    if len(results) < 3:
+        custom_id = f"fb_custom_{uuid.uuid4().hex[:6]}"
+        results.append({
+            "page_id": custom_id,
+            "name": query.title(),
+            "category": "Local Business",
+            "likes": None,
+            "url": f"https://facebook.com/{query.lower().replace(' ', '')}",
+            "review_link": f"https://facebook.com/{query.lower().replace(' ', '')}/reviews"
+        })
+    
+    return {"results": results[:5]}
+
 @api_router.post("/facebook/connect")
 async def connect_facebook_page(
     data: dict,
@@ -485,11 +538,10 @@ async def connect_facebook_page(
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
     
-    page_url = data.get("page_url", "")
-    page_name = data.get("page_name", business["name"])
-    
-    # Extract page ID from URL or generate mock
-    page_id = f"fb_page_{uuid.uuid4().hex[:8]}"
+    page_id = data.get("page_id", f"fb_page_{uuid.uuid4().hex[:8]}")
+    page_url = data.get("page_url") or data.get("url", "")
+    page_name = data.get("page_name") or data.get("name", business["name"])
+    review_link = data.get("review_link", f"{page_url}/reviews" if page_url else f"https://facebook.com/{page_id}/reviews")
     
     # Update business with Facebook info
     await db.businesses.update_one(
@@ -507,8 +559,8 @@ async def connect_facebook_page(
         {"$set": {
             "status": "connected",
             "page_id": page_id,
-            "page_url": page_url or f"https://facebook.com/{page_id}/reviews",
-            "review_link": f"https://facebook.com/{page_id}/reviews",
+            "page_url": page_url or f"https://facebook.com/{page_id}",
+            "review_link": review_link,
             "connected_at": datetime.now(timezone.utc).isoformat(),
             "last_sync": datetime.now(timezone.utc).isoformat()
         }}
@@ -517,7 +569,7 @@ async def connect_facebook_page(
     # Generate mock reviews
     await generate_mock_reviews(business["business_id"], "facebook")
     
-    return {"message": "Facebook Page connected successfully"}
+    return {"message": "Facebook Page connected successfully", "review_link": review_link}
 
 # ============ PLATFORM CONNECTION ENDPOINTS ============
 
