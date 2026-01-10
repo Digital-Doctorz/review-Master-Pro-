@@ -200,16 +200,44 @@ class ReviewFlowAPITester:
                      "Should return 401 without authentication" if success else "Unexpected response",
                      401, status)
 
+        # Test get private reviews without auth
+        success, data, status = self.make_request('GET', 'reviews/private', expected_status=401, auth_required=True)
+        self.log_test("GET /api/reviews/private (no auth)", success,
+                     "Should return 401 without authentication" if success else "Unexpected response",
+                     401, status)
+
+        # Test get reviews with is_private filter without auth
+        success, data, status = self.make_request('GET', 'reviews?is_private=true', expected_status=401, auth_required=True)
+        self.log_test("GET /api/reviews?is_private=true (no auth)", success,
+                     "Should return 401 without authentication" if success else "Unexpected response",
+                     401, status)
+
         # Test public review submission (should work without auth)
         review_data = {
             "business_id": "test_business_id",
-            "platform": "direct",
             "author_name": "Test Customer",
+            "author_email": "test@example.com",
+            "author_phone": "+1234567890",
             "rating": 5,
-            "text": "Great service!"
+            "text": "Great service!",
+            "platform_choice": "direct"
         }
         success, data, status = self.make_request('POST', 'public/review', data=review_data, expected_status=404)
         self.log_test("POST /api/public/review", success,
+                     "Should return 404 for non-existent business" if success else f"Unexpected response: {data}",
+                     404, status)
+
+        # Test public review submission with low rating (should be private)
+        low_rating_review = {
+            "business_id": "test_business_id",
+            "author_name": "Test Customer",
+            "author_email": "test@example.com",
+            "rating": 2,
+            "text": "Not great experience",
+            "platform_choice": "direct"
+        }
+        success, data, status = self.make_request('POST', 'public/review', data=low_rating_review, expected_status=404)
+        self.log_test("POST /api/public/review (low rating)", success,
                      "Should return 404 for non-existent business" if success else f"Unexpected response: {data}",
                      404, status)
 
