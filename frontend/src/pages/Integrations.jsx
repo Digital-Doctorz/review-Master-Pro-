@@ -27,6 +27,8 @@ import {
   ArrowRight,
   Copy,
   Globe,
+  Users,
+  ThumbsUp,
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -63,9 +65,11 @@ export default function Integrations() {
   
   // Facebook connection modal state
   const [showFacebookModal, setShowFacebookModal] = useState(false);
-  const [facebookPageUrl, setFacebookPageUrl] = useState("");
-  const [facebookPageName, setFacebookPageName] = useState("");
+  const [facebookSearch, setFacebookSearch] = useState("");
+  const [facebookResults, setFacebookResults] = useState([]);
+  const [searchingFacebook, setSearchingFacebook] = useState(false);
   const [connectingFacebook, setConnectingFacebook] = useState(false);
+  const [selectedFacebookPage, setSelectedFacebookPage] = useState(null);
 
   useEffect(() => {
     fetchPlatforms();
@@ -106,6 +110,28 @@ export default function Integrations() {
     }
   }, []);
 
+  // Debounced Facebook search
+  const searchFacebookPages = useCallback(async (query) => {
+    if (query.length < 2) {
+      setFacebookResults([]);
+      return;
+    }
+    
+    setSearchingFacebook(true);
+    try {
+      const response = await axios.get(`${API}/facebook/search`, {
+        params: { query },
+        withCredentials: true,
+      });
+      setFacebookResults(response.data.results || []);
+    } catch (error) {
+      console.error("Error searching Facebook:", error);
+      toast.error("Search failed. Please try again.");
+    } finally {
+      setSearchingFacebook(false);
+    }
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       if (googleSearch) {
@@ -114,6 +140,15 @@ export default function Integrations() {
     }, 300);
     return () => clearTimeout(timer);
   }, [googleSearch, searchGoogleBusinesses]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (facebookSearch) {
+        searchFacebookPages(facebookSearch);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [facebookSearch, searchFacebookPages]);
 
   const connectGoogleBusiness = async (business) => {
     setConnectingGoogle(true);
@@ -130,7 +165,7 @@ export default function Integrations() {
         { withCredentials: true }
       );
       
-      toast.success("Google Business connected successfully!");
+      toast.success("Google Business connected successfully! Reviews are syncing...");
       setShowGoogleModal(false);
       setGoogleSearch("");
       setGoogleResults([]);
@@ -144,28 +179,29 @@ export default function Integrations() {
     }
   };
 
-  const connectFacebookPage = async () => {
-    if (!facebookPageName.trim()) {
-      toast.error("Please enter your Facebook page name");
-      return;
-    }
-    
+  const connectFacebookPage = async (page) => {
     setConnectingFacebook(true);
+    setSelectedFacebookPage(page);
     
     try {
       await axios.post(
         `${API}/facebook/connect`,
         {
-          page_url: facebookPageUrl,
-          page_name: facebookPageName
+          page_id: page.page_id,
+          name: page.name,
+          page_name: page.name,
+          url: page.url,
+          page_url: page.url,
+          review_link: page.review_link
         },
         { withCredentials: true }
       );
       
-      toast.success("Facebook Page connected successfully!");
+      toast.success("Facebook Page connected successfully! Reviews are syncing...");
       setShowFacebookModal(false);
-      setFacebookPageUrl("");
-      setFacebookPageName("");
+      setFacebookSearch("");
+      setFacebookResults([]);
+      setSelectedFacebookPage(null);
       fetchPlatforms();
     } catch (error) {
       console.error("Error connecting Facebook:", error);
@@ -404,18 +440,18 @@ export default function Integrations() {
 
               {facebookConnected && facebookData?.page_url && (
                 <div className="mb-4 p-3 rounded-xl bg-white border border-slate-100">
-                  <p className="text-xs text-slate-500 mb-1">Your Facebook Page</p>
+                  <p className="text-xs text-slate-500 mb-1">Your Facebook Review Link</p>
                   <div className="flex items-center gap-2">
                     <code className="text-xs text-slate-600 truncate flex-1">
-                      {facebookData.page_url}
+                      {facebookData.review_link || facebookData.page_url}
                     </code>
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => window.open(facebookData.page_url, "_blank")}
+                      onClick={() => copyReviewLink(facebookData.review_link || facebookData.page_url)}
                       className="h-8 px-2"
                     >
-                      <ExternalLink className="w-4 h-4" />
+                      <Copy className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
@@ -424,7 +460,7 @@ export default function Integrations() {
               <p className="text-sm text-slate-600 mb-6">
                 {facebookConnected
                   ? "Your Facebook Page is connected. Recommendations are syncing."
-                  : "Enter your Facebook Page URL to connect and manage recommendations."}
+                  : "Search for your Facebook Page to connect and manage recommendations."}
               </p>
 
               {facebookConnected ? (
@@ -451,8 +487,8 @@ export default function Integrations() {
                   onClick={() => setShowFacebookModal(true)}
                   data-testid="connect-facebook-btn"
                 >
-                  <Link2 className="w-4 h-4 mr-2" />
-                  Connect Page
+                  <Search className="w-4 h-4 mr-2" />
+                  Search & Connect
                 </Button>
               )}
             </CardContent>
@@ -559,66 +595,101 @@ export default function Integrations() {
         </DialogContent>
       </Dialog>
 
-      {/* Facebook Connect Modal */}
+      {/* Facebook Search Modal */}
       <Dialog open={showFacebookModal} onOpenChange={setShowFacebookModal}>
-        <DialogContent className="max-w-lg" data-testid="facebook-connect-modal">
+        <DialogContent className="max-w-lg" data-testid="facebook-search-modal">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
               <FacebookIcon className="w-6 h-6" />
               Connect Facebook Page
             </DialogTitle>
             <DialogDescription>
-              Enter your Facebook Page details to connect and manage recommendations.
+              Search for your Facebook Page to connect and manage recommendations.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label>Page Name *</Label>
+            {/* Search Input */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <Input
-                value={facebookPageName}
-                onChange={(e) => setFacebookPageName(e.target.value)}
-                placeholder="Your Business Name"
-                className="h-12 rounded-xl border-slate-200"
-                data-testid="facebook-page-name-input"
+                value={facebookSearch}
+                onChange={(e) => setFacebookSearch(e.target.value)}
+                placeholder="Search your Facebook Page name..."
+                className="pl-10 h-12 rounded-xl border-slate-200"
+                data-testid="facebook-search-input"
               />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Page URL (optional)</Label>
-              <div className="relative">
-                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <Input
-                  value={facebookPageUrl}
-                  onChange={(e) => setFacebookPageUrl(e.target.value)}
-                  placeholder="https://facebook.com/yourbusiness"
-                  className="pl-10 h-12 rounded-xl border-slate-200"
-                  data-testid="facebook-page-url-input"
-                />
-              </div>
-            </div>
-
-            <Button
-              onClick={connectFacebookPage}
-              disabled={connectingFacebook || !facebookPageName.trim()}
-              className="w-full h-12 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white"
-              data-testid="facebook-connect-submit-btn"
-            >
-              {connectingFacebook ? (
-                <RefreshCw className="w-5 h-5 animate-spin" />
-              ) : (
-                <>
-                  <CheckCircle2 className="w-5 h-5 mr-2" />
-                  Connect Page
-                </>
+              {searchingFacebook && (
+                <RefreshCw className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 animate-spin" />
               )}
-            </Button>
+            </div>
 
+            {/* Search Results */}
+            <AnimatePresence>
+              {facebookResults.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-2 max-h-80 overflow-y-auto"
+                >
+                  {facebookResults.map((result, index) => (
+                    <motion.button
+                      key={result.page_id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      onClick={() => connectFacebookPage(result)}
+                      disabled={connectingFacebook}
+                      className={`w-full p-4 rounded-xl border-2 text-left transition-all hover:border-indigo-400 hover:bg-indigo-50 ${
+                        selectedFacebookPage?.page_id === result.page_id && connectingFacebook
+                          ? "border-indigo-500 bg-indigo-50"
+                          : "border-slate-200 bg-white"
+                      }`}
+                      data-testid={`facebook-result-${index}`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-slate-900">{result.name}</p>
+                          </div>
+                          <div className="flex items-center gap-3 text-sm text-slate-500 mt-1">
+                            <span className="flex items-center gap-1">
+                              <Globe className="w-3 h-3" />
+                              {result.category}
+                            </span>
+                            {result.likes && (
+                              <span className="flex items-center gap-1">
+                                <ThumbsUp className="w-3 h-3" />
+                                {result.likes.toLocaleString()} likes
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        {selectedFacebookPage?.page_id === result.page_id && connectingFacebook ? (
+                          <RefreshCw className="w-5 h-5 text-indigo-500 animate-spin" />
+                        ) : (
+                          <ArrowRight className="w-5 h-5 text-slate-400" />
+                        )}
+                      </div>
+                    </motion.button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* No Results */}
+            {facebookSearch.length >= 2 && !searchingFacebook && facebookResults.length === 0 && (
+              <div className="text-center py-8 text-slate-500">
+                <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p>No pages found. Try a different search term.</p>
+              </div>
+            )}
+
+            {/* Help Text */}
             <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-100">
               <p className="text-sm text-indigo-800">
-                <strong>How to find your Page URL:</strong> Go to your Facebook Page, 
-                click the address bar, and copy the URL. It usually looks like 
-                facebook.com/yourbusinessname
+                <strong>Tip:</strong> Enter your Facebook Page name exactly as it appears on Facebook for best results.
               </p>
             </div>
           </div>
@@ -642,7 +713,7 @@ export default function Integrations() {
             <div className="p-4 rounded-xl bg-slate-50">
               <h4 className="font-medium text-slate-900 mb-2">Facebook Page Help</h4>
               <p className="text-sm text-slate-600">
-                Enter your Facebook Page name and URL. Customers will be redirected 
+                Search for your Facebook Page name. Customers will be redirected 
                 to your Facebook Page to leave recommendations.
               </p>
             </div>
