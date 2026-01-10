@@ -157,9 +157,36 @@ class ReviewFlowAPITester:
                      "Should return 401 without authentication" if success else "Unexpected response",
                      401, status)
 
-        # Test connect platform without auth
-        success, data, status = self.make_request('POST', 'platforms/google/connect', expected_status=401, auth_required=True)
-        self.log_test("POST /api/platforms/google/connect (no auth)", success,
+        # Test Google search endpoint without auth
+        success, data, status = self.make_request('GET', 'google/search?query=test', expected_status=401, auth_required=True)
+        self.log_test("GET /api/google/search (no auth)", success,
+                     "Should return 401 without authentication" if success else "Unexpected response",
+                     401, status)
+
+        # Test Google connect without auth
+        google_connect_data = {
+            "place_id": "ChIJ_mock_001",
+            "name": "Test Business",
+            "review_link": "https://search.google.com/local/writereview?placeid=ChIJ_mock_001"
+        }
+        success, data, status = self.make_request('POST', 'google/connect', data=google_connect_data, expected_status=401, auth_required=True)
+        self.log_test("POST /api/google/connect (no auth)", success,
+                     "Should return 401 without authentication" if success else "Unexpected response",
+                     401, status)
+
+        # Test Facebook connect without auth
+        facebook_connect_data = {
+            "page_url": "https://facebook.com/testbusiness",
+            "page_name": "Test Business"
+        }
+        success, data, status = self.make_request('POST', 'facebook/connect', data=facebook_connect_data, expected_status=401, auth_required=True)
+        self.log_test("POST /api/facebook/connect (no auth)", success,
+                     "Should return 401 without authentication" if success else "Unexpected response",
+                     401, status)
+
+        # Test platform disconnect without auth
+        success, data, status = self.make_request('POST', 'platforms/google/disconnect', expected_status=401, auth_required=True)
+        self.log_test("POST /api/platforms/google/disconnect (no auth)", success,
                      "Should return 401 without authentication" if success else "Unexpected response",
                      401, status)
 
