@@ -69,6 +69,18 @@ export default function Dashboard() {
     fetchDashboardData();
   };
 
+  const handleSyncReviews = async () => {
+    setSyncing(true);
+    try {
+      await axios.post(`${API}/reviews/sync`, {}, { withCredentials: true });
+      await fetchDashboardData();
+    } catch (error) {
+      console.error("Error syncing reviews:", error);
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   const getSentimentIcon = (sentiment) => {
     switch (sentiment) {
       case "positive":
