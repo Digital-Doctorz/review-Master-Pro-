@@ -471,10 +471,18 @@ async def connect_google_business(
         }}
     )
     
-    # Generate mock reviews
-    await generate_mock_reviews(business["business_id"], "google")
+    # Sync reviews using the service (real or mock)
+    await sync_platform_reviews(business["business_id"], "google", place_id, name)
     
-    return {"message": "Google Business connected successfully", "review_link": review_link}
+    # Get integration status
+    integration_status = google_reviews.get_integration_status()
+    
+    return {
+        "message": "Google Business connected successfully", 
+        "review_link": review_link,
+        "integration_mode": integration_status["status"],
+        "is_real_data": integration_status["real_api_enabled"]
+    }
 
 # ============ FACEBOOK MOCK INTEGRATION ============
 
