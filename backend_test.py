@@ -163,6 +163,12 @@ class ReviewFlowAPITester:
                      "Should return 401 without authentication" if success else "Unexpected response",
                      401, status)
 
+        # Test Facebook search endpoint without auth (NEW FIX)
+        success, data, status = self.make_request('GET', 'facebook/search?query=test', expected_status=401, auth_required=True)
+        self.log_test("GET /api/facebook/search (no auth)", success,
+                     "Should return 401 without authentication" if success else "Unexpected response",
+                     401, status)
+
         # Test Google connect without auth
         google_connect_data = {
             "place_id": "ChIJ_mock_001",
