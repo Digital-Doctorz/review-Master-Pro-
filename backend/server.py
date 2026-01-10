@@ -720,6 +720,83 @@ async def generate_mock_reviews(business_id: str, platform: str):
     # This is kept for backward compatibility but now delegates to the service
     await sync_platform_reviews(business_id, platform, f"mock_{platform}_{business_id}", "")
 
+
+@api_router.post("/reviews/sync")
+async def sync_reviews(
+    platform: Optional[str] = None,
+    user: User = Depends(get_current_user)
+):
+    """
+    Manually sync reviews from connected platforms
+    If platform is specified, only sync that platform. Otherwise sync all connected platforms.
+    """
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    results = {}
+    
+    # Sync Google if connected and (no platform specified or google specified)
+    if (not platform or platform == "google") and business.get("google_place_id"):
+        result = await sync_platform_reviews(
+            business["business_id"], 
+            "google", 
+            business["google_place_id"],
+            business.get("google_business_name", "")
+        )
+        results["google"] = result
+        
+        # Update last_sync timestamp
+        await db.platform_connections.update_one(
+            {"business_id": business["business_id"], "platform": "google"},
+            {"$set": {"last_sync": datetime.now(timezone.utc).isoformat()}}
+        )
+    
+    # Sync Facebook if connected and (no platform specified or facebook specified)
+    if (not platform or platform == "facebook") and business.get("facebook_page_id"):
+        result = await sync_platform_reviews(
+            business["business_id"], 
+            "facebook", 
+            business["facebook_page_id"],
+            business.get("facebook_page_name", "")
+        )
+        results["facebook"] = result
+        
+        # Update last_sync timestamp
+        await db.platform_connections.update_one(
+            {"business_id": business["business_id"], "platform": "facebook"},
+            {"$set": {"last_sync": datetime.now(timezone.utc).isoformat()}}
+        )
+    
+    if not results:
+        return {
+            "message": "No platforms connected to sync",
+            "results": {}
+        }
+    
+    return {
+        "message": "Sync completed",
+        "results": results
+    }
+
+
+@api_router.get("/integration-status")
+async def get_integration_status(user: User = Depends(get_current_user)):
+    """Get the status of platform integrations (real vs mock)"""
+    google_status = google_reviews.get_integration_status()
+    facebook_status = facebook_reviews.get_integration_status()
+    
+    return {
+        "google": google_status,
+        "facebook": facebook_status,
+        "overall_mode": "production" if (google_status["real_api_enabled"] or facebook_status["real_api_enabled"]) else "demo",
+        "setup_instructions": {
+            "google": "Add GOOGLE_PLACES_API_KEY to backend/.env to enable real Google reviews",
+            "facebook": "Add FACEBOOK_APP_ID and FACEBOOK_APP_SECRET to backend/.env to enable real Facebook reviews"
+        }
+    }
+
+
 @api_router.get("/reviews")
 async def get_reviews(
     platform: Optional[str] = None,
