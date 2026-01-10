@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import axios from "axios";
@@ -18,6 +18,9 @@ import {
   ThumbsDown,
   Minus,
   RefreshCw,
+  AlertCircle,
+  Lock,
+  Link2,
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -27,29 +30,39 @@ export default function Dashboard() {
   const { user, business } = useContext(AuthContext);
   const [analytics, setAnalytics] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [privateReviews, setPrivateReviews] = useState([]);
   const [platforms, setPlatforms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
-      const [analyticsRes, reviewsRes, platformsRes] = await Promise.all([
+      const [analyticsRes, reviewsRes, privateRes, platformsRes] = await Promise.all([
         axios.get(`${API}/analytics/overview`, { withCredentials: true }),
-        axios.get(`${API}/reviews?limit=5`, { withCredentials: true }),
+        axios.get(`${API}/reviews?limit=10&is_private=false`, { withCredentials: true }),
+        axios.get(`${API}/reviews/private`, { withCredentials: true }),
         axios.get(`${API}/platforms`, { withCredentials: true }),
       ]);
 
       setAnalytics(analyticsRes.data);
       setReviews(reviewsRes.data);
+      setPrivateReviews(privateRes.data);
       setPlatforms(platformsRes.data);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  }, []);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchDashboardData();
   };
 
   const getSentimentIcon = (sentiment) => {
@@ -73,6 +86,7 @@ export default function Dashboard() {
   };
 
   const connectedPlatforms = platforms.filter((p) => p.status === "connected");
+  const hasReviews = reviews.length > 0 || privateReviews.length > 0;
 
   if (loading) {
     return (
@@ -94,11 +108,51 @@ export default function Dashboard() {
             Here&apos;s how {business?.name} is performing today.
           </p>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 text-green-600 text-sm font-medium">
-          <span className="w-2 h-2 rounded-full bg-green-500 live-indicator" />
-          Live Dashboard
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="rounded-full"
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 text-green-600 text-sm font-medium">
+            <span className="w-2 h-2 rounded-full bg-green-500 live-indicator" />
+            Live Dashboard
+          </div>
         </div>
       </div>
+
+      {/* Connection Prompt - Show if no platforms connected */}
+      {connectedPlatforms.length === 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-card rounded-2xl p-6 border-2 border-amber-200 bg-amber-50/50"
+        >
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+              <AlertCircle className="w-6 h-6 text-amber-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-slate-900 mb-1">Connect Your Platforms</h3>
+              <p className="text-slate-600 text-sm mb-4">
+                Connect Google or Facebook to start collecting and managing reviews. 
+                It only takes 30 seconds!
+              </p>
+              <Link to="/integrations">
+                <Button className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white">
+                  <Link2 className="w-4 h-4 mr-2" />
+                  Connect Platforms
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -198,7 +252,7 @@ export default function Dashboard() {
       </div>
 
       <div className="grid lg:grid-cols-12 gap-6">
-        {/* Recent Reviews */}
+        {/* Recent Public Reviews */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -221,13 +275,15 @@ export default function Dashboard() {
               {reviews.length === 0 ? (
                 <div className="text-center py-8">
                   <MessageSquare className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                  <p className="text-slate-500">No reviews yet.</p>
-                  <p className="text-sm text-slate-400">
-                    Connect your platforms to start collecting reviews.
+                  <p className="text-slate-500 font-medium">No public reviews yet.</p>
+                  <p className="text-sm text-slate-400 mt-1">
+                    {connectedPlatforms.length === 0 
+                      ? "Connect your platforms to start collecting reviews."
+                      : "Reviews will appear here once customers start leaving feedback."}
                   </p>
                 </div>
               ) : (
-                reviews.map((review, index) => (
+                reviews.slice(0, 5).map((review, index) => (
                   <motion.div
                     key={review.review_id}
                     initial={{ opacity: 0, x: -20 }}
@@ -249,9 +305,7 @@ export default function Dashboard() {
                         </span>
                         <Badge
                           variant="secondary"
-                          className={`text-xs ${getPlatformBadge(
-                            review.platform
-                          )}`}
+                          className={`text-xs ${getPlatformBadge(review.platform)}`}
                         >
                           {review.platform}
                         </Badge>
@@ -272,6 +326,12 @@ export default function Dashboard() {
                       <p className="text-sm text-slate-600 line-clamp-2">
                         {review.text}
                       </p>
+                      {review.response && (
+                        <div className="mt-2 text-xs text-green-600 flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                          Responded
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 ))
@@ -282,6 +342,39 @@ export default function Dashboard() {
 
         {/* Sidebar */}
         <div className="lg:col-span-4 space-y-6">
+          {/* Private Feedback Alert */}
+          {privateReviews.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45 }}
+            >
+              <Card className="border-2 border-red-200 bg-red-50/50">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg font-semibold flex items-center gap-2 text-red-700">
+                    <Lock className="w-5 h-5" />
+                    Private Feedback
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-red-600 mb-4">
+                    You have {privateReviews.length} private feedback(s) from customers 
+                    who rated below 4 stars. Review and follow up!
+                  </p>
+                  <Link to="/reviews?filter=private">
+                    <Button 
+                      variant="outline" 
+                      className="w-full rounded-xl border-red-300 text-red-700 hover:bg-red-100"
+                    >
+                      View Private Feedback
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
           {/* Sentiment Orb */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -366,6 +459,54 @@ export default function Dashboard() {
                     Respond to Reviews
                   </Button>
                 </Link>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Platform Status */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+          >
+            <Card className="glass-card border-0">
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">
+                  Platform Status
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {platforms.map((platform) => (
+                  <div
+                    key={platform.platform}
+                    className="flex items-center justify-between p-3 rounded-xl bg-slate-50"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                        platform.platform === "google" ? "bg-blue-100" : "bg-indigo-100"
+                      }`}>
+                        {platform.platform === "google" ? (
+                          <span className="text-blue-600 font-bold text-xs">G</span>
+                        ) : (
+                          <span className="text-indigo-600 font-bold text-xs">f</span>
+                        )}
+                      </div>
+                      <span className="font-medium text-slate-700 capitalize">
+                        {platform.platform}
+                      </span>
+                    </div>
+                    <Badge
+                      variant={platform.status === "connected" ? "default" : "secondary"}
+                      className={
+                        platform.status === "connected"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-slate-200 text-slate-600"
+                      }
+                    >
+                      {platform.status === "connected" ? "Connected" : "Disconnected"}
+                    </Badge>
+                  </div>
+                ))}
               </CardContent>
             </Card>
           </motion.div>
