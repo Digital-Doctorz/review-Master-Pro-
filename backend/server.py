@@ -653,46 +653,72 @@ async def disconnect_platform(platform: str, user: User = Depends(get_current_us
 
 # ============ REVIEW ENDPOINTS ============
 
-async def generate_mock_reviews(business_id: str, platform: str):
-    """Generate mock reviews for demo purposes"""
-    mock_names = [
-        "Sarah Johnson", "Mike Chen", "Emily Rodriguez", "James Wilson",
-        "Amanda Lee", "David Thompson", "Jessica Martinez", "Ryan Kim",
-        "Laura Garcia", "Chris Brown"
-    ]
+async def sync_platform_reviews(business_id: str, platform: str, platform_id: str, business_name: str = ""):
+    """
+    Sync reviews from platform (Google or Facebook)
+    Uses real API if credentials are available, otherwise uses mock data
+    """
+    logger.info(f"Syncing {platform} reviews for business {business_id}")
     
-    mock_reviews = [
-        {"rating": 5, "text": "Absolutely fantastic experience! The service was exceptional and exceeded all my expectations. Will definitely be coming back!", "sentiment": "positive"},
-        {"rating": 5, "text": "Best in town! Highly recommend to everyone. The quality is outstanding.", "sentiment": "positive"},
-        {"rating": 4, "text": "Really good experience overall. A few minor things could be improved but nothing major.", "sentiment": "positive"},
-        {"rating": 4, "text": "Great service and friendly staff. Would recommend!", "sentiment": "positive"},
-        {"rating": 3, "text": "Average experience. Nothing special but nothing bad either.", "sentiment": "neutral"},
-        {"rating": 3, "text": "It was okay. Service was a bit slow but the quality was decent.", "sentiment": "neutral"},
-        {"rating": 2, "text": "Disappointed with my visit. Expected much better based on reviews.", "sentiment": "negative"},
-        {"rating": 1, "text": "Very poor experience. Long wait times and unhelpful staff. Not coming back.", "sentiment": "negative"},
-    ]
-    
-    # Generate 5-8 random reviews
-    num_reviews = random.randint(5, 8)
-    selected_reviews = random.sample(mock_reviews, min(num_reviews, len(mock_reviews)))
-    
-    for i, review_data in enumerate(selected_reviews):
-        review = Review(
-            business_id=business_id,
-            platform=platform,
-            author_name=random.choice(mock_names),
-            author_avatar=f"https://api.dicebear.com/7.x/avataaars/svg?seed={uuid.uuid4().hex[:6]}",
-            rating=review_data["rating"],
-            text=review_data["text"],
-            sentiment=review_data["sentiment"],
-            sentiment_score=random.uniform(0.3, 0.9) if review_data["sentiment"] == "positive" else (random.uniform(-0.9, -0.3) if review_data["sentiment"] == "negative" else random.uniform(-0.2, 0.2)),
-            is_private=review_data["rating"] < 4,
-            created_at=datetime.now(timezone.utc) - timedelta(days=random.randint(0, 30), hours=random.randint(0, 23))
-        )
+    try:
+        if platform == "google":
+            result = await google_reviews.get_google_reviews(platform_id, business_name)
+        elif platform == "facebook":
+            result = await facebook_reviews.get_facebook_reviews(platform_id, business_name)
+        else:
+            logger.error(f"Unknown platform: {platform}")
+            return {"synced": 0, "error": "Unknown platform"}
         
-        doc = review.model_dump()
-        doc["created_at"] = doc["created_at"].isoformat()
-        await db.reviews.insert_one(doc)
+        reviews_data = result.get("reviews", [])
+        is_mock = result.get("is_mock", True)
+        
+        synced_count = 0
+        for review_data in reviews_data:
+            # Create review document
+            review = Review(
+                review_id=review_data.get("review_id", f"rev_{uuid.uuid4().hex[:12]}"),
+                business_id=business_id,
+                platform=platform,
+                author_name=review_data.get("author_name", "Anonymous"),
+                author_avatar=review_data.get("author_avatar"),
+                rating=review_data.get("rating", 3),
+                text=review_data.get("text", ""),
+                sentiment=review_data.get("sentiment", "neutral"),
+                sentiment_score=review_data.get("sentiment_score", 0.0),
+                is_private=review_data.get("is_private", False),
+                created_at=datetime.fromisoformat(review_data.get("publish_time", datetime.now(timezone.utc).isoformat()).replace("Z", "+00:00")) if review_data.get("publish_time") else datetime.now(timezone.utc)
+            )
+            
+            doc = review.model_dump()
+            doc["created_at"] = doc["created_at"].isoformat() if isinstance(doc["created_at"], datetime) else doc["created_at"]
+            doc["is_mock"] = is_mock
+            doc["synced_at"] = datetime.now(timezone.utc).isoformat()
+            
+            # Upsert review (update if exists, insert if not)
+            await db.reviews.update_one(
+                {"review_id": review.review_id},
+                {"$set": doc},
+                upsert=True
+            )
+            synced_count += 1
+        
+        logger.info(f"Synced {synced_count} reviews for business {business_id} from {platform}")
+        return {
+            "synced": synced_count,
+            "source": result.get("source"),
+            "is_mock": is_mock,
+            "message": result.get("message")
+        }
+        
+    except Exception as e:
+        logger.error(f"Error syncing reviews: {str(e)}")
+        return {"synced": 0, "error": str(e)}
+
+
+async def generate_mock_reviews(business_id: str, platform: str):
+    """Legacy function - now uses sync_platform_reviews"""
+    # This is kept for backward compatibility but now delegates to the service
+    await sync_platform_reviews(business_id, platform, f"mock_{platform}_{business_id}", "")
 
 @api_router.get("/reviews")
 async def get_reviews(
