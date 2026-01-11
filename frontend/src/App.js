@@ -213,6 +213,16 @@ function AppRouter() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/webhooks"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <WebhookSettings />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }
