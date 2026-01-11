@@ -26,6 +26,7 @@ EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
 
 # Import review services
 from services import google_reviews, facebook_reviews
+from services import email_service
 
 # Create the main app
 app = FastAPI(title="ReviewFlow API")
