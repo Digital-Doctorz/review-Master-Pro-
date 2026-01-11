@@ -35,6 +35,7 @@ const navItems = [
   { path: "/reviews", label: "Reviews", icon: MessageSquare },
   { path: "/analytics", label: "Analytics", icon: BarChart3 },
   { path: "/qr-generator", label: "QR Code", icon: QrCode },
+  { path: "/webhooks", label: "Webhooks", icon: Webhook },
   { path: "/settings", label: "Settings", icon: Settings },
 ];
 
