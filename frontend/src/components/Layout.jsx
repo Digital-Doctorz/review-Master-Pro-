@@ -37,6 +37,7 @@ const navItems = [
   { path: "/analytics", label: "Analytics", icon: BarChart3 },
   { path: "/qr-generator", label: "QR Code", icon: QrCode },
   { path: "/webhooks", label: "Webhooks", icon: Webhook },
+  { path: "/notifications", label: "Notifications", icon: Bell },
   { path: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -66,13 +67,8 @@ export default function Layout({ children }) {
       >
         {/* Logo */}
         <div className="p-6 border-b border-slate-100">
-          <Link to="/dashboard" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-teal-400 flex items-center justify-center">
-              <Star className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-slate-900 tracking-tight-custom">
-              ReviewFlow
-            </span>
+          <Link to="/dashboard">
+            <AnimatedLogo size="default" />
           </Link>
         </div>
 
