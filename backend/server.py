@@ -1113,7 +1113,18 @@ Generate an appropriate response:"""
 
 @api_router.post("/ai/write-assist")
 async def ai_write_assist(data: AIWriteAssistRequest, user: User = Depends(get_current_user)):
-    """AI assistant to help customers write reviews"""
+    """AI assistant to help customers write reviews (authenticated)"""
+    return await generate_ai_review(data)
+
+
+@api_router.post("/public/ai/write-assist")
+async def public_ai_write_assist(data: AIWriteAssistRequest):
+    """AI assistant to help customers write reviews (public - for QR code flow)"""
+    return await generate_ai_review(data)
+
+
+async def generate_ai_review(data: AIWriteAssistRequest):
+    """Generate AI review - shared logic for both authenticated and public endpoints"""
     from emergentintegrations.llm.chat import LlmChat, UserMessage
     
     rating_context = {
