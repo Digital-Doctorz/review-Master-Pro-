@@ -96,17 +96,10 @@ export default function Landing() {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-nav">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-violet-500 flex items-center justify-center shadow-lg shadow-sky-500/20">
-              <Star className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-slate-900 tracking-tight-custom">
-              ReviewFlow
-            </span>
-          </div>
+          <AnimatedLogo size="default" />
           <Button
             onClick={handleGoogleLogin}
-            className="rounded-full px-6 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white btn-glow"
+            className="rounded-full px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow"
             data-testid="nav-login-btn"
           >
             Get Started Free
@@ -126,7 +119,7 @@ export default function Landing() {
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-frosted text-slate-700 text-sm font-medium mb-6">
                 <Sparkles className="w-4 h-4 text-violet-500" />
-                Zero-Knowledge Review Management
+                Zero-Friction Review Management
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight-custom leading-tight mb-6">
@@ -135,24 +128,25 @@ export default function Landing() {
               </h1>
 
               <p className="text-lg text-slate-600 mb-8 max-w-lg leading-relaxed">
-                The simplest way to manage Google & Facebook reviews. AI-powered responses, 
-                smart routing for negative feedback, and QR codes that convert.
+                The simplest way to manage Google & Facebook reviews. One-click setup, 
+                AI-powered responses, and smart routing for negative feedback.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Button
                   onClick={handleGoogleLogin}
                   size="lg"
-                  className="rounded-full px-8 py-7 text-lg bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white btn-glow hover:-translate-y-0.5 active:translate-y-0"
+                  className="rounded-full px-8 py-7 text-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow hover:-translate-y-0.5 active:translate-y-0"
                   data-testid="hero-cta-btn"
                 >
-                  Start Free Trial
+                  Start Free - 60 Second Setup
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
                 <Button
                   variant="outline"
                   size="lg"
                   className="rounded-full px-8 py-7 text-lg border-slate-200 hover:bg-white/50"
+                  data-testid="get-started-btn"
                 >
                   <Play className="w-5 h-5 mr-2" />
                   Watch Demo
