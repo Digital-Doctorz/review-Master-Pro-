@@ -80,9 +80,10 @@ export default function Integrations() {
       const response = await axios.get(`${API}/platforms`, {
         withCredentials: true,
       });
-      setPlatforms(response.data);
+      setPlatforms(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
-      console.error("Error fetching platforms:", error);
+      console.error("Error fetching platforms:", error?.message || error);
+      setPlatforms([]);
     } finally {
       setLoading(false);
     }
@@ -101,10 +102,11 @@ export default function Integrations() {
         params: { query },
         withCredentials: true,
       });
-      setGoogleResults(response.data.results || []);
+      setGoogleResults(Array.isArray(response.data?.results) ? response.data.results : []);
     } catch (error) {
-      console.error("Error searching Google:", error);
+      console.error("Error searching Google:", error?.message || error);
       toast.error("Search failed. Please try again.");
+      setGoogleResults([]);
     } finally {
       setSearchingGoogle(false);
     }
@@ -123,10 +125,11 @@ export default function Integrations() {
         params: { query },
         withCredentials: true,
       });
-      setFacebookResults(response.data.results || []);
+      setFacebookResults(Array.isArray(response.data?.results) ? response.data.results : []);
     } catch (error) {
-      console.error("Error searching Facebook:", error);
+      console.error("Error searching Facebook:", error?.message || error);
       toast.error("Search failed. Please try again.");
+      setFacebookResults([]);
     } finally {
       setSearchingFacebook(false);
     }
