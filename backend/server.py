@@ -29,7 +29,7 @@ from services import google_reviews, facebook_reviews
 from services import email_service
 
 # Create the main app
-app = FastAPI(title="ReviewFlow API")
+app = FastAPI(title="Review Master API")
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
@@ -945,7 +945,7 @@ async def send_test_notification(user: User = Depends(get_current_user)):
         business_name=business.get("name", "Your Business"),
         reviewer_name="Test User",
         rating=5,
-        review_text="This is a test notification to verify your email settings are working correctly. Great job setting up ReviewFlow!",
+        review_text="This is a test notification to verify your email settings are working correctly. Great job setting up Review Master!",
         platform="google",
         dashboard_url=dashboard_url
     )
@@ -1782,7 +1782,7 @@ async def test_webhook(
 
 @api_router.get("/")
 async def root():
-    return {"message": "ReviewFlow API", "version": "2.2.0"}
+    return {"message": "Review Master API", "version": "3.0.0"}
 
 @api_router.get("/health")
 async def health_check():
