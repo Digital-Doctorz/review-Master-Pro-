@@ -873,7 +873,7 @@ export default function PublicReview() {
         
         {/* Powered By Footer */}
         <p className="text-center text-slate-400 text-xs mt-6">
-          Powered by <span className="font-medium text-slate-500">ReviewFlow</span>
+          Powered by <span className="font-medium text-slate-500">Review Master</span>
         </p>
       </motion.div>
     </div>

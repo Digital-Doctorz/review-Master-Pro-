@@ -172,7 +172,7 @@ export default function Landing() {
                     ))}
                   </div>
                   <p className="text-sm text-slate-600">
-                    <span className="font-semibold">500+</span> businesses love ReviewFlow
+                    <span className="font-semibold">500+</span> businesses love Review Master
                   </p>
                 </div>
               </div>
@@ -425,7 +425,7 @@ export default function Landing() {
               Ready to transform your reviews?
             </h2>
             <p className="text-lg text-slate-600 mb-8 max-w-xl mx-auto">
-              Join 500+ businesses already using ReviewFlow. Setup takes 3 minutes.
+              Join 500+ businesses already using Review Master. Setup takes 3 minutes.
             </p>
             <Button
               onClick={handleGoogleLogin}
@@ -448,9 +448,9 @@ export default function Landing() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-violet-500 flex items-center justify-center">
               <Star className="w-4 h-4 text-white" />
             </div>
-            <span className="font-semibold text-slate-900">ReviewFlow</span>
+            <span className="font-semibold text-slate-900">Review Master</span>
           </div>
-          <p className="text-sm text-slate-500">© 2025 ReviewFlow. All rights reserved.</p>
+          <p className="text-sm text-slate-500">© 2025 Review Master. All rights reserved.</p>
         </div>
       </footer>
     </div>
