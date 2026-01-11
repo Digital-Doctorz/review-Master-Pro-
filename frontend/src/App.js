@@ -13,6 +13,7 @@ import QRGenerator from "./pages/QRGenerator";
 import Settings from "./pages/Settings";
 import Onboarding from "./pages/Onboarding";
 import PublicReview from "./pages/PublicReview";
+import WebhookSettings from "./pages/WebhookSettings";
 
 // Components
 import Layout from "./components/Layout";
