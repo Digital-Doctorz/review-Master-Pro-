@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
+import { AnimatedLogo } from "../components/AnimatedLogo";
 import {
   Star,
   Zap,
@@ -26,8 +27,8 @@ export default function Landing() {
   const features = [
     {
       icon: Zap,
-      title: "3-Minute Setup",
-      description: "Connect Google & Facebook in minutes. Just search your business name - we do the rest.",
+      title: "60-Second Setup",
+      description: "Connect Google & Facebook in one click. Just search your business name - we do the rest.",
       color: "from-amber-400 to-orange-500",
     },
     {
@@ -71,22 +72,22 @@ export default function Landing() {
 
   const testimonials = [
     {
-      name: "Sarah Chen",
+      name: "Priya Sharma",
       role: "Owner, Sunrise Cafe",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sarah",
-      text: "ReviewFlow changed everything. We went from 3.8 to 4.6 stars in just 2 months!",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=priya",
+      text: "Review Master changed everything. We went from 3.8 to 4.6 stars in just 2 months!",
     },
     {
-      name: "Mike Johnson",
+      name: "Rahul Patel",
       role: "Manager, Downtown Diner",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=mike",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=rahul",
       text: "The private feedback feature is genius. We fix issues before they become public complaints.",
     },
     {
-      name: "Emily Rodriguez",
+      name: "Anita Desai",
       role: "Owner, Bella Salon",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=emily",
-      text: "Setup took literally 3 minutes. Now I respond to reviews from my phone in seconds.",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=anita",
+      text: "Setup took literally 60 seconds. Now I respond to reviews from my phone in seconds.",
     },
   ];
 
