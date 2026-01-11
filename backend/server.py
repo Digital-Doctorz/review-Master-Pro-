@@ -890,6 +890,8 @@ async def get_notification_settings(user: User = Depends(get_current_user)):
             "created_at": datetime.now(timezone.utc).isoformat()
         }
         await db.notification_settings.insert_one(settings)
+        # Remove MongoDB _id from response
+        settings.pop("_id", None)
     
     return {
         **settings,
