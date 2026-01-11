@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   Star,
+  Webhook,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
