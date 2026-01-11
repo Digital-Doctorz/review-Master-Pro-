@@ -34,29 +34,42 @@ const API = `${BACKEND_URL}/api`;
 const Confetti = ({ active }) => {
   const colors = ["#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#EC4899"];
   
+  // Pre-generate confetti pieces with stable random values
+  const confettiPieces = useRef(
+    [...Array(50)].map((_, i) => ({
+      id: i,
+      color: colors[i % colors.length],
+      left: (i * 17 + 23) % 100, // Deterministic spread
+      rotate: (i * 37) % 720 - 360,
+      xOffset: ((i * 13) % 200) - 100,
+      duration: 2 + (i % 20) / 10,
+      delay: (i % 10) / 20,
+    }))
+  ).current;
+  
   if (!active) return null;
   
   return (
     <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
-      {[...Array(50)].map((_, i) => (
+      {confettiPieces.map((piece) => (
         <motion.div
-          key={i}
+          key={piece.id}
           className="absolute w-3 h-3 rounded-full"
           style={{
-            backgroundColor: colors[Math.floor(Math.random() * colors.length)],
-            left: `${Math.random() * 100}%`,
+            backgroundColor: piece.color,
+            left: `${piece.left}%`,
             top: -20,
           }}
           initial={{ y: 0, opacity: 1, rotate: 0 }}
           animate={{
             y: window.innerHeight + 100,
             opacity: [1, 1, 0],
-            rotate: Math.random() * 720 - 360,
-            x: (Math.random() - 0.5) * 200,
+            rotate: piece.rotate,
+            x: piece.xOffset,
           }}
           transition={{
-            duration: 2 + Math.random() * 2,
-            delay: Math.random() * 0.5,
+            duration: piece.duration,
+            delay: piece.delay,
             ease: "easeOut",
           }}
         />
