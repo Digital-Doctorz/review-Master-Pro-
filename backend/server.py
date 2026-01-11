@@ -654,6 +654,64 @@ async def disconnect_platform(platform: str, user: User = Depends(get_current_us
 
 # ============ REVIEW ENDPOINTS ============
 
+async def send_review_email_notification(
+    business_id: str,
+    reviewer_name: str,
+    rating: int,
+    review_text: str,
+    platform: str,
+    is_private: bool = False,
+    customer_email: str = None,
+    customer_phone: str = None
+):
+    """Send email notification for new review/feedback"""
+    try:
+        # Get business and notification settings
+        business = await db.businesses.find_one({"business_id": business_id}, {"_id": 0})
+        if not business:
+            return
+        
+        settings = await db.notification_settings.find_one(
+            {"business_id": business_id},
+            {"_id": 0}
+        )
+        
+        if not settings:
+            return
+        
+        to_email = settings.get("notification_email")
+        if not to_email:
+            return
+        
+        dashboard_url = os.environ.get('WEBHOOK_BASE_URL', '') + "/dashboard"
+        
+        if is_private and settings.get("email_private_feedback", True):
+            # Send private feedback notification
+            await email_service.send_private_feedback_notification(
+                to_email=to_email,
+                business_name=business.get("name", "Your Business"),
+                customer_name=reviewer_name,
+                customer_email=customer_email or "",
+                customer_phone=customer_phone or "",
+                rating=rating,
+                feedback_text=review_text,
+                dashboard_url=dashboard_url
+            )
+        elif not is_private and settings.get("email_new_reviews", True):
+            # Send new review notification
+            await email_service.send_new_review_notification(
+                to_email=to_email,
+                business_name=business.get("name", "Your Business"),
+                reviewer_name=reviewer_name,
+                rating=rating,
+                review_text=review_text,
+                platform=platform,
+                dashboard_url=dashboard_url
+            )
+    except Exception as e:
+        logger.error(f"Failed to send email notification: {e}")
+
+
 async def sync_platform_reviews(business_id: str, platform: str, platform_id: str, business_name: str = ""):
     """
     Sync reviews from platform (Google or Facebook)
