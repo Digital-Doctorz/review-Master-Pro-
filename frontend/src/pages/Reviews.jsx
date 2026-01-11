@@ -75,14 +75,20 @@ export default function Reviews() {
       params.append("is_private", "false");
 
       const [publicRes, privateRes] = await Promise.all([
-        axios.get(`${API}/reviews?${params.toString()}`, { withCredentials: true }),
-        axios.get(`${API}/reviews/private`, { withCredentials: true }),
+        axios.get(`${API}/reviews?${params.toString()}`, { withCredentials: true }).catch((err) => {
+          console.error("Public reviews fetch error:", err?.response?.data || err.message);
+          return { data: [] };
+        }),
+        axios.get(`${API}/reviews/private`, { withCredentials: true }).catch((err) => {
+          console.error("Private reviews fetch error:", err?.response?.data || err.message);
+          return { data: [] };
+        }),
       ]);
 
-      setReviews(publicRes.data);
-      setPrivateReviews(privateRes.data);
+      setReviews(Array.isArray(publicRes.data) ? publicRes.data : []);
+      setPrivateReviews(Array.isArray(privateRes.data) ? privateRes.data : []);
     } catch (error) {
-      console.error("Error fetching reviews:", error);
+      console.error("Error fetching reviews:", error?.message || error);
     } finally {
       setLoading(false);
     }
