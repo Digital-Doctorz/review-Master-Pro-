@@ -184,18 +184,18 @@ export default function PublicReview() {
   const generateAIReview = async () => {
     setAiLoading(true);
     try {
-      const response = await axios.post(`${API}/ai/write-assist`, {
+      const response = await axios.post(`${API}/public/ai/write-assist`, {
         rating,
         business_name: business?.name || "this business",
         keywords: null
       });
       setReviewText(response.data.review_text);
-      toast.success("✨ AI enhanced your review!");
+      toast.success("✨ AI generated a review for you!");
       // Focus textarea for editing
       textareaRef.current?.focus();
     } catch (err) {
       console.error("AI error:", err);
-      toast.error("Could not enhance review. Please write your own.");
+      toast.error("Could not generate review. Please write your own.");
     } finally {
       setAiLoading(false);
     }
@@ -208,7 +208,7 @@ export default function PublicReview() {
     }
     setAiLoading(true);
     try {
-      const response = await axios.post(`${API}/ai/write-assist`, {
+      const response = await axios.post(`${API}/public/ai/write-assist`, {
         rating,
         business_name: business?.name || "this business",
         keywords: reviewText.substring(0, 100)
