@@ -257,7 +257,13 @@ export default function PublicReview() {
         platform_choice: selectedPlatform || "direct"
       });
 
-      setStep(rating >= 4 ? 5 : 4);
+      // For high ratings with Google/Facebook, go to Copy & Go step (4)
+      // For high ratings with direct or low ratings, go to success (4 for low, 5 for high direct)
+      if (rating >= 4 && selectedPlatform && selectedPlatform !== "direct") {
+        setStep(4); // Copy & Go step
+      } else {
+        setStep(rating >= 4 ? 5 : 4); // Success step
+      }
       toast.success("Thank you for your feedback! 🙏");
     } catch (err) {
       console.error("Submit error:", err);
