@@ -5,23 +5,28 @@ Build ReviewFlow - a zero-knowledge review management platform focused exclusive
 
 ## What's Been Implemented (January 2025)
 
-### MVP Features v2.2 - Hybrid API Integration:
+### MVP Features v2.3 - Webhook Support for Real-Time Syncing:
 
-**NEW - Hybrid Review Integration (January 10, 2025):**
+**NEW - Webhook Support (January 11, 2025):**
+- [x] **Webhook Configuration API** - `/api/webhooks/config` for managing webhook settings
+- [x] **Google Webhook Handler** - `/api/webhooks/google/{webhook_id}` receives Google Business Profile notifications
+- [x] **Facebook Webhook Handler** - `/api/webhooks/facebook/{webhook_id}` receives Facebook Page recommendations
+- [x] **Facebook Verification** - GET endpoint for Facebook webhook verification challenge
+- [x] **Webhook Secret Management** - Secure token generation and regeneration
+- [x] **Test Webhook Feature** - Create test reviews to verify integration
+- [x] **Event Logging** - Track all webhook events with timestamps and status
+- [x] **WebhookSettings Page** - New `/webhooks` route with full configuration UI
+- [x] **Toggle Enable/Disable** - Per-platform webhook control
+- [x] **Copy Webhook URLs** - Easy clipboard copy for platform setup
+- [x] **Setup Instructions** - In-app documentation for Google & Facebook setup
+
+**Previous - Hybrid API Integration (January 10, 2025):**
 - [x] **Hybrid API Architecture** - Mock data by default, real APIs when credentials provided
 - [x] **Google Reviews Service** - `/app/backend/services/google_reviews.py`
 - [x] **Facebook Reviews Service** - `/app/backend/services/facebook_reviews.py`
 - [x] **Integration Status API** - `/api/integration-status` shows current mode (demo/production)
 - [x] **Manual Review Sync** - `/api/reviews/sync` endpoint for on-demand sync
 - [x] **Demo Mode Indicator** - Dashboard shows "Demo Mode" badge when using mock data
-- [x] **Sync Reviews Button** - Dashboard button to manually sync reviews from platforms
-- [x] **Integration Guide** - `/app/INTEGRATION_GUIDE.md` with setup instructions
-
-**Fixed Issues:**
-- [x] **Facebook Search** - Added `/api/facebook/search` endpoint with mock data
-- [x] **Facebook Reviews Display** - Reviews now generated and displayed after connecting
-- [x] **Dashboard Reviews** - All reviews (public & private) now properly fetched and displayed
-- [x] **Reviews Page Tabs** - Added Public/Private tabs with proper filtering
 
 **Customer Review Flow:**
 - [x] Step 1: Animated star rating selection with emoji feedback
@@ -54,24 +59,48 @@ Build ReviewFlow - a zero-knowledge review management platform focused exclusive
 - **AI**: Gemini 3 Flash via emergentintegrations library
 - **Auth**: Emergent-managed Google OAuth
 
-## API Endpoints (v2.2)
+## API Endpoints (v2.3)
+
+### Authentication
 - `POST /api/auth/session` - Exchange Emergent session for local session
 - `GET /api/auth/me` - Get current user
+
+### Business
 - `POST /api/business` - Create business
 - `GET /api/business` - Get user's business
-- `GET /api/google/search?query=` - Search Google Business profiles (MOCK/REAL)
+
+### Platform Integrations
+- `GET /api/google/search?query=` - Search Google Business profiles
 - `POST /api/google/connect` - Connect Google Business
-- `GET /api/facebook/search?query=` - Search Facebook Pages (MOCK)
+- `GET /api/facebook/search?query=` - Search Facebook Pages
 - `POST /api/facebook/connect` - Connect Facebook Page
 - `GET/POST /api/platforms/{platform}/disconnect` - Disconnect platform
-- `GET /api/reviews` - Get reviews with filters (including is_private)
+- `GET /api/integration-status` - Get API integration status
+
+### Reviews
+- `GET /api/reviews` - Get reviews with filters
 - `GET /api/reviews/private` - Get private feedback only
-- **NEW:** `POST /api/reviews/sync` - Manually sync reviews from connected platforms
+- `POST /api/reviews/sync` - Manually sync reviews from platforms
 - `POST /api/reviews/{id}/respond` - Save response
+
+### Webhooks (NEW)
+- `GET /api/webhooks/config` - Get webhook configuration
+- `PUT /api/webhooks/config` - Update webhook settings
+- `POST /api/webhooks/regenerate-secret` - Regenerate webhook secret
+- `GET /api/webhooks/events` - Get recent webhook events
+- `POST /api/webhooks/google/{webhook_id}` - Google webhook handler (public)
+- `POST /api/webhooks/facebook/{webhook_id}` - Facebook webhook handler (public)
+- `GET /api/webhooks/facebook/{webhook_id}` - Facebook verification challenge
+- `POST /api/webhooks/test/{platform}` - Test webhook integration
+
+### AI
 - `POST /api/ai/generate-response` - Generate AI response
 - `POST /api/ai/write-assist` - AI help customers write reviews
+
+### Analytics
 - `GET /api/analytics/overview` - Analytics summary
-- **NEW:** `GET /api/integration-status` - Get API integration status (demo/production)
+
+### Public
 - `GET /api/public/business/{qr_code_id}` - Public business info
 - `POST /api/public/review` - Submit public review
 
@@ -80,40 +109,59 @@ Build ReviewFlow - a zero-knowledge review management platform focused exclusive
 /app/
 ├── backend/
 │   ├── server.py           # Main FastAPI app with all endpoints
-│   ├── services/           # NEW: Service layer
+│   ├── services/
 │   │   ├── __init__.py
 │   │   ├── google_reviews.py   # Google review fetching (mock/real)
-│   │   └── facebook_reviews.py # Facebook review fetching (mock/real)
-│   └── .env               # Environment config (API keys)
+│   │   ├── facebook_reviews.py # Facebook review fetching (mock/real)
+│   │   └── webhook_service.py  # Webhook parsing and verification
+│   └── .env               # Environment config
 ├── frontend/
 │   └── src/
 │       ├── pages/
-│       │   ├── Dashboard.jsx    # Updated with sync button, demo mode
+│       │   ├── Dashboard.jsx
 │       │   ├── Integrations.jsx
 │       │   ├── Reviews.jsx
+│       │   ├── WebhookSettings.jsx  # NEW
 │       │   └── PublicReview.jsx
-│       └── components/ui/  # Shadcn components
-├── INTEGRATION_GUIDE.md    # NEW: How to enable real APIs
+│       └── components/ui/
+├── tests/
+│   ├── test_reviewflow_api.py
+│   └── test_webhook_api.py      # NEW
+├── INTEGRATION_GUIDE.md
 └── memory/
-    └── PRD.md             # This file
+    └── PRD.md
 ```
 
-## Enabling Real API Integration
+## Database Collections
+- `users` - User accounts
+- `businesses` - Business profiles
+- `platform_connections` - Google/Facebook connection status
+- `reviews` - All reviews (public and private)
+- `webhook_configs` - Webhook configuration per business (NEW)
+- `webhook_events` - Webhook event logs (NEW)
 
-### Google Places API
-1. Create Google Cloud project
-2. Enable Places API
-3. Create API key
-4. Add to `.env`: `GOOGLE_PLACES_API_KEY=your_key`
+## Environment Variables
+```
+# Required
+MONGO_URL=mongodb://localhost:27017
+DB_NAME=test_database
+EMERGENT_LLM_KEY=your_key
 
-### Facebook Graph API
-1. Create Facebook App
-2. Get App ID and Secret
-3. Add to `.env`: 
-   - `FACEBOOK_APP_ID=your_id`
-   - `FACEBOOK_APP_SECRET=your_secret`
+# Webhook (auto-generated if not set)
+WEBHOOK_BASE_URL=https://your-domain.com
 
-See `/app/INTEGRATION_GUIDE.md` for detailed instructions.
+# Optional - Real API Integration
+GOOGLE_PLACES_API_KEY=your_google_key
+FACEBOOK_APP_ID=your_fb_app_id
+FACEBOOK_APP_SECRET=your_fb_secret
+```
+
+## Testing
+- **Test Reports**: `/app/test_reports/iteration_5.json`
+- **Test Files**: 
+  - `/app/tests/test_reviewflow_api.py`
+  - `/app/tests/test_webhook_api.py`
+- **Success Rate**: Backend 100%, Frontend 100%
 
 ## Prioritized Backlog
 
@@ -121,6 +169,7 @@ See `/app/INTEGRATION_GUIDE.md` for detailed instructions.
 - [x] Hybrid API integration (mock + real)
 - [x] Integration status endpoint
 - [x] Manual sync functionality
+- [x] Webhook support for real-time syncing
 
 ### P1 - High Priority
 - [ ] Email notifications for new reviews
@@ -135,9 +184,3 @@ See `/app/INTEGRATION_GUIDE.md` for detailed instructions.
 - [ ] White-label QR code branding
 - [ ] Custom response templates
 - [ ] Export analytics reports
-- [ ] Webhook support for real-time notifications
-
-## Testing
-- **Test Reports**: `/app/test_reports/iteration_4.json`
-- **Test File**: `/app/tests/test_reviewflow_api.py`
-- **Success Rate**: Backend 100%, Frontend 100%
