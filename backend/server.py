@@ -1644,6 +1644,16 @@ async def handle_facebook_webhook(
         )
         
         logger.info(f"Facebook webhook: Created review {review.review_id}")
+        
+        # Send email notification
+        await send_review_email_notification(
+            config["business_id"],
+            review.author_name,
+            review.rating,
+            review.text,
+            "facebook",
+            review.is_private
+        )
     
     # Log webhook event
     event_log = webhook_service.create_webhook_event_log(
