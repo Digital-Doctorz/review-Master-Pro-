@@ -786,16 +786,121 @@ async def get_integration_status(user: User = Depends(get_current_user)):
     """Get the status of platform integrations (real vs mock)"""
     google_status = google_reviews.get_integration_status()
     facebook_status = facebook_reviews.get_integration_status()
+    email_status = email_service.get_email_status()
     
     return {
         "google": google_status,
         "facebook": facebook_status,
+        "email": email_status,
         "overall_mode": "production" if (google_status["real_api_enabled"] or facebook_status["real_api_enabled"]) else "demo",
         "setup_instructions": {
             "google": "Add GOOGLE_PLACES_API_KEY to backend/.env to enable real Google reviews",
-            "facebook": "Add FACEBOOK_APP_ID and FACEBOOK_APP_SECRET to backend/.env to enable real Facebook reviews"
+            "facebook": "Add FACEBOOK_APP_ID and FACEBOOK_APP_SECRET to backend/.env to enable real Facebook reviews",
+            "email": "Add RESEND_API_KEY to backend/.env to enable email notifications"
         }
     }
+
+
+# ============ EMAIL NOTIFICATION ENDPOINTS ============
+
+class NotificationSettings(BaseModel):
+    email_new_reviews: bool = True
+    email_private_feedback: bool = True
+    email_weekly_summary: bool = False
+    notification_email: Optional[str] = None
+
+@api_router.get("/notifications/settings")
+async def get_notification_settings(user: User = Depends(get_current_user)):
+    """Get notification settings for user"""
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    settings = await db.notification_settings.find_one(
+        {"business_id": business["business_id"]},
+        {"_id": 0}
+    )
+    
+    if not settings:
+        # Create default settings
+        settings = {
+            "business_id": business["business_id"],
+            "email_new_reviews": True,
+            "email_private_feedback": True,
+            "email_weekly_summary": False,
+            "notification_email": user.email,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.notification_settings.insert_one(settings)
+    
+    return {
+        **settings,
+        "email_service_enabled": email_service.EMAIL_ENABLED
+    }
+
+
+@api_router.put("/notifications/settings")
+async def update_notification_settings(
+    settings: NotificationSettings,
+    user: User = Depends(get_current_user)
+):
+    """Update notification settings"""
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    update_data = settings.model_dump(exclude_unset=True)
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.notification_settings.update_one(
+        {"business_id": business["business_id"]},
+        {"$set": update_data},
+        upsert=True
+    )
+    
+    return {"message": "Notification settings updated"}
+
+
+@api_router.post("/notifications/test")
+async def send_test_notification(user: User = Depends(get_current_user)):
+    """Send a test email notification"""
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    settings = await db.notification_settings.find_one(
+        {"business_id": business["business_id"]},
+        {"_id": 0}
+    )
+    
+    to_email = settings.get("notification_email") if settings else user.email
+    if not to_email:
+        raise HTTPException(status_code=400, detail="No notification email configured")
+    
+    # Get dashboard URL
+    dashboard_url = os.environ.get('WEBHOOK_BASE_URL', '') + "/dashboard"
+    
+    result = await email_service.send_new_review_notification(
+        to_email=to_email,
+        business_name=business.get("name", "Your Business"),
+        reviewer_name="Test User",
+        rating=5,
+        review_text="This is a test notification to verify your email settings are working correctly. Great job setting up ReviewFlow!",
+        platform="google",
+        dashboard_url=dashboard_url
+    )
+    
+    return {
+        "message": "Test notification sent" if result["status"] == "success" else "Failed to send",
+        "status": result["status"],
+        "email_id": result.get("email_id")
+    }
+
+
+@api_router.get("/email/status")
+async def get_email_status():
+    """Get email service status (public endpoint for frontend)"""
+    return email_service.get_email_status()
 
 
 @api_router.get("/reviews")
