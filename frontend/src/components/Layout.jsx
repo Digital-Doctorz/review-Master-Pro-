@@ -13,7 +13,7 @@ import {
   LogOut,
   Menu,
   X,
-  Star,
+  Bell,
   Webhook,
 } from "lucide-react";
 import { Button } from "./ui/button";
@@ -25,6 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { AnimatedLogo } from "./AnimatedLogo";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
