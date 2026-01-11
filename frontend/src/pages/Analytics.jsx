@@ -52,14 +52,20 @@ export default function Analytics() {
   const fetchAnalytics = async () => {
     try {
       const [overviewRes, trendsRes] = await Promise.all([
-        axios.get(`${API}/analytics/overview`, { withCredentials: true }),
-        axios.get(`${API}/analytics/trends?days=30`, { withCredentials: true }),
+        axios.get(`${API}/analytics/overview`, { withCredentials: true }).catch((err) => {
+          console.error("Analytics overview fetch error:", err?.response?.data || err.message);
+          return { data: { average_rating: 0, total_reviews: 0, response_rate: 0, positive_ratio: 0, sentiment_breakdown: { positive: 0, neutral: 0, negative: 0 }, platform_breakdown: [] } };
+        }),
+        axios.get(`${API}/analytics/trends?days=30`, { withCredentials: true }).catch((err) => {
+          console.error("Analytics trends fetch error:", err?.response?.data || err.message);
+          return { data: [] };
+        }),
       ]);
 
       setAnalytics(overviewRes.data);
-      setTrends(trendsRes.data);
+      setTrends(Array.isArray(trendsRes.data) ? trendsRes.data : []);
     } catch (error) {
-      console.error("Error fetching analytics:", error);
+      console.error("Error fetching analytics:", error?.message || error);
     } finally {
       setLoading(false);
     }
