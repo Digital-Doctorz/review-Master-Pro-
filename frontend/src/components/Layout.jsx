@@ -142,11 +142,8 @@ export default function Layout({ children }) {
       {/* Mobile Header */}
       <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200 px-4 py-3">
         <div className="flex items-center justify-between">
-          <Link to="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-teal-400 flex items-center justify-center">
-              <Star className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-lg font-bold text-slate-900">ReviewFlow</span>
+          <Link to="/dashboard">
+            <AnimatedLogo size="small" />
           </Link>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
