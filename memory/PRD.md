@@ -1,42 +1,33 @@
-# ReviewFlow - Product Requirements Document
+# Review Master - Product Requirements Document
 
 ## Original Problem Statement
-Build ReviewFlow - a zero-knowledge review management platform focused exclusively on Google and Facebook reviews, with seamless setup, real-time monitoring, and AI-powered responses.
+Build Review Master - a zero-friction review management platform focused on Google and Facebook reviews, with seamless setup, real-time monitoring, and AI-powered responses. Designed for non-technical business owners who can connect accounts in 60 seconds.
 
 ## What's Been Implemented (January 2025)
 
-### MVP Features v3.0 - Comprehensive Enhancement:
+### MVP Features v3.0 - Rebrand & Enhancement:
 
-**NEW - Email Notifications (January 11, 2025):**
-- [x] **Email Service** - `/app/backend/services/email_service.py` with Resend API integration
-- [x] **Notification Templates** - Beautiful HTML emails for new reviews, private feedback, welcome
-- [x] **Notification Settings** - Per-business settings for email preferences
-- [x] **Test Email** - `/api/notifications/test` to verify email setup
-- [x] **Webhook Email Integration** - Auto-send emails when reviews arrive via webhooks
+**NEW - Review Master Rebrand (January 11, 2025):**
+- [x] **Animated Logo** - `/app/frontend/src/components/AnimatedLogo.jsx` with shine effect and sparkles
+- [x] **Full Rebrand** - All "ReviewFlow" instances replaced with "Review Master"
+- [x] **Updated Color Scheme** - Purple/indigo gradient theme
+- [x] **New Tagline** - "60 Second Setup" messaging
+- [x] **API Version 3.0.0** - Updated backend version
 
-**NEW - Enhanced UI/UX with Wow Effect:**
-- [x] **Confetti Animation** - Celebration effect for 5-star ratings
-- [x] **Progress Steps Indicator** - Visual flow through review submission
-- [x] **Smart Review Routing** - <4 stars → private feedback, ≥4 stars → public with channel selection
-- [x] **Platform Selection Cards** - Beautiful Google/Facebook/Direct option cards
-- [x] **Copy & Go Flow** - Instructions to copy review and post on chosen platform
-- [x] **Mobile-First Design** - Optimized for budget Android phones
-- [x] **Smooth Animations** - Framer Motion transitions throughout
+**NEW - Notification Settings Page:**
+- [x] **Notification Preferences** - Email toggles for new reviews, private feedback, weekly summary
+- [x] **Email Configuration** - Set notification email address
+- [x] **Test Email** - Send test notification to verify setup
+- [x] **Email Service Status** - Shows if email is configured/enabled
 
-**NEW - Public AI Review Enhancement:**
-- [x] **Public AI Endpoint** - `/api/public/ai/write-assist` for unauthenticated users
-- [x] **AI Write Button** - Generate full review from scratch
-- [x] **AI Enhance Button** - Improve existing review text
-- [x] **Fallback Templates** - Works even if AI service is unavailable
-
-**Previous Features (v2.3):**
+**Previous Features:**
+- [x] Email notification service with Resend API
 - [x] Webhook support for real-time review syncing
+- [x] Enhanced QR review flow with confetti, progress steps, AI enhancement
 - [x] Hybrid API integration (mock/real)
 - [x] Magic search for Google/Facebook business profiles
-- [x] QR code generator with multiple sizes
 - [x] AI-powered response generation
-- [x] Private feedback inbox
-- [x] Analytics dashboard
+- [x] Private feedback inbox for low ratings
 
 ### Tech Stack:
 - **Frontend**: React 19, Tailwind CSS, Shadcn/UI, Framer Motion
@@ -45,29 +36,46 @@ Build ReviewFlow - a zero-knowledge review management platform focused exclusive
 - **Email**: Resend API (optional)
 - **Auth**: Emergent-managed Google OAuth
 
-## API Endpoints (v3.0)
+## Key Features
+
+### For Business Owners:
+1. **60-Second Setup** - Connect Google/Facebook with just your business name
+2. **Smart Review Routing** - Low ratings (1-3 stars) go to private inbox, not public
+3. **AI Smart Replies** - Generate professional responses in seconds
+4. **QR Code Magic** - Print QR codes for easy customer reviews
+5. **Real-time Notifications** - Get alerted for urgent reviews via webhook/email
+6. **Analytics Dashboard** - Track sentiment trends and response rates
+
+### For Customers:
+1. **AI Write Assist** - Help writing reviews with AI
+2. **Platform Choice** - Select where to post (Google, Facebook, or Direct)
+3. **Confetti Celebration** - Fun animation for 5-star ratings
+4. **Copy & Go** - Easy instructions for posting on external platforms
+
+## API Endpoints (v3.0.0)
+
+### Core
+- `GET /api/` - Returns "Review Master API" with version 3.0.0
+- `GET /api/health` - Health check
 
 ### Authentication
 - `POST /api/auth/session` - Exchange Emergent session for local session
 - `GET /api/auth/me` - Get current user
 
-### Business
-- `POST /api/business` - Create business
-- `GET /api/business` - Get user's business
-
-### Platform Integrations
+### Business & Integrations
 - `GET /api/google/search?query=` - Magic search Google Business
 - `POST /api/google/connect` - Connect Google Business
 - `GET /api/facebook/search?query=` - Magic search Facebook Pages
 - `POST /api/facebook/connect` - Connect Facebook Page
-- `GET /api/integration-status` - Get integration status (Google, Facebook, Email)
+- `GET /api/integration-status` - Get integration status (includes email)
 
 ### Reviews
 - `GET /api/reviews` - Get reviews with filters
-- `GET /api/reviews/private` - Get private feedback
 - `POST /api/reviews/sync` - Manual sync from platforms
+- `POST /api/public/review` - Submit review from QR page
+- `POST /api/public/ai/write-assist` - AI review generation (public)
 
-### Email Notifications (NEW)
+### Notifications
 - `GET /api/notifications/settings` - Get notification preferences
 - `PUT /api/notifications/settings` - Update notification preferences
 - `POST /api/notifications/test` - Send test email
@@ -79,40 +87,32 @@ Build ReviewFlow - a zero-knowledge review management platform focused exclusive
 - `POST /api/webhooks/google/{id}` - Google webhook handler
 - `POST /api/webhooks/facebook/{id}` - Facebook webhook handler
 
-### Public (No Auth Required)
-- `GET /api/public/business/{qr_code_id}` - Get business info for QR page
-- `POST /api/public/review` - Submit review from QR page
-- **NEW:** `POST /api/public/ai/write-assist` - AI review generation for customers
-
-### AI
-- `POST /api/ai/generate-response` - Generate response (authenticated)
-- `POST /api/ai/write-assist` - AI review writing (authenticated)
-
 ## Code Architecture
 ```
 /app/
 ├── backend/
-│   ├── server.py           # Main FastAPI app
+│   ├── server.py           # Main FastAPI app (v3.0.0)
 │   ├── services/
 │   │   ├── google_reviews.py   
 │   │   ├── facebook_reviews.py 
 │   │   ├── webhook_service.py  
-│   │   └── email_service.py    # NEW
+│   │   └── email_service.py
 │   └── .env               
 ├── frontend/
 │   └── src/
+│       ├── components/
+│       │   ├── AnimatedLogo.jsx  # NEW animated logo
+│       │   └── Layout.jsx
 │       ├── pages/
-│       │   ├── PublicReview.jsx  # Enhanced with confetti, progress steps
+│       │   ├── Landing.jsx       # Rebranded
 │       │   ├── Dashboard.jsx
+│       │   ├── NotificationSettings.jsx  # NEW
 │       │   ├── WebhookSettings.jsx
-│       │   └── ...
-│       └── components/ui/
-├── tests/
-│   ├── test_reviewflow_api.py
-│   ├── test_webhook_api.py
-│   └── test_notifications_and_public_review.py  # NEW
-└── memory/
-    └── PRD.md
+│       │   └── PublicReview.jsx  # Enhanced
+│       └── App.js
+└── tests/
+    ├── test_rebrand_and_notifications.py  # NEW
+    └── test_notifications_and_public_review.py
 ```
 
 ## Environment Variables
@@ -134,27 +134,26 @@ FACEBOOK_APP_SECRET=your_fb_secret
 ```
 
 ## Testing
-- **Test Reports**: `/app/test_reports/iteration_6.json`
+- **Test Reports**: `/app/test_reports/iteration_7.json`
 - **Test Files**: 
-  - `/app/tests/test_reviewflow_api.py`
-  - `/app/tests/test_webhook_api.py`
-  - `/app/tests/test_notifications_and_public_review.py`
+  - `/app/tests/test_rebrand_and_notifications.py` (11 tests)
+  - `/app/tests/test_notifications_and_public_review.py` (21 tests)
 - **Success Rate**: Backend 100%, Frontend 100%
 
 ## Prioritized Backlog
 
 ### P0 - Critical (Completed ✅)
-- [x] Hybrid API integration
-- [x] Webhook support for real-time syncing
-- [x] Email notifications
-- [x] Enhanced QR review flow with AI
-- [x] Public AI endpoint for customers
+- [x] Review Master rebrand with animated logo
+- [x] Notification settings page
+- [x] Email notification service
+- [x] Webhook support
+- [x] Enhanced QR review flow
 
 ### P1 - High Priority
+- [ ] WhatsApp notifications for urgent reviews
 - [ ] Team collaboration (invite members, role-based access)
 - [ ] Review response scheduling
-- [ ] Bulk response actions
-- [ ] Weekly email summaries
+- [ ] Weekly email summaries (cron job)
 
 ### P2 - Nice to Have
 - [ ] Mobile app (iOS/Android)
