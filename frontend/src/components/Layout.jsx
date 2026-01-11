@@ -203,7 +203,7 @@ export default function Layout({ children }) {
         className="md:hidden fixed bottom-4 left-4 right-4 glass-nav rounded-full p-2 flex justify-around z-50"
         data-testid="mobile-bottom-nav"
       >
-        {navItems.slice(0, 5).map((item) => {
+        {navItems.slice(0, 6).map((item) => {
           const isActive = location.pathname === item.path;
           return (
             <Link
