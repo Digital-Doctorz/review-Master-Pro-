@@ -1180,11 +1180,412 @@ async def submit_public_review(review_data: PublicReviewCreate):
             "platform_choice": platform
         }
 
+# ============ WEBHOOK ENDPOINTS ============
+
+from services import webhook_service
+
+class WebhookSettings(BaseModel):
+    google_enabled: bool = False
+    facebook_enabled: bool = False
+
+@api_router.get("/webhooks/config")
+async def get_webhook_config(user: User = Depends(get_current_user)):
+    """Get webhook configuration for user's business"""
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    # Check if webhook config exists
+    config = await db.webhook_configs.find_one(
+        {"business_id": business["business_id"]},
+        {"_id": 0}
+    )
+    
+    if not config:
+        # Create new webhook config
+        webhook_id = webhook_service.generate_webhook_id()
+        webhook_secret = webhook_service.generate_webhook_secret()
+        
+        # Get base URL from environment or request
+        base_url = os.environ.get('WEBHOOK_BASE_URL', os.environ.get('REACT_APP_BACKEND_URL', ''))
+        
+        config = {
+            "webhook_id": webhook_id,
+            "business_id": business["business_id"],
+            "webhook_secret": webhook_secret,
+            "google_enabled": False,
+            "facebook_enabled": False,
+            "webhook_url_google": f"{base_url}/api/webhooks/google/{webhook_id}",
+            "webhook_url_facebook": f"{base_url}/api/webhooks/facebook/{webhook_id}",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "last_triggered": None,
+            "trigger_count": 0
+        }
+        
+        await db.webhook_configs.insert_one(config)
+    
+    # Don't expose the secret in full
+    config_response = {**config}
+    config_response["webhook_secret_preview"] = config["webhook_secret"][:8] + "..."
+    
+    return config_response
+
+
+@api_router.put("/webhooks/config")
+async def update_webhook_config(
+    settings: WebhookSettings,
+    user: User = Depends(get_current_user)
+):
+    """Update webhook settings for user's business"""
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    result = await db.webhook_configs.update_one(
+        {"business_id": business["business_id"]},
+        {"$set": {
+            "google_enabled": settings.google_enabled,
+            "facebook_enabled": settings.facebook_enabled,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Webhook config not found")
+    
+    return {"message": "Webhook settings updated"}
+
+
+@api_router.post("/webhooks/regenerate-secret")
+async def regenerate_webhook_secret(user: User = Depends(get_current_user)):
+    """Regenerate webhook secret for security"""
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    new_secret = webhook_service.generate_webhook_secret()
+    
+    await db.webhook_configs.update_one(
+        {"business_id": business["business_id"]},
+        {"$set": {
+            "webhook_secret": new_secret,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    return {
+        "message": "Webhook secret regenerated",
+        "webhook_secret_preview": new_secret[:8] + "..."
+    }
+
+
+@api_router.get("/webhooks/events")
+async def get_webhook_events(
+    limit: int = 20,
+    user: User = Depends(get_current_user)
+):
+    """Get recent webhook events for user's business"""
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    config = await db.webhook_configs.find_one(
+        {"business_id": business["business_id"]},
+        {"_id": 0}
+    )
+    
+    if not config:
+        return {"events": [], "total": 0}
+    
+    events = await db.webhook_events.find(
+        {"webhook_id": config["webhook_id"]},
+        {"_id": 0}
+    ).sort("received_at", -1).to_list(limit)
+    
+    total = await db.webhook_events.count_documents(
+        {"webhook_id": config["webhook_id"]}
+    )
+    
+    return {"events": events, "total": total}
+
+
+@api_router.post("/webhooks/google/{webhook_id}")
+async def handle_google_webhook(
+    webhook_id: str,
+    request: Request
+):
+    """
+    Handle incoming Google Business Profile webhooks
+    This endpoint receives real-time review notifications from Google
+    """
+    # Get webhook config
+    config = await db.webhook_configs.find_one(
+        {"webhook_id": webhook_id},
+        {"_id": 0}
+    )
+    
+    if not config:
+        logger.warning(f"Webhook not found: {webhook_id}")
+        raise HTTPException(status_code=404, detail="Webhook not found")
+    
+    if not config.get("google_enabled"):
+        logger.warning(f"Google webhook disabled for: {webhook_id}")
+        raise HTTPException(status_code=403, detail="Google webhook disabled")
+    
+    # Get raw body for signature verification
+    body = await request.body()
+    
+    # Verify signature if present
+    signature = request.headers.get("X-Goog-Signature", "")
+    if signature and not webhook_service.verify_google_webhook(body, signature, config["webhook_secret"]):
+        logger.warning(f"Invalid Google webhook signature for: {webhook_id}")
+        raise HTTPException(status_code=401, detail="Invalid signature")
+    
+    # Parse payload
+    try:
+        payload = await request.json()
+    except:
+        payload = {}
+    
+    # Parse review data
+    review_data = webhook_service.parse_google_review_webhook(payload)
+    
+    if review_data:
+        # Create review in database
+        review = Review(
+            review_id=f"google_wh_{review_data.get('review_id', uuid.uuid4().hex[:12])}",
+            business_id=config["business_id"],
+            platform="google",
+            author_name=review_data.get("reviewer_name", "Anonymous"),
+            rating=review_data.get("rating", 5),
+            text=review_data.get("text", ""),
+            sentiment="positive" if review_data.get("rating", 5) >= 4 else ("negative" if review_data.get("rating", 5) <= 2 else "neutral"),
+            sentiment_score=0.5 if review_data.get("rating", 5) >= 4 else -0.5,
+            is_private=review_data.get("rating", 5) < 4
+        )
+        
+        doc = review.model_dump()
+        doc["created_at"] = doc["created_at"].isoformat() if isinstance(doc["created_at"], datetime) else doc["created_at"]
+        doc["source"] = "webhook"
+        doc["webhook_event"] = True
+        
+        await db.reviews.update_one(
+            {"review_id": review.review_id},
+            {"$set": doc},
+            upsert=True
+        )
+        
+        logger.info(f"Google webhook: Created review {review.review_id}")
+    
+    # Log webhook event
+    event_log = webhook_service.create_webhook_event_log(
+        webhook_id=webhook_id,
+        platform="google",
+        event_type=review_data.get("event_type", "UNKNOWN") if review_data else "PARSE_FAILED",
+        payload=review_data or payload,
+        status="processed" if review_data else "parse_failed"
+    )
+    await db.webhook_events.insert_one(event_log)
+    
+    # Update webhook stats
+    await db.webhook_configs.update_one(
+        {"webhook_id": webhook_id},
+        {
+            "$set": {"last_triggered": datetime.now(timezone.utc).isoformat()},
+            "$inc": {"trigger_count": 1}
+        }
+    )
+    
+    return {"status": "received", "processed": bool(review_data)}
+
+
+@api_router.post("/webhooks/facebook/{webhook_id}")
+async def handle_facebook_webhook(
+    webhook_id: str,
+    request: Request
+):
+    """
+    Handle incoming Facebook webhooks for page reviews/recommendations
+    """
+    # Get webhook config
+    config = await db.webhook_configs.find_one(
+        {"webhook_id": webhook_id},
+        {"_id": 0}
+    )
+    
+    if not config:
+        logger.warning(f"Webhook not found: {webhook_id}")
+        raise HTTPException(status_code=404, detail="Webhook not found")
+    
+    if not config.get("facebook_enabled"):
+        logger.warning(f"Facebook webhook disabled for: {webhook_id}")
+        raise HTTPException(status_code=403, detail="Facebook webhook disabled")
+    
+    # Get raw body for signature verification
+    body = await request.body()
+    
+    # Verify signature if present
+    signature = request.headers.get("X-Hub-Signature-256", "")
+    fb_app_secret = os.environ.get("FACEBOOK_APP_SECRET", config["webhook_secret"])
+    
+    if signature and not webhook_service.verify_facebook_webhook(body, signature, fb_app_secret):
+        logger.warning(f"Invalid Facebook webhook signature for: {webhook_id}")
+        raise HTTPException(status_code=401, detail="Invalid signature")
+    
+    # Parse payload
+    try:
+        payload = await request.json()
+    except:
+        payload = {}
+    
+    # Parse review data
+    review_data = webhook_service.parse_facebook_review_webhook(payload)
+    
+    if review_data:
+        # Convert recommendation to rating
+        rating = 5 if review_data.get("recommendation_type") == "positive" else 2
+        
+        # Create review in database
+        review = Review(
+            review_id=f"fb_wh_{review_data.get('review_id', uuid.uuid4().hex[:12])}",
+            business_id=config["business_id"],
+            platform="facebook",
+            author_name=review_data.get("reviewer_name", "Facebook User"),
+            rating=rating,
+            text=review_data.get("text", ""),
+            sentiment="positive" if rating >= 4 else "negative",
+            sentiment_score=0.5 if rating >= 4 else -0.5,
+            is_private=rating < 4
+        )
+        
+        doc = review.model_dump()
+        doc["created_at"] = doc["created_at"].isoformat() if isinstance(doc["created_at"], datetime) else doc["created_at"]
+        doc["source"] = "webhook"
+        doc["webhook_event"] = True
+        
+        await db.reviews.update_one(
+            {"review_id": review.review_id},
+            {"$set": doc},
+            upsert=True
+        )
+        
+        logger.info(f"Facebook webhook: Created review {review.review_id}")
+    
+    # Log webhook event
+    event_log = webhook_service.create_webhook_event_log(
+        webhook_id=webhook_id,
+        platform="facebook",
+        event_type=review_data.get("event_type", "UNKNOWN") if review_data else "PARSE_FAILED",
+        payload=review_data or payload,
+        status="processed" if review_data else "parse_failed"
+    )
+    await db.webhook_events.insert_one(event_log)
+    
+    # Update webhook stats
+    await db.webhook_configs.update_one(
+        {"webhook_id": webhook_id},
+        {
+            "$set": {"last_triggered": datetime.now(timezone.utc).isoformat()},
+            "$inc": {"trigger_count": 1}
+        }
+    )
+    
+    return {"status": "received", "processed": bool(review_data)}
+
+
+@api_router.get("/webhooks/facebook/{webhook_id}")
+async def verify_facebook_webhook(
+    webhook_id: str,
+    request: Request
+):
+    """
+    Handle Facebook webhook verification challenge
+    Facebook sends a GET request with hub.challenge to verify the webhook URL
+    """
+    # Get query parameters
+    mode = request.query_params.get("hub.mode")
+    token = request.query_params.get("hub.verify_token")
+    challenge = request.query_params.get("hub.challenge")
+    
+    if mode == "subscribe":
+        # Verify token matches webhook secret
+        config = await db.webhook_configs.find_one(
+            {"webhook_id": webhook_id},
+            {"_id": 0}
+        )
+        
+        if config and token == config.get("webhook_secret"):
+            logger.info(f"Facebook webhook verified for: {webhook_id}")
+            return int(challenge) if challenge else "OK"
+    
+    raise HTTPException(status_code=403, detail="Verification failed")
+
+
+@api_router.post("/webhooks/test/{platform}")
+async def test_webhook(
+    platform: str,
+    user: User = Depends(get_current_user)
+):
+    """
+    Send a test webhook event to verify the integration is working
+    """
+    if platform not in ["google", "facebook"]:
+        raise HTTPException(status_code=400, detail="Invalid platform")
+    
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    config = await db.webhook_configs.find_one(
+        {"business_id": business["business_id"]},
+        {"_id": 0}
+    )
+    
+    if not config:
+        raise HTTPException(status_code=404, detail="Webhook not configured")
+    
+    # Create a test review
+    test_review = Review(
+        review_id=f"test_{platform}_{uuid.uuid4().hex[:8]}",
+        business_id=business["business_id"],
+        platform=platform,
+        author_name="Test Webhook User",
+        rating=5,
+        text=f"This is a test review from the {platform} webhook integration. Everything is working!",
+        sentiment="positive",
+        sentiment_score=0.9,
+        is_private=False
+    )
+    
+    doc = test_review.model_dump()
+    doc["created_at"] = doc["created_at"].isoformat() if isinstance(doc["created_at"], datetime) else doc["created_at"]
+    doc["source"] = "webhook_test"
+    doc["is_test"] = True
+    
+    await db.reviews.insert_one(doc)
+    
+    # Log the test event
+    event_log = webhook_service.create_webhook_event_log(
+        webhook_id=config["webhook_id"],
+        platform=platform,
+        event_type="TEST_EVENT",
+        payload={"test": True, "review_id": test_review.review_id},
+        status="test_processed"
+    )
+    await db.webhook_events.insert_one(event_log)
+    
+    return {
+        "message": f"Test {platform} webhook event created",
+        "review_id": test_review.review_id,
+        "platform": platform
+    }
+
+
 # ============ ROOT & HEALTH ============
 
 @api_router.get("/")
 async def root():
-    return {"message": "ReviewFlow API", "version": "2.0.0"}
+    return {"message": "ReviewFlow API", "version": "2.2.0"}
 
 @api_router.get("/health")
 async def health_check():
