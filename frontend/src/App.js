@@ -14,6 +14,7 @@ import Settings from "./pages/Settings";
 import Onboarding from "./pages/Onboarding";
 import PublicReview from "./pages/PublicReview";
 import WebhookSettings from "./pages/WebhookSettings";
+import NotificationSettings from "./pages/NotificationSettings";
 
 // Components
 import Layout from "./components/Layout";
