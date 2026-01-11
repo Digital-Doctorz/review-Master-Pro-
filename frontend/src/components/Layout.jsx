@@ -193,32 +193,42 @@ export default function Layout({ children }) {
         </div>
       )}
 
-      {/* Mobile Bottom Nav */}
+      {/* Premium Mobile Bottom Nav */}
       <nav
-        className="md:hidden fixed bottom-4 left-4 right-4 glass-nav rounded-full p-2 flex justify-around z-50"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 mobile-safe-bottom"
         data-testid="mobile-bottom-nav"
       >
-        {navItems.slice(0, 6).map((item) => {
-          const isActive = location.pathname === item.path;
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`p-3 rounded-full transition-all ${
-                isActive
-                  ? "bg-sky-100 text-sky-600"
-                  : "text-slate-500 hover:text-slate-700"
-              }`}
-            >
-              <item.icon className="w-5 h-5" />
-            </Link>
-          );
-        })}
+        <div className="mx-3 mb-3 glass-mobile-nav rounded-2xl p-1.5">
+          <div className="flex items-center justify-around">
+            {navItems.slice(0, 5).map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`relative flex flex-col items-center justify-center py-2.5 px-4 rounded-xl transition-all duration-300 ${
+                    isActive
+                      ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30"
+                      : "text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/50 active:scale-95"
+                  }`}
+                >
+                  <item.icon className={`w-5 h-5 ${isActive ? "drop-shadow-sm" : ""}`} />
+                  <span className={`text-[10px] font-medium mt-1 ${isActive ? "text-white/90" : ""}`}>
+                    {item.label.split(' ')[0]}
+                  </span>
+                  {isActive && (
+                    <span className="absolute -top-1 right-1/2 translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-sm" />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
       </nav>
 
       {/* Main Content */}
-      <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0 min-h-screen">
-        <div className="p-6 md:p-8">
+      <main className="md:ml-64 pt-16 md:pt-0 pb-28 md:pb-0 min-h-screen">
+        <div className="p-4 md:p-8">
           <ErrorBoundary>
             {children}
           </ErrorBoundary>
