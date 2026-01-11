@@ -34,18 +34,18 @@ const API = `${BACKEND_URL}/api`;
 const Confetti = ({ active }) => {
   const colors = ["#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#EC4899"];
   
-  // Pre-generate confetti pieces with stable random values
-  const confettiPieces = useRef(
+  // Pre-generate confetti pieces with stable deterministic values
+  const confettiPieces = useMemo(() => 
     [...Array(50)].map((_, i) => ({
       id: i,
       color: colors[i % colors.length],
-      left: (i * 17 + 23) % 100, // Deterministic spread
+      left: (i * 17 + 23) % 100,
       rotate: (i * 37) % 720 - 360,
       xOffset: ((i * 13) % 200) - 100,
       duration: 2 + (i % 20) / 10,
       delay: (i % 10) / 20,
     }))
-  ).current;
+  , []);
   
   if (!active) return null;
   
