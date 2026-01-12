@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { toast } from "sonner";
 import { AuthContext } from "../App";
@@ -31,9 +31,6 @@ import {
 import {
   Star,
   MessageSquare,
-  ThumbsUp,
-  ThumbsDown,
-  Minus,
   RefreshCw,
   Filter,
   Sparkles,
@@ -42,8 +39,8 @@ import {
   Globe,
   Mail,
   Phone,
-  User,
 } from "lucide-react";
+import { ReviewCard } from "../components/ReviewCard";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
