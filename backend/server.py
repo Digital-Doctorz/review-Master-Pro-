@@ -31,6 +31,12 @@ from services import email_service
 # Create the main app
 app = FastAPI(title="Review Master API")
 
+# Root-level health check for Kubernetes (without /api prefix) - must be registered early
+@app.get("/health")
+async def root_health_check():
+    """Health check endpoint for Kubernetes - available at /health"""
+    return {"status": "healthy"}
+
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
