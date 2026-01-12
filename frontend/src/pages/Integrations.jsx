@@ -740,11 +740,11 @@ export default function Integrations() {
           </DialogHeader>
           
           <div className="space-y-4 py-4">
-            <p className="text-sm text-slate-600">
-              {manualModal.platform === "google"
-                ? "Enter your Google review link. You can find this by searching your business on Google Maps and copying the review link."
-                : "Enter your Facebook Page URL. This is the URL that appears when you visit your page."}
-            </p>
+                <p className="text-sm text-slate-600">
+                  {manualModal.platform === "google"
+                    ? "Enter your Google review link. You can find this by searching your business on Google Maps and copying the review link."
+                    : "Enter your Facebook Page URL. This is the URL that appears when you visit your page."}
+                </p>
             
             <div className="space-y-2">
               <Input
@@ -760,7 +760,6 @@ export default function Integrations() {
               />
             </div>
 
-            {manualModal.platform === "google" && (
               <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
                 <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
                   <Info className="w-4 h-4" />
@@ -769,11 +768,10 @@ export default function Integrations() {
                 <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
                   <li>Search for your business on Google Maps</li>
                   <li>Click on your business profile</li>
-                  <li>Click "Write a review" button</li>
+                  <li>Click the &quot;Write a review&quot; button</li>
                   <li>Copy the URL from your browser</li>
                 </ol>
               </div>
-            )}
 
             <Button
               onClick={handleManualConnect}
