@@ -1,7 +1,35 @@
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { Toaster } from "./components/ui/sonner";
+import { Toaster, toast } from "./components/ui/sonner";
 import axios from "axios";
+
+// Setup axios interceptors for better error handling
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Extract a user-friendly error message
+    let errorMessage = "An error occurred. Please try again.";
+    
+    if (error.response?.data?.detail) {
+      errorMessage = typeof error.response.data.detail === 'string' 
+        ? error.response.data.detail 
+        : JSON.stringify(error.response.data.detail);
+    } else if (error.response?.data?.message) {
+      errorMessage = typeof error.response.data.message === 'string'
+        ? error.response.data.message
+        : JSON.stringify(error.response.data.message);
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    // Don't show toast for auth errors (401) - those are handled by redirects
+    if (error.response?.status !== 401) {
+      console.error("API Error:", errorMessage);
+    }
+    
+    return Promise.reject(error);
+  }
+);
 
 // Pages
 import Landing from "./pages/Landing";
