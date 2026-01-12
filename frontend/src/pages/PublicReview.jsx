@@ -223,11 +223,30 @@ export default function PublicReview() {
     }
   };
 
-  const copyReviewToClipboard = useCallback(() => {
-    navigator.clipboard.writeText(reviewText);
-    setCopied(true);
-    toast.success("📋 Review copied!");
-    setTimeout(() => setCopied(false), 3000);
+  const copyReviewToClipboard = useCallback(async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(reviewText);
+      } else {
+        // Fallback for older browsers or non-secure contexts
+        const textArea = document.createElement("textarea");
+        textArea.value = reviewText;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+      setCopied(true);
+      toast.success("Review copied! Now paste it on Google/Facebook");
+      setTimeout(() => setCopied(false), 5000);
+    } catch (err) {
+      // Show the review text for manual copy
+      toast.error("Please select and copy the review text manually");
+    }
   }, [reviewText]);
 
   const handleSubmitReview = async () => {
