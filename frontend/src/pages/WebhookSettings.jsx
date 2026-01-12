@@ -103,11 +103,30 @@ export default function WebhookSettings() {
     }
   };
 
-  const copyToClipboard = (text, type) => {
-    navigator.clipboard.writeText(text);
-    setCopied(type);
-    toast.success("Copied to clipboard!");
-    setTimeout(() => setCopied(null), 2000);
+  const copyToClipboard = async (text, type) => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback for older browsers or non-secure contexts
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+      setCopied(type);
+      toast.success("Copied to clipboard!");
+      setTimeout(() => setCopied(null), 2000);
+    } catch (err) {
+      // Show error and let user manually copy
+      toast.error("Copy failed. Please select and copy manually.");
+    }
   };
 
   const formatDate = (dateString) => {
