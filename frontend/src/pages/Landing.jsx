@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { AnimatedLogo } from "../components/AnimatedLogo";
@@ -11,12 +12,41 @@ import {
   ArrowRight,
   CheckCircle2,
   Sparkles,
-  Play,
   Users,
   TrendingUp,
+  Crown,
+  Rocket,
+  Building2,
+  BadgeCheck,
+  Clock,
+  Gift,
+  ThumbsUp,
+  Eye,
+  Bell,
+  Globe,
+  X,
 } from "lucide-react";
 
+// Google Icon
+const GoogleIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+  </svg>
+);
+
+// Facebook Icon
+const FacebookIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+  </svg>
+);
+
 export default function Landing() {
+  const [billingCycle, setBillingCycle] = useState("monthly");
+
   const handleGoogleLogin = () => {
     const redirectUrl = window.location.origin + "/dashboard";
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(
@@ -28,7 +58,7 @@ export default function Landing() {
     {
       icon: Zap,
       title: "60-Second Setup",
-      description: "Connect Google & Facebook in one click. Just search your business name - we do the rest.",
+      description: "Connect Google & Facebook instantly. Just paste your review link - no API keys needed.",
       color: "from-amber-400 to-orange-500",
     },
     {
@@ -64,8 +94,8 @@ export default function Landing() {
   ];
 
   const stats = [
-    { value: "10K+", label: "Reviews Managed" },
-    { value: "500+", label: "Happy Businesses" },
+    { value: "50K+", label: "Reviews Managed" },
+    { value: "2,500+", label: "Happy Businesses" },
     { value: "4.9", label: "Average Rating" },
     { value: "98%", label: "Response Rate" },
   ];
@@ -75,19 +105,87 @@ export default function Landing() {
       name: "Priya Sharma",
       role: "Owner, Sunrise Cafe",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=priya",
-      text: "Review Master changed everything. We went from 3.8 to 4.6 stars in just 2 months!",
+      text: "Review Master changed everything. We went from 3.8 to 4.6 stars in just 2 months! The ROI is incredible.",
+      rating: 5,
     },
     {
       name: "Rahul Patel",
       role: "Manager, Downtown Diner",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=rahul",
-      text: "The private feedback feature is genius. We fix issues before they become public complaints.",
+      text: "The private feedback feature is genius. We fix issues before they become public complaints. Worth every rupee!",
+      rating: 5,
     },
     {
       name: "Anita Desai",
       role: "Owner, Bella Salon",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=anita",
-      text: "Setup took literally 60 seconds. Now I respond to reviews from my phone in seconds.",
+      text: "Setup took literally 60 seconds. Now I respond to reviews from my phone. My Google rating jumped from 4.1 to 4.7!",
+      rating: 5,
+    },
+  ];
+
+  const pricingPlans = [
+    {
+      name: "Starter",
+      icon: Rocket,
+      price: billingCycle === "monthly" ? 499 : 399,
+      originalPrice: billingCycle === "monthly" ? 999 : 799,
+      reviews: 100,
+      color: "from-sky-500 to-cyan-500",
+      popular: false,
+      features: [
+        "100 reviews/month",
+        "1 business location",
+        "Google Reviews integration",
+        "QR code generator",
+        "AI review responses",
+        "Email notifications",
+        "Basic analytics",
+      ],
+      cta: "Start Free Trial",
+    },
+    {
+      name: "Growth",
+      icon: TrendingUp,
+      price: billingCycle === "monthly" ? 999 : 799,
+      originalPrice: billingCycle === "monthly" ? 1999 : 1599,
+      reviews: 500,
+      color: "from-violet-500 to-purple-600",
+      popular: true,
+      features: [
+        "500 reviews/month",
+        "3 business locations",
+        "Google + Facebook integration",
+        "Unlimited QR codes",
+        "AI review responses",
+        "Priority email + WhatsApp alerts",
+        "Advanced analytics & reports",
+        "Private feedback inbox",
+        "Custom branding",
+      ],
+      cta: "Most Popular",
+    },
+    {
+      name: "Enterprise",
+      icon: Building2,
+      price: billingCycle === "monthly" ? 2499 : 1999,
+      originalPrice: billingCycle === "monthly" ? 4999 : 3999,
+      reviews: "Unlimited",
+      color: "from-amber-500 to-orange-500",
+      popular: false,
+      features: [
+        "Unlimited reviews",
+        "Unlimited locations",
+        "All platform integrations",
+        "Unlimited QR codes",
+        "AI review responses",
+        "Dedicated account manager",
+        "Custom analytics dashboard",
+        "API access",
+        "White-label option",
+        "Priority 24/7 support",
+      ],
+      cta: "Contact Sales",
     },
   ];
 
@@ -97,6 +195,11 @@ export default function Landing() {
       <nav className="fixed top-0 left-0 right-0 z-50 glass-nav">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <AnimatedLogo size="default" />
+          <div className="hidden md:flex items-center gap-8">
+            <a href="#features" className="text-slate-600 hover:text-slate-900 transition-colors">Features</a>
+            <a href="#pricing" className="text-slate-600 hover:text-slate-900 transition-colors">Pricing</a>
+            <a href="#testimonials" className="text-slate-600 hover:text-slate-900 transition-colors">Reviews</a>
+          </div>
           <Button
             onClick={handleGoogleLogin}
             className="rounded-full px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow"
@@ -117,19 +220,20 @@ export default function Landing() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-frosted text-slate-700 text-sm font-medium mb-6">
-                <Sparkles className="w-4 h-4 text-violet-500" />
-                Zero-Friction Review Management
+              {/* Limited Offer Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 text-white text-sm font-medium mb-6 animate-pulse">
+                <Gift className="w-4 h-4" />
+                Limited Time: 50% OFF All Plans!
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight-custom leading-tight mb-6">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight mb-6">
                 Turn Every Review Into
-                <span className="block text-gradient">Business Growth</span>
+                <span className="block text-gradient">₹10,000+ Revenue</span>
               </h1>
 
               <p className="text-lg text-slate-600 mb-8 max-w-lg leading-relaxed">
-                The simplest way to manage Google & Facebook reviews. One-click setup, 
-                AI-powered responses, and smart routing for negative feedback.
+                Join <span className="font-bold text-indigo-600">2,500+ businesses</span> already using Review Master. 
+                One-click setup, AI-powered responses, and smart routing for negative feedback.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -139,22 +243,29 @@ export default function Landing() {
                   className="rounded-full px-8 py-7 text-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow hover:-translate-y-0.5 active:translate-y-0"
                   data-testid="hero-cta-btn"
                 >
-                  Start Free - 60 Second Setup
+                  Start Free - No Card Required
                   <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="rounded-full px-8 py-7 text-lg border-slate-200 hover:bg-white/50"
-                  data-testid="get-started-btn"
-                >
-                  <Play className="w-5 h-5 mr-2" />
-                  Watch Demo
                 </Button>
               </div>
 
-              {/* Trust Badges */}
-              <div className="flex items-center gap-6">
+              {/* Trust Indicators */}
+              <div className="flex flex-wrap items-center gap-6">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                  <span className="text-sm text-slate-600">7-day free trial</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                  <span className="text-sm text-slate-600">No credit card</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                  <span className="text-sm text-slate-600">Cancel anytime</span>
+                </div>
+              </div>
+
+              {/* Social Proof */}
+              <div className="mt-8 flex items-center gap-4">
                 <div className="flex -space-x-3">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <img
@@ -170,9 +281,10 @@ export default function Landing() {
                     {[1, 2, 3, 4, 5].map((i) => (
                       <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
                     ))}
+                    <span className="ml-1 font-bold text-slate-900">4.9/5</span>
                   </div>
                   <p className="text-sm text-slate-600">
-                    <span className="font-semibold">500+</span> businesses love Review Master
+                    from <span className="font-semibold">2,500+</span> happy businesses
                   </p>
                 </div>
               </div>
@@ -185,35 +297,55 @@ export default function Landing() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative"
             >
-              <div className="glass-deep rounded-3xl p-6 shadow-2xl">
-                {/* Mock Dashboard Header */}
+              {/* Main Dashboard Card */}
+              <div className="glass-deep rounded-3xl p-6 shadow-2xl border border-white/20">
+                {/* Dashboard Header */}
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h3 className="font-semibold text-slate-900">Dashboard</h3>
-                    <p className="text-sm text-slate-500">Real-time overview</p>
+                    <h3 className="font-semibold text-slate-900">Dashboard Overview</h3>
+                    <p className="text-sm text-slate-500">Real-time performance</p>
                   </div>
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-600 text-sm">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 live-indicator" />
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                     Live
                   </div>
                 </div>
 
-                {/* Mock Stats */}
+                {/* Stats Grid */}
                 <div className="grid grid-cols-3 gap-3 mb-6">
                   {[
-                    { label: "Reviews", value: "1,284", color: "text-sky-600" },
-                    { label: "Avg Rating", value: "4.7", color: "text-amber-600" },
-                    { label: "Response", value: "98%", color: "text-emerald-600" },
+                    { label: "Total Reviews", value: "1,284", change: "+12%", color: "text-sky-600", bg: "bg-sky-50" },
+                    { label: "Avg Rating", value: "4.7", change: "+0.3", color: "text-amber-600", bg: "bg-amber-50" },
+                    { label: "Response Rate", value: "98%", change: "+5%", color: "text-emerald-600", bg: "bg-emerald-50" },
                   ].map((stat, i) => (
-                    <div key={i} className="p-4 rounded-xl bg-white/50 text-center">
+                    <div key={i} className={`p-4 rounded-xl ${stat.bg}`}>
                       <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
                       <p className="text-xs text-slate-500">{stat.label}</p>
+                      <span className="text-xs text-emerald-600 font-medium">{stat.change}</span>
                     </div>
                   ))}
                 </div>
 
-                {/* Mock Review */}
+                {/* Platform Status */}
+                <div className="flex items-center gap-4 mb-6 p-3 rounded-xl bg-slate-50">
+                  <div className="flex items-center gap-2">
+                    <GoogleIcon className="w-5 h-5" />
+                    <span className="text-sm font-medium text-slate-700">Connected</span>
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <FacebookIcon className="w-5 h-5" />
+                    <span className="text-sm font-medium text-slate-700">Connected</span>
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  </div>
+                </div>
+
+                {/* Recent Review */}
                 <div className="p-4 rounded-xl bg-white border border-slate-100">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-slate-500">New Review - Just now</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-600">5★</span>
+                  </div>
                   <div className="flex items-start gap-3">
                     <img
                       src="https://api.dicebear.com/7.x/avataaars/svg?seed=sarah"
@@ -230,19 +362,29 @@ export default function Landing() {
                         </div>
                       </div>
                       <p className="text-sm text-slate-600">
-                        &quot;Absolutely fantastic experience! Highly recommend...&quot;
+                        &quot;Absolutely fantastic experience! The food was amazing and service was top-notch. Will definitely come back!&quot;
                       </p>
                     </div>
+                  </div>
+                  <div className="mt-3 flex gap-2">
+                    <Button size="sm" className="rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs">
+                      <Sparkles className="w-3 h-3 mr-1" />
+                      AI Reply
+                    </Button>
+                    <Button size="sm" variant="outline" className="rounded-lg text-xs">
+                      <Eye className="w-3 h-3 mr-1" />
+                      View
+                    </Button>
                   </div>
                 </div>
               </div>
 
-              {/* Floating Elements */}
+              {/* Floating Cards */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: 0.6 }}
-                className="absolute -bottom-6 -left-6 glass-card rounded-2xl p-4 shadow-xl"
+                className="absolute -bottom-6 -left-6 glass-card rounded-2xl p-4 shadow-xl border border-white/20"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
@@ -259,15 +401,15 @@ export default function Landing() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: 0.8 }}
-                className="absolute -top-4 -right-4 glass-card rounded-2xl p-4 shadow-xl"
+                className="absolute -top-4 -right-4 glass-card rounded-2xl p-4 shadow-xl border border-white/20"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center">
-                    <Sparkles className="w-6 h-6 text-white" />
+                    <Bell className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="font-bold text-slate-900">AI Reply</p>
-                    <p className="text-xs text-slate-500">Generated in 2s</p>
+                    <p className="font-bold text-slate-900">Instant Alert</p>
+                    <p className="text-xs text-slate-500">New review!</p>
                   </div>
                 </div>
               </motion.div>
@@ -299,15 +441,138 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Features Section - Bento Grid */}
-      <section className="py-20 px-6">
+      {/* Dashboard Screenshots Section */}
+      <section className="py-20 px-6 bg-gradient-to-b from-white/50 to-indigo-50/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 text-sm font-medium mb-4"
+            >
+              <Eye className="w-4 h-4" />
+              See It In Action
+            </motion.div>
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4">
+              Powerful Dashboard,
+              <span className="block text-gradient">Simple Interface</span>
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Everything you need to manage reviews in one beautiful dashboard
+            </p>
+          </div>
+
+          {/* Dashboard Preview Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Analytics Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="glass-card rounded-2xl p-6 hover:shadow-xl transition-all"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-cyan-500 flex items-center justify-center">
+                  <BarChart3 className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900">Analytics Dashboard</h3>
+                  <p className="text-xs text-slate-500">Track your growth</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
+                  <span className="text-sm text-slate-600">This Month</span>
+                  <span className="font-bold text-emerald-600">+127 reviews</span>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
+                  <span className="text-sm text-slate-600">Avg Rating</span>
+                  <span className="font-bold text-amber-600">4.7 ★</span>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
+                  <span className="text-sm text-slate-600">Response Time</span>
+                  <span className="font-bold text-sky-600">2 mins</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Reviews Management Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="glass-card rounded-2xl p-6 hover:shadow-xl transition-all"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
+                  <MessageSquare className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900">Review Management</h3>
+                  <p className="text-xs text-slate-500">All reviews in one place</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {[
+                  { name: "Amit K.", stars: 5, text: "Best restaurant in town!" },
+                  { name: "Neha S.", stars: 4, text: "Great food, nice ambiance" },
+                  { name: "Raj P.", stars: 5, text: "Amazing experience!" },
+                ].map((review, i) => (
+                  <div key={i} className="p-3 rounded-lg bg-slate-50">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-medium text-slate-900">{review.name}</span>
+                      <div className="flex">
+                        {[...Array(review.stars)].map((_, j) => (
+                          <Star key={j} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-600">{review.text}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* QR Code Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="glass-card rounded-2xl p-6 hover:shadow-xl transition-all"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
+                  <QrCode className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900">QR Code Generator</h3>
+                  <p className="text-xs text-slate-500">Easy review collection</p>
+                </div>
+              </div>
+              <div className="text-center p-6 rounded-xl bg-slate-50">
+                <div className="w-24 h-24 mx-auto mb-4 bg-white rounded-xl border-2 border-slate-200 flex items-center justify-center">
+                  <QrCode className="w-16 h-16 text-slate-400" />
+                </div>
+                <p className="text-sm text-slate-600 mb-2">Scan to leave a review</p>
+                <Button size="sm" className="rounded-lg">Download QR</Button>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="py-20 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight-custom mb-4"
+              className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4"
             >
               Everything you need to
               <span className="block text-gradient">dominate reviews</span>
@@ -339,48 +604,159 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-20 px-6 bg-white/50">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight-custom mb-4">
-              How it works
+      {/* Pricing Section */}
+      <section id="pricing" className="py-20 px-6 bg-gradient-to-b from-white to-indigo-50/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 text-white text-sm font-medium mb-4"
+            >
+              <Gift className="w-4 h-4" />
+              Limited Time: 50% OFF All Plans!
+            </motion.div>
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4">
+              Simple, Transparent Pricing
             </h2>
-            <p className="text-lg text-slate-600">Three simple steps to review success</p>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
+              Start free, upgrade when you&apos;re ready. No hidden fees, cancel anytime.
+            </p>
+
+            {/* Billing Toggle */}
+            <div className="flex items-center justify-center gap-4 mb-12">
+              <span className={`text-sm font-medium ${billingCycle === "monthly" ? "text-slate-900" : "text-slate-500"}`}>
+                Monthly
+              </span>
+              <button
+                onClick={() => setBillingCycle(billingCycle === "monthly" ? "yearly" : "monthly")}
+                className={`relative w-14 h-8 rounded-full transition-colors ${
+                  billingCycle === "yearly" ? "bg-indigo-600" : "bg-slate-300"
+                }`}
+              >
+                <span
+                  className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow transition-transform ${
+                    billingCycle === "yearly" ? "translate-x-7" : "translate-x-1"
+                  }`}
+                />
+              </button>
+              <span className={`text-sm font-medium ${billingCycle === "yearly" ? "text-slate-900" : "text-slate-500"}`}>
+                Yearly
+              </span>
+              {billingCycle === "yearly" && (
+                <span className="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">
+                  Save 20%
+                </span>
+              )}
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { step: "1", title: "Connect", desc: "Search your business name. We find your Google & Facebook profiles automatically." },
-              { step: "2", title: "Generate QR", desc: "Print QR codes for your tables, receipts, or counter. Customers scan and review." },
-              { step: "3", title: "Respond", desc: "Get notified instantly. Use AI to respond professionally in seconds." },
-            ].map((item, index) => (
+          {/* Pricing Cards */}
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {pricingPlans.map((plan, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
-                className="text-center"
+                transition={{ delay: index * 0.1 }}
+                className={`relative rounded-3xl p-8 ${
+                  plan.popular
+                    ? "bg-gradient-to-br from-violet-600 to-purple-700 text-white shadow-2xl shadow-violet-500/30 scale-105"
+                    : "glass-card"
+                }`}
               >
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-violet-500 flex items-center justify-center mx-auto mb-6 text-2xl font-bold text-white shadow-lg shadow-sky-500/20">
-                  {item.step}
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-400 text-amber-900 text-sm font-bold">
+                    MOST POPULAR
+                  </div>
+                )}
+
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${plan.color} flex items-center justify-center`}>
+                    <plan.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className={`text-xl font-bold ${plan.popular ? "text-white" : "text-slate-900"}`}>
+                      {plan.name}
+                    </h3>
+                    <p className={`text-sm ${plan.popular ? "text-violet-200" : "text-slate-500"}`}>
+                      {plan.reviews} reviews/month
+                    </p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-3">{item.title}</h3>
-                <p className="text-slate-600">{item.desc}</p>
+
+                <div className="mb-6">
+                  <div className="flex items-baseline gap-2">
+                    <span className={`text-4xl font-bold ${plan.popular ? "text-white" : "text-slate-900"}`}>
+                      ₹{plan.price}
+                    </span>
+                    <span className={plan.popular ? "text-violet-200" : "text-slate-500"}>/month</span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className={`text-sm line-through ${plan.popular ? "text-violet-300" : "text-slate-400"}`}>
+                      ₹{plan.originalPrice}
+                    </span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      plan.popular ? "bg-amber-400 text-amber-900" : "bg-emerald-100 text-emerald-700"
+                    } font-medium`}>
+                      50% OFF
+                    </span>
+                  </div>
+                </div>
+
+                <ul className="space-y-3 mb-8">
+                  {plan.features.map((feature, i) => (
+                    <li key={i} className="flex items-center gap-3">
+                      <CheckCircle2 className={`w-5 h-5 flex-shrink-0 ${
+                        plan.popular ? "text-emerald-300" : "text-emerald-500"
+                      }`} />
+                      <span className={`text-sm ${plan.popular ? "text-violet-100" : "text-slate-600"}`}>
+                        {feature}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Button
+                  onClick={handleGoogleLogin}
+                  className={`w-full rounded-xl py-6 font-semibold ${
+                    plan.popular
+                      ? "bg-white text-violet-700 hover:bg-violet-50"
+                      : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+                  }`}
+                  data-testid={`pricing-cta-${index}`}
+                >
+                  {plan.cta}
+                </Button>
               </motion.div>
             ))}
           </div>
+
+          {/* Money Back Guarantee */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-12 text-center"
+          >
+            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-emerald-50 border border-emerald-200">
+              <Shield className="w-5 h-5 text-emerald-600" />
+              <span className="text-emerald-800 font-medium">30-Day Money-Back Guarantee</span>
+            </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 px-6">
+      <section id="testimonials" className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight-custom mb-4">
-              Loved by business owners
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4">
+              Loved by 2,500+ Business Owners
             </h2>
+            <p className="text-lg text-slate-600">See why businesses are switching to Review Master</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -394,25 +770,25 @@ export default function Landing() {
                 className="glass-card rounded-3xl p-8"
               >
                 <div className="flex items-center gap-4 mb-4">
-                  <img src={testimonial.avatar} alt="" className="w-12 h-12 rounded-full" />
+                  <img src={testimonial.avatar} alt="" className="w-14 h-14 rounded-full" />
                   <div>
                     <p className="font-semibold text-slate-900">{testimonial.name}</p>
                     <p className="text-sm text-slate-500">{testimonial.role}</p>
                   </div>
                 </div>
-                <p className="text-slate-700 leading-relaxed">&quot;{testimonial.text}&quot;</p>
-                <div className="flex gap-0.5 mt-4">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                <div className="flex gap-0.5 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
                   ))}
                 </div>
+                <p className="text-slate-700 leading-relaxed">&quot;{testimonial.text}&quot;</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Final CTA Section */}
       <section className="py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -421,22 +797,48 @@ export default function Landing() {
             viewport={{ once: true }}
             className="glass-deep rounded-3xl p-12 text-center relative overflow-hidden"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight-custom mb-4">
-              Ready to transform your reviews?
-            </h2>
-            <p className="text-lg text-slate-600 mb-8 max-w-xl mx-auto">
-              Join 500+ businesses already using Review Master. Setup takes 3 minutes.
-            </p>
-            <Button
-              onClick={handleGoogleLogin}
-              size="lg"
-              className="rounded-full px-10 py-7 text-lg bg-gradient-to-r from-sky-500 to-violet-500 hover:from-sky-600 hover:to-violet-600 text-white btn-glow-purple hover:-translate-y-0.5 active:translate-y-0"
-              data-testid="cta-start-btn"
-            >
-              Start Free Trial
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
-            <p className="text-sm text-slate-500 mt-4">No credit card required</p>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-violet-500/20 to-purple-500/20 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-br from-sky-500/20 to-cyan-500/20 rounded-full blur-3xl" />
+            
+            <div className="relative">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 text-white text-sm font-medium mb-6">
+                <Clock className="w-4 h-4" />
+                Offer Ends Soon - Don&apos;t Miss Out!
+              </div>
+              
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4">
+                Start Growing Your Reviews Today
+              </h2>
+              <p className="text-lg text-slate-600 mb-8 max-w-xl mx-auto">
+                Join 2,500+ businesses already using Review Master. 
+                <span className="font-bold text-indigo-600"> Start your free trial now!</span>
+              </p>
+              
+              <Button
+                onClick={handleGoogleLogin}
+                size="lg"
+                className="rounded-full px-10 py-7 text-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow hover:-translate-y-0.5 active:translate-y-0"
+                data-testid="cta-start-btn"
+              >
+                Start Free Trial - ₹0 Today
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+              
+              <div className="flex items-center justify-center gap-6 mt-6">
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  7-day free trial
+                </div>
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  No credit card
+                </div>
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  Cancel anytime
+                </div>
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -445,10 +847,15 @@ export default function Landing() {
       <footer className="py-12 px-6 border-t border-slate-100">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-violet-500 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
               <Star className="w-4 h-4 text-white" />
             </div>
             <span className="font-semibold text-slate-900">Review Master</span>
+          </div>
+          <div className="flex items-center gap-6">
+            <a href="#features" className="text-sm text-slate-600 hover:text-slate-900">Features</a>
+            <a href="#pricing" className="text-sm text-slate-600 hover:text-slate-900">Pricing</a>
+            <a href="#testimonials" className="text-sm text-slate-600 hover:text-slate-900">Reviews</a>
           </div>
           <p className="text-sm text-slate-500">© 2025 Review Master. All rights reserved.</p>
         </div>
