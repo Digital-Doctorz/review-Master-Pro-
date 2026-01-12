@@ -7,7 +7,12 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ### MVP Features v3.5 - Updated Instructions & Flow:
 
-**NEW - Improved Connection Instructions (January 12, 2025):**
+**NEW - Facebook Channel Fix (January 12, 2025):**
+- [x] **Facebook Option Now Shows** - Step 3 "Share Your Review" displays Facebook option when connected
+- [x] **Dual Data Source Check** - Frontend checks both `facebook_page_url` and `platforms.facebook.review_link`
+- [x] **Complete Platform Support** - All 3 options (Google, Facebook, Send Directly) visible in Step 3
+
+**Improved Connection Instructions (January 12, 2025):**
 - [x] **Google Instructions Updated** - Step-by-step: Sign in to Google Business Profile → Select business → Click "Ask for reviews" → Copy link
 - [x] **Facebook Instructions Updated** - Step-by-step: Open Facebook Page → Click Reviews tab → Click "Write a review" → Copy URL
 - [x] **Clickable Links** - Direct links to business.google.com and facebook.com/pages
