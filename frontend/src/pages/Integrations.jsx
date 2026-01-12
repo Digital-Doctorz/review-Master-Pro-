@@ -595,7 +595,7 @@ export default function Integrations() {
             {/* Search Input */}
             <div className="space-y-2">
               <p className="text-sm text-slate-600">
-                Search for your business by name. We'll find it automatically.
+                Search for your business by name. We&apos;ll find it automatically.
               </p>
               <div className="flex gap-2">
                 <div className="relative flex-1">
