@@ -527,26 +527,77 @@ export default function Integrations() {
             {/* Step 1: Find your link */}
             <div className="space-y-4">
               <div className="p-4 rounded-xl bg-blue-50 border border-blue-100">
-                <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
+                <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
                   <Info className="w-4 h-4" />
                   {setupModal.platform === "google" 
-                    ? "How to find your Google Review link:" 
-                    : "How to find your Facebook Page link:"}
+                    ? "How to get your Google Review link" 
+                    : "How to get your Facebook Review link"}
                 </h4>
                 {setupModal.platform === "google" ? (
-                  <ol className="text-sm text-blue-800 space-y-2 list-decimal list-inside">
-                    <li>Open <strong>Google Maps</strong> on your phone or computer</li>
-                    <li>Search for your business name</li>
-                    <li>Click on your business listing</li>
-                    <li>Click <strong>&quot;Write a review&quot;</strong> button</li>
-                    <li>Copy the URL from your browser&apos;s address bar</li>
-                  </ol>
+                  <div className="space-y-3">
+                    <p className="text-sm text-blue-800 font-medium">From Google Business Profile (Owner):</p>
+                    <ol className="text-sm text-blue-800 space-y-2">
+                      <li className="flex items-start gap-2">
+                        <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                        <span>Sign in to <a href="https://business.google.com" target="_blank" rel="noopener noreferrer" className="font-medium underline hover:text-blue-600">Google Business Profile</a></span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                        <span>Select your business</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+                        <span>Click <strong>&quot;Ask for reviews&quot;</strong></span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>
+                        <span>Copy the review link shown</span>
+                      </li>
+                    </ol>
+                    <div className="mt-3">
+                      <a 
+                        href="https://business.google.com" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
+                      >
+                        <Globe className="w-4 h-4" />
+                        Open Google Business Profile
+                      </a>
+                    </div>
+                  </div>
                 ) : (
-                  <ol className="text-sm text-blue-800 space-y-2 list-decimal list-inside">
-                    <li>Go to your <strong>Facebook Page</strong></li>
-                    <li>Copy the URL from your browser (e.g., facebook.com/yourbusiness)</li>
-                    <li>Or go to your Reviews tab and copy that URL</li>
-                  </ol>
+                  <div className="space-y-3">
+                    <ol className="text-sm text-blue-800 space-y-2">
+                      <li className="flex items-start gap-2">
+                        <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                        <span>Open your <a href="https://www.facebook.com/pages" target="_blank" rel="noopener noreferrer" className="font-medium underline hover:text-blue-600">Facebook Business Page</a></span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                        <span>Click the <strong>Reviews</strong> (or Recommendations) tab</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+                        <span>Click <strong>&quot;Write a review&quot;</strong></span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>
+                        <span>Copy the page URL from the browser address bar</span>
+                      </li>
+                    </ol>
+                    <div className="mt-3">
+                      <a 
+                        href="https://www.facebook.com/pages" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors"
+                      >
+                        <Globe className="w-4 h-4" />
+                        Open Facebook Pages
+                      </a>
+                    </div>
+                  </div>
                 )}
               </div>
 
@@ -560,8 +611,8 @@ export default function Integrations() {
                   onChange={(e) => setReviewLink(e.target.value)}
                   placeholder={
                     setupModal.platform === "google"
-                      ? "https://www.google.com/maps/place/..."
-                      : "https://www.facebook.com/yourbusiness"
+                      ? "https://g.page/r/..."
+                      : "https://www.facebook.com/yourbusiness/reviews"
                   }
                   className="h-12 rounded-xl"
                   data-testid="review-link-input"
