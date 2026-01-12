@@ -664,7 +664,7 @@ export default function PublicReview() {
                     <p className="text-sm font-medium text-slate-700">Post your review on:</p>
                     
                     {/* Google Option */}
-                    {business?.google_review_link && (
+                    {(business?.google_review_link || business?.platforms?.google?.review_link) && (
                       <motion.button
                         type="button"
                         onClick={() => setSelectedPlatform("google")}
@@ -690,7 +690,7 @@ export default function PublicReview() {
                     )}
                     
                     {/* Facebook Option */}
-                    {business?.platforms?.facebook?.review_link && (
+                    {(business?.facebook_page_url || business?.platforms?.facebook?.review_link) && (
                       <motion.button
                         type="button"
                         onClick={() => setSelectedPlatform("facebook")}
