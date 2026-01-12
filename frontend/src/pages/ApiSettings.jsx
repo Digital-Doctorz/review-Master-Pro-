@@ -540,7 +540,7 @@ export default function ApiSettings() {
             <Sparkles className="w-6 h-6 text-indigo-600" />
           </div>
           <div>
-            <h3 className="font-semibold text-slate-900 mb-1">Don't have API credentials?</h3>
+            <h3 className="font-semibold text-slate-900 mb-1">Don&apos;t have API credentials?</h3>
             <p className="text-slate-600 text-sm mb-3">
               No problem! Review Master works perfectly in Demo Mode. You can still:
             </p>
