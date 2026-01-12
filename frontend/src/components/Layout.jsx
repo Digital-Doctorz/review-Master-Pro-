@@ -15,6 +15,7 @@ import {
   X,
   Bell,
   Webhook,
+  Key,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -39,6 +40,7 @@ const navItems = [
   { path: "/qr-generator", label: "QR Code", icon: QrCode },
   { path: "/webhooks", label: "Webhooks", icon: Webhook },
   { path: "/notifications", label: "Notifications", icon: Bell },
+  { path: "/api-settings", label: "API Keys", icon: Key },
   { path: "/settings", label: "Settings", icon: Settings },
 ];
 
