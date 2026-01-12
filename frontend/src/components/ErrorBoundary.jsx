@@ -13,11 +13,21 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
+    // Safely extract error message
+    let errorMessage = "Unknown error";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (typeof error === "string") {
+      errorMessage = error;
+    } else if (error && typeof error === "object") {
+      errorMessage = JSON.stringify(error);
+    }
+    
     this.setState({
-      error: error,
+      error: { message: errorMessage, stack: error?.stack },
       errorInfo: errorInfo
     });
-    console.error("ErrorBoundary caught an error:", error, errorInfo);
+    console.error("ErrorBoundary caught an error:", errorMessage, errorInfo);
   }
 
   handleReset = () => {
@@ -51,9 +61,10 @@ class ErrorBoundary extends Component {
                 <summary className="text-sm text-slate-500 cursor-pointer">
                   Error Details (Development)
                 </summary>
-                <pre className="mt-2 p-4 bg-slate-100 rounded-lg text-xs text-red-600 overflow-auto">
-                  {this.state.error.toString()}
-                  {this.state.errorInfo?.componentStack}
+                <pre className="mt-2 p-4 bg-slate-100 rounded-lg text-xs text-red-600 overflow-auto max-h-40">
+                  {this.state.error?.message || "No error message"}
+                  {"\n"}
+                  {this.state.errorInfo?.componentStack || ""}
                 </pre>
               </details>
             )}
