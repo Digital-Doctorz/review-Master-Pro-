@@ -303,7 +303,12 @@ export default function Reviews() {
             ) : (
               <AnimatePresence>
                 {reviews.map((review, index) => (
-                  <ReviewCard key={review.review_id} review={review} index={index} />
+                  <ReviewCard 
+                    key={review.review_id} 
+                    review={review} 
+                    index={index} 
+                    onClick={() => handleReviewClick(review)}
+                  />
                 ))}
               </AnimatePresence>
             )}
@@ -346,7 +351,13 @@ export default function Reviews() {
             ) : (
               <AnimatePresence>
                 {privateReviews.map((review, index) => (
-                  <ReviewCard key={review.review_id} review={review} index={index} isPrivate />
+                  <ReviewCard 
+                    key={review.review_id} 
+                    review={review} 
+                    index={index} 
+                    isPrivate 
+                    onClick={() => handleReviewClick(review)}
+                  />
                 ))}
               </AnimatePresence>
             )}
