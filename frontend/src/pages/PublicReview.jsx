@@ -45,6 +45,7 @@ const Confetti = ({ active }) => {
       duration: 2 + (i % 20) / 10,
       delay: (i % 10) / 20,
     }))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   , []);
   
   if (!active) return null;
