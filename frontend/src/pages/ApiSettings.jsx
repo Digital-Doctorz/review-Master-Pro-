@@ -489,15 +489,15 @@ export default function ApiSettings() {
                       <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm flex-shrink-0">2</div>
                       <div>
                         <p className="font-medium text-slate-900">Create a New App</p>
-                        <p className="text-sm text-slate-600 mt-1">Click "Create App" → Choose "Business" type → Fill in details</p>
+                        <p className="text-sm text-slate-600 mt-1">Click &quot;Create App&quot; → Choose &quot;Business&quot; type → Fill in details</p>
                       </div>
                     </div>
                     
                     <div className="flex gap-3">
                       <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm flex-shrink-0">3</div>
                       <div>
-                        <p className="font-medium text-slate-900">Get App ID & Secret</p>
-                        <p className="text-sm text-slate-600 mt-1">Go to "Settings" → "Basic" to find your App ID and App Secret</p>
+                        <p className="font-medium text-slate-900">Get App ID &amp; Secret</p>
+                        <p className="text-sm text-slate-600 mt-1">Go to &quot;Settings&quot; → &quot;Basic&quot; to find your App ID and App Secret</p>
                       </div>
                     </div>
                     
@@ -505,7 +505,7 @@ export default function ApiSettings() {
                       <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm flex-shrink-0">4</div>
                       <div>
                         <p className="font-medium text-slate-900">Add Page Reviews Permission</p>
-                        <p className="text-sm text-slate-600 mt-1">In your app, go to "Add Products" → Enable "Facebook Login" and request "pages_read_engagement" permission</p>
+                        <p className="text-sm text-slate-600 mt-1">In your app, go to &quot;Add Products&quot; → Enable &quot;Facebook Login&quot; and request &quot;pages_read_engagement&quot; permission</p>
                       </div>
                     </div>
 
