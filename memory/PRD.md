@@ -5,21 +5,26 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## What's Been Implemented (January 2025)
 
+### MVP Features v3.5 - Updated Instructions & Flow:
+
+**NEW - Improved Connection Instructions (January 12, 2025):**
+- [x] **Google Instructions Updated** - Step-by-step: Sign in to Google Business Profile → Select business → Click "Ask for reviews" → Copy link
+- [x] **Facebook Instructions Updated** - Step-by-step: Open Facebook Page → Click Reviews tab → Click "Write a review" → Copy URL
+- [x] **Clickable Links** - Direct links to business.google.com and facebook.com/pages
+- [x] **Webhook Clipboard Fix** - Fixed clipboard error on Webhook Settings page with fallback
+
+**NEW - Improved Public Review Flow (January 12, 2025):**
+- [x] **Clear 2-Step Process** - Step 1: Copy your review, Step 2: Open Google/Facebook & paste
+- [x] **Step Locking** - "Open Platform" button disabled until review is copied
+- [x] **Better UX** - Clear visual feedback when review is copied
+
 ### MVP Features v3.4 - Simplified User Experience:
 
-**NEW - Super Simple Integration (January 12, 2025):**
+**Super Simple Integration (January 12, 2025):**
 - [x] **No API Keys Required** - Users just paste their Google/Facebook review link - that's it!
 - [x] **Redesigned Integrations Page** - Clean, simple modal with step-by-step instructions
 - [x] **Clipboard Fallback** - Fixed "Clipboard API blocked" error with document.execCommand fallback
 - [x] **API Settings Page Simplified** - Shows "You don't need this page!" with link to simple Integrations
-- [x] **External Links Fixed** - Links properly open in new tabs without blocking
-
-**How Users Connect Google Now:**
-1. Go to Google Maps on phone/computer
-2. Search for their business name
-3. Click "Write a review" button
-4. Copy the URL from browser address bar
-5. Paste it in Review Master - Done!
 
 ### MVP Features v3.3 - Error Handling & Stability:
 
