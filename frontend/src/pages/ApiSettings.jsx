@@ -316,7 +316,7 @@ export default function ApiSettings() {
                       <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm flex-shrink-0">2</div>
                       <div>
                         <p className="font-medium text-slate-900">Enable Places API</p>
-                        <p className="text-sm text-slate-600 mt-1">Click "Enable" to activate the Places API for your project</p>
+                        <p className="text-sm text-slate-600 mt-1">Click &quot;Enable&quot; to activate the Places API for your project</p>
                       </div>
                     </div>
                     
@@ -324,7 +324,7 @@ export default function ApiSettings() {
                       <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm flex-shrink-0">3</div>
                       <div>
                         <p className="font-medium text-slate-900">Create API Key</p>
-                        <p className="text-sm text-slate-600 mt-1">Go to "Credentials" → "Create Credentials" → "API Key"</p>
+                        <p className="text-sm text-slate-600 mt-1">Go to &quot;Credentials&quot; → &quot;Create Credentials&quot; → &quot;API Key&quot;</p>
                         <Button
                           variant="outline"
                           size="sm"
