@@ -141,8 +141,9 @@ FACEBOOK_APP_SECRET=your_fb_secret
 ```
 
 ## Testing
-- **Test Reports**: `/app/test_reports/iteration_7.json`
+- **Test Reports**: `/app/test_reports/iteration_8.json`
 - **Test Files**: 
+  - `/app/tests/test_bug_fixes_iteration8.py` (14 tests)
   - `/app/tests/test_rebrand_and_notifications.py` (11 tests)
   - `/app/tests/test_notifications_and_public_review.py` (21 tests)
 - **Success Rate**: Backend 100%, Frontend 100%
@@ -155,6 +156,8 @@ FACEBOOK_APP_SECRET=your_fb_secret
 - [x] Email notification service
 - [x] Webhook support
 - [x] Enhanced QR review flow
+- [x] **[object Object] bug fix** (Jan 12, 2025)
+- [x] **ReviewCard component extraction** (Jan 12, 2025)
 
 ### P1 - High Priority
 - [ ] WhatsApp notifications for urgent reviews
