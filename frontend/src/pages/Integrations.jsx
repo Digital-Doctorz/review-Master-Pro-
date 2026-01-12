@@ -2,33 +2,28 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "../components/ui/dialog";
 import {
   CheckCircle2,
   XCircle,
   RefreshCw,
-  Link2,
-  ExternalLink,
-  Sparkles,
   Search,
   MapPin,
   Star,
   ArrowRight,
-  Copy,
-  Globe,
-  Users,
-  ThumbsUp,
+  Sparkles,
+  Zap,
+  Shield,
+  Clock,
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -51,11 +46,86 @@ const FacebookIcon = ({ className = "w-8 h-8" }) => (
   </svg>
 );
 
+// Search Result Card Component
+const SearchResultCard = ({ result, platform, onSelect, isSelected, isConnecting }) => (
+  <motion.button
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    onClick={() => onSelect(result)}
+    disabled={isConnecting}
+    className={`w-full text-left p-4 rounded-2xl border-2 transition-all duration-300 ${
+      isSelected
+        ? platform === "google"
+          ? "border-blue-500 bg-blue-50/80 shadow-lg shadow-blue-500/20"
+          : "border-indigo-500 bg-indigo-50/80 shadow-lg shadow-indigo-500/20"
+        : "border-slate-200 bg-white/60 hover:border-slate-300 hover:bg-white/80 hover:shadow-md"
+    }`}
+    data-testid={`search-result-${result.place_id || result.id}`}
+  >
+    <div className="flex items-start gap-4">
+      <div className={`w-14 h-14 rounded-xl flex items-center justify-center shadow-sm ${
+        platform === "google" ? "bg-gradient-to-br from-red-50 to-orange-50" : "bg-gradient-to-br from-blue-50 to-indigo-50"
+      }`}>
+        {platform === "google" ? (
+          <GoogleIcon className="w-8 h-8" />
+        ) : (
+          <FacebookIcon className="w-8 h-8" />
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        <h3 className="font-semibold text-slate-900 truncate text-lg">{result.name}</h3>
+        {result.address && (
+          <div className="flex items-center text-sm text-slate-500 mt-1">
+            <MapPin className="w-4 h-4 mr-1.5 flex-shrink-0 text-slate-400" />
+            <span className="truncate">{result.address}</span>
+          </div>
+        )}
+        {result.category && (
+          <div className="flex items-center text-sm text-slate-500 mt-1">
+            <span className="truncate">{result.category}</span>
+          </div>
+        )}
+        {result.rating && (
+          <div className="flex items-center mt-2 gap-2">
+            <div className="flex items-center gap-0.5">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Star
+                  key={i}
+                  className={`w-4 h-4 ${
+                    i <= Math.round(result.rating)
+                      ? "fill-amber-400 text-amber-400"
+                      : "text-slate-200"
+                  }`}
+                />
+              ))}
+            </div>
+            <span className="text-sm font-medium text-slate-600">
+              {result.rating?.toFixed(1)}
+            </span>
+            {result.review_count > 0 && (
+              <span className="text-sm text-slate-400">
+                ({result.review_count} reviews)
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+      {isSelected && (
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+          platform === "google" ? "bg-blue-500" : "bg-indigo-500"
+        }`}>
+          <CheckCircle2 className="w-5 h-5 text-white" />
+        </div>
+      )}
+    </div>
+  </motion.button>
+);
+
 export default function Integrations() {
   const [platforms, setPlatforms] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Google connection modal state
+  // Google connection state
   const [showGoogleModal, setShowGoogleModal] = useState(false);
   const [googleSearch, setGoogleSearch] = useState("");
   const [googleResults, setGoogleResults] = useState([]);
@@ -63,7 +133,7 @@ export default function Integrations() {
   const [connectingGoogle, setConnectingGoogle] = useState(false);
   const [selectedGoogleBusiness, setSelectedGoogleBusiness] = useState(null);
   
-  // Facebook connection modal state
+  // Facebook connection state
   const [showFacebookModal, setShowFacebookModal] = useState(false);
   const [facebookSearch, setFacebookSearch] = useState("");
   const [facebookResults, setFacebookResults] = useState([]);
@@ -77,9 +147,7 @@ export default function Integrations() {
 
   const fetchPlatforms = async () => {
     try {
-      const response = await axios.get(`${API}/platforms`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(`${API}/platforms`, { withCredentials: true });
       setPlatforms(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Error fetching platforms:", error?.message || error);
@@ -137,592 +205,532 @@ export default function Integrations() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (googleSearch) {
-        searchGoogleBusinesses(googleSearch);
-      }
-    }, 300);
+      if (googleSearch) searchGoogleBusinesses(googleSearch);
+    }, 400);
     return () => clearTimeout(timer);
   }, [googleSearch, searchGoogleBusinesses]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (facebookSearch) {
-        searchFacebookPages(facebookSearch);
-      }
-    }, 300);
+      if (facebookSearch) searchFacebookPages(facebookSearch);
+    }, 400);
     return () => clearTimeout(timer);
   }, [facebookSearch, searchFacebookPages]);
 
-  const connectGoogleBusiness = async (business) => {
-    setConnectingGoogle(true);
-    setSelectedGoogleBusiness(business);
+  const connectGoogleBusiness = async () => {
+    if (!selectedGoogleBusiness) return;
     
+    setConnectingGoogle(true);
     try {
-      await axios.post(
-        `${API}/google/connect`,
-        {
-          place_id: business.place_id,
-          name: business.name,
-          review_link: business.review_link
-        },
-        { withCredentials: true }
-      );
+      await axios.post(`${API}/google/connect`, {
+        place_id: selectedGoogleBusiness.place_id,
+        name: selectedGoogleBusiness.name,
+        address: selectedGoogleBusiness.address,
+        review_link: selectedGoogleBusiness.review_link,
+      }, { withCredentials: true });
       
-      toast.success("Google Business connected successfully! Reviews are syncing...");
+      toast.success("🎉 Google Business connected successfully!");
       setShowGoogleModal(false);
       setGoogleSearch("");
       setGoogleResults([]);
       setSelectedGoogleBusiness(null);
       fetchPlatforms();
     } catch (error) {
-      console.error("Error connecting Google:", error);
-      toast.error("Failed to connect Google Business");
+      console.error("Error connecting Google:", error?.message || error);
+      toast.error("Failed to connect. Please try again.");
     } finally {
       setConnectingGoogle(false);
     }
   };
 
-  const connectFacebookPage = async (page) => {
-    setConnectingFacebook(true);
-    setSelectedFacebookPage(page);
+  const connectFacebookPage = async () => {
+    if (!selectedFacebookPage) return;
     
+    setConnectingFacebook(true);
     try {
-      await axios.post(
-        `${API}/facebook/connect`,
-        {
-          page_id: page.page_id,
-          name: page.name,
-          page_name: page.name,
-          url: page.url,
-          page_url: page.url,
-          review_link: page.review_link
-        },
-        { withCredentials: true }
-      );
+      await axios.post(`${API}/facebook/connect`, {
+        page_id: selectedFacebookPage.id,
+        name: selectedFacebookPage.name,
+        url: selectedFacebookPage.url,
+        category: selectedFacebookPage.category,
+      }, { withCredentials: true });
       
-      toast.success("Facebook Page connected successfully! Reviews are syncing...");
+      toast.success("🎉 Facebook Page connected successfully!");
       setShowFacebookModal(false);
       setFacebookSearch("");
       setFacebookResults([]);
       setSelectedFacebookPage(null);
       fetchPlatforms();
     } catch (error) {
-      console.error("Error connecting Facebook:", error);
-      toast.error("Failed to connect Facebook Page");
+      console.error("Error connecting Facebook:", error?.message || error);
+      toast.error("Failed to connect. Please try again.");
     } finally {
       setConnectingFacebook(false);
     }
   };
 
-  const handleDisconnect = async (platform) => {
+  const disconnectPlatform = async (platform) => {
     try {
-      await axios.post(
-        `${API}/platforms/${platform}/disconnect`,
-        {},
-        { withCredentials: true }
-      );
-      
-      toast.success(`${platform.charAt(0).toUpperCase() + platform.slice(1)} disconnected`);
+      await axios.post(`${API}/platforms/${platform}/disconnect`, {}, { withCredentials: true });
+      toast.success(`${platform === "google" ? "Google" : "Facebook"} disconnected`);
       fetchPlatforms();
     } catch (error) {
-      console.error("Error disconnecting platform:", error);
-      toast.error(`Failed to disconnect ${platform}`);
+      console.error("Error disconnecting:", error?.message || error);
+      toast.error("Failed to disconnect. Please try again.");
     }
   };
 
-  const getPlatformStatus = (platformName) => {
-    const platform = platforms.find((p) => p.platform === platformName);
-    return platform?.status || "disconnected";
-  };
-
-  const getPlatformData = (platformName) => {
-    return platforms.find((p) => p.platform === platformName);
-  };
-
-  const copyReviewLink = (link) => {
-    navigator.clipboard.writeText(link);
-    toast.success("Review link copied to clipboard!");
-  };
+  const googlePlatform = platforms.find(p => p.platform === "google");
+  const facebookPlatform = platforms.find(p => p.platform === "facebook");
+  const isGoogleConnected = googlePlatform?.status === "connected";
+  const isFacebookConnected = facebookPlatform?.status === "connected";
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <RefreshCw className="w-8 h-8 text-sky-500 animate-spin" />
+        <div className="text-center">
+          <RefreshCw className="w-10 h-10 text-indigo-500 animate-spin mx-auto mb-4" />
+          <p className="text-slate-500 font-medium">Loading integrations...</p>
+        </div>
       </div>
     );
   }
 
-  const googleConnected = getPlatformStatus("google") === "connected";
-  const facebookConnected = getPlatformStatus("facebook") === "connected";
-  const googleData = getPlatformData("google");
-  const facebookData = getPlatformData("facebook");
-
   return (
-    <div className="space-y-8" data-testid="integrations-page">
+    <div className="space-y-6 max-w-4xl mx-auto" data-testid="integrations-page">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight-custom">
-          Platform Integrations
+      <div className="text-center mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 text-indigo-600 text-sm font-medium mb-4"
+        >
+          <Sparkles className="w-4 h-4" />
+          60-Second Setup
+        </motion.div>
+        <h1 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight mb-3">
+          Connect Your Platforms
         </h1>
-        <p className="text-slate-600 mt-1">
-          Connect Google & Facebook to manage all your reviews in one place.
+        <p className="text-slate-600 text-lg max-w-xl mx-auto">
+          Just search your business name - we&apos;ll find it automatically. No technical skills required.
         </p>
       </div>
 
-      {/* Setup Guide Banner */}
+      {/* Features row */}
+      <div className="grid grid-cols-3 gap-3 mb-8">
+        {[
+          { icon: Zap, label: "Instant Sync", color: "text-amber-500" },
+          { icon: Shield, label: "100% Secure", color: "text-emerald-500" },
+          { icon: Clock, label: "Real-time", color: "text-indigo-500" },
+        ].map((feature, i) => (
+          <motion.div
+            key={feature.label}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            className="flex flex-col items-center justify-center p-4 rounded-2xl glass-frosted"
+          >
+            <feature.icon className={`w-6 h-6 ${feature.color} mb-2`} />
+            <span className="text-sm font-medium text-slate-700">{feature.label}</span>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Platform Cards */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Google Card */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <Card className={`glass-card border-2 overflow-hidden transition-all duration-300 ${
+            isGoogleConnected 
+              ? "border-emerald-300 bg-gradient-to-br from-emerald-50/50 to-white" 
+              : "border-slate-200 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-500/10"
+          }`}>
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between mb-6">
+                <div className="flex items-center gap-4">
+                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg ${
+                    isGoogleConnected 
+                      ? "bg-gradient-to-br from-emerald-400 to-teal-500 shadow-emerald-500/30" 
+                      : "bg-white shadow-slate-200"
+                  }`}>
+                    {isGoogleConnected ? (
+                      <CheckCircle2 className="w-8 h-8 text-white" />
+                    ) : (
+                      <GoogleIcon className="w-9 h-9" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900">Google Business</h3>
+                    <p className="text-slate-500 text-sm">
+                      {isGoogleConnected ? "Connected & syncing" : "Connect to sync reviews"}
+                    </p>
+                  </div>
+                </div>
+                <Badge
+                  className={isGoogleConnected 
+                    ? "bg-emerald-100 text-emerald-700 border-emerald-200" 
+                    : "bg-slate-100 text-slate-600"
+                  }
+                >
+                  {isGoogleConnected ? "Active" : "Not Connected"}
+                </Badge>
+              </div>
+
+              {isGoogleConnected && googlePlatform && (
+                <div className="mb-6 p-4 rounded-xl bg-white/60 border border-slate-100">
+                  <p className="font-medium text-slate-900 truncate">
+                    {googlePlatform.place_id || "Connected Business"}
+                  </p>
+                  {googlePlatform.last_sync && (
+                    <p className="text-sm text-slate-500 mt-1">
+                      Last synced: {new Date(googlePlatform.last_sync).toLocaleString()}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {isGoogleConnected ? (
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    className="flex-1 rounded-xl h-12"
+                    onClick={() => disconnectPlatform("google")}
+                  >
+                    <XCircle className="w-4 h-4 mr-2" />
+                    Disconnect
+                  </Button>
+                  <Button
+                    className="flex-1 rounded-xl h-12 bg-emerald-600 hover:bg-emerald-700"
+                    onClick={fetchPlatforms}
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Sync Now
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  onClick={() => setShowGoogleModal(true)}
+                  className="w-full rounded-xl h-14 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 transition-all duration-300"
+                  data-testid="connect-google-btn"
+                >
+                  <GoogleIcon className="w-6 h-6 mr-3" />
+                  Connect Google Business
+                  <ArrowRight className="w-5 h-5 ml-auto" />
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Facebook Card */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <Card className={`glass-card border-2 overflow-hidden transition-all duration-300 ${
+            isFacebookConnected 
+              ? "border-emerald-300 bg-gradient-to-br from-emerald-50/50 to-white" 
+              : "border-slate-200 hover:border-indigo-300 hover:shadow-lg hover:shadow-indigo-500/10"
+          }`}>
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between mb-6">
+                <div className="flex items-center gap-4">
+                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg ${
+                    isFacebookConnected 
+                      ? "bg-gradient-to-br from-emerald-400 to-teal-500 shadow-emerald-500/30" 
+                      : "bg-white shadow-slate-200"
+                  }`}>
+                    {isFacebookConnected ? (
+                      <CheckCircle2 className="w-8 h-8 text-white" />
+                    ) : (
+                      <FacebookIcon className="w-9 h-9" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900">Facebook Page</h3>
+                    <p className="text-slate-500 text-sm">
+                      {isFacebookConnected ? "Connected & syncing" : "Connect to sync reviews"}
+                    </p>
+                  </div>
+                </div>
+                <Badge
+                  className={isFacebookConnected 
+                    ? "bg-emerald-100 text-emerald-700 border-emerald-200" 
+                    : "bg-slate-100 text-slate-600"
+                  }
+                >
+                  {isFacebookConnected ? "Active" : "Not Connected"}
+                </Badge>
+              </div>
+
+              {isFacebookConnected && facebookPlatform && (
+                <div className="mb-6 p-4 rounded-xl bg-white/60 border border-slate-100">
+                  <p className="font-medium text-slate-900 truncate">
+                    {facebookPlatform.page_id || "Connected Page"}
+                  </p>
+                  {facebookPlatform.last_sync && (
+                    <p className="text-sm text-slate-500 mt-1">
+                      Last synced: {new Date(facebookPlatform.last_sync).toLocaleString()}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {isFacebookConnected ? (
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    className="flex-1 rounded-xl h-12"
+                    onClick={() => disconnectPlatform("facebook")}
+                  >
+                    <XCircle className="w-4 h-4 mr-2" />
+                    Disconnect
+                  </Button>
+                  <Button
+                    className="flex-1 rounded-xl h-12 bg-emerald-600 hover:bg-emerald-700"
+                    onClick={fetchPlatforms}
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Sync Now
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  onClick={() => setShowFacebookModal(true)}
+                  className="w-full rounded-xl h-14 text-lg font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/40 transition-all duration-300"
+                  data-testid="connect-facebook-btn"
+                >
+                  <FacebookIcon className="w-6 h-6 mr-3" />
+                  Connect Facebook Page
+                  <ArrowRight className="w-5 h-5 ml-auto" />
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+
+      {/* Help Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass-card rounded-2xl p-6 border-0"
+        transition={{ delay: 0.3 }}
+        className="p-6 rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100"
       >
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-violet-500/20">
-            <Sparkles className="w-6 h-6 text-white" />
+          <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center">
+            <Sparkles className="w-6 h-6 text-indigo-600" />
           </div>
           <div>
-            <h3 className="font-semibold text-slate-900 mb-1">Easy 3-Step Setup</h3>
-            <ol className="text-slate-600 text-sm space-y-1">
-              <li><span className="font-medium">1.</span> Search for your business name below</li>
-              <li><span className="font-medium">2.</span> Select your business from the results</li>
-              <li><span className="font-medium">3.</span> That&apos;s it! Reviews will sync automatically</li>
-            </ol>
+            <h3 className="font-semibold text-slate-900 mb-1">Pro Tip</h3>
+            <p className="text-slate-600 text-sm">
+              Once connected, reviews sync automatically. Low ratings (1-3 stars) go to your private inbox 
+              so you can address issues before they become public complaints.
+            </p>
           </div>
         </div>
       </motion.div>
 
-      {/* Platform Cards */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Google Business Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-        >
-          <Card
-            className={`border-2 transition-all ${
-              googleConnected
-                ? "border-blue-300 bg-blue-50/50"
-                : "border-slate-200 bg-white hover:border-blue-300"
-            }`}
-            data-testid="platform-card-google"
-          >
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-white shadow-sm border border-slate-100">
-                    <GoogleIcon />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-slate-900 text-lg">Google Business</h3>
-                    <Badge
-                      variant={googleConnected ? "default" : "secondary"}
-                      className={
-                        googleConnected
-                          ? "bg-green-100 text-green-700 hover:bg-green-100 mt-1"
-                          : "bg-slate-100 text-slate-600 mt-1"
-                      }
-                    >
-                      {googleConnected ? (
-                        <>
-                          <CheckCircle2 className="w-3 h-3 mr-1" />
-                          Connected
-                        </>
-                      ) : (
-                        <>
-                          <XCircle className="w-3 h-3 mr-1" />
-                          Not Connected
-                        </>
-                      )}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-
-              {googleConnected && googleData?.review_link && (
-                <div className="mb-4 p-3 rounded-xl bg-white border border-slate-100">
-                  <p className="text-xs text-slate-500 mb-1">Your Google Review Link</p>
-                  <div className="flex items-center gap-2">
-                    <code className="text-xs text-slate-600 truncate flex-1">
-                      {googleData.review_link}
-                    </code>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => copyReviewLink(googleData.review_link)}
-                      className="h-8 px-2"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              <p className="text-sm text-slate-600 mb-6">
-                {googleConnected
-                  ? "Your Google Business is connected. Reviews are syncing automatically."
-                  : "Search for your business to connect and start collecting Google reviews."}
-              </p>
-
-              {googleConnected ? (
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    className="flex-1 h-11 rounded-xl border-slate-200"
-                    onClick={() => handleDisconnect("google")}
-                    data-testid="disconnect-google-btn"
-                  >
-                    Disconnect
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="h-11 rounded-xl border-slate-200"
-                    onClick={() => window.open(googleData?.review_link, "_blank")}
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg shadow-blue-500/20"
-                  onClick={() => setShowGoogleModal(true)}
-                  data-testid="connect-google-btn"
-                >
-                  <Search className="w-4 h-4 mr-2" />
-                  Search & Connect
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Facebook Page Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <Card
-            className={`border-2 transition-all ${
-              facebookConnected
-                ? "border-indigo-300 bg-indigo-50/50"
-                : "border-slate-200 bg-white hover:border-indigo-300"
-            }`}
-            data-testid="platform-card-facebook"
-          >
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-white shadow-sm border border-slate-100">
-                    <FacebookIcon />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-slate-900 text-lg">Facebook Page</h3>
-                    <Badge
-                      variant={facebookConnected ? "default" : "secondary"}
-                      className={
-                        facebookConnected
-                          ? "bg-green-100 text-green-700 hover:bg-green-100 mt-1"
-                          : "bg-slate-100 text-slate-600 mt-1"
-                      }
-                    >
-                      {facebookConnected ? (
-                        <>
-                          <CheckCircle2 className="w-3 h-3 mr-1" />
-                          Connected
-                        </>
-                      ) : (
-                        <>
-                          <XCircle className="w-3 h-3 mr-1" />
-                          Not Connected
-                        </>
-                      )}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-
-              {facebookConnected && facebookData?.page_url && (
-                <div className="mb-4 p-3 rounded-xl bg-white border border-slate-100">
-                  <p className="text-xs text-slate-500 mb-1">Your Facebook Review Link</p>
-                  <div className="flex items-center gap-2">
-                    <code className="text-xs text-slate-600 truncate flex-1">
-                      {facebookData.review_link || facebookData.page_url}
-                    </code>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => copyReviewLink(facebookData.review_link || facebookData.page_url)}
-                      className="h-8 px-2"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              <p className="text-sm text-slate-600 mb-6">
-                {facebookConnected
-                  ? "Your Facebook Page is connected. Recommendations are syncing."
-                  : "Search for your Facebook Page to connect and manage recommendations."}
-              </p>
-
-              {facebookConnected ? (
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    className="flex-1 h-11 rounded-xl border-slate-200"
-                    onClick={() => handleDisconnect("facebook")}
-                    data-testid="disconnect-facebook-btn"
-                  >
-                    Disconnect
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="h-11 rounded-xl border-slate-200"
-                    onClick={() => window.open(facebookData?.page_url, "_blank")}
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  className="w-full h-12 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white shadow-lg shadow-indigo-500/20"
-                  onClick={() => setShowFacebookModal(true)}
-                  data-testid="connect-facebook-btn"
-                >
-                  <Search className="w-4 h-4 mr-2" />
-                  Search & Connect
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
-
-      {/* Google Search Modal */}
+      {/* Google Connection Modal */}
       <Dialog open={showGoogleModal} onOpenChange={setShowGoogleModal}>
-        <DialogContent className="max-w-lg" data-testid="google-search-modal">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-3">
-              <GoogleIcon className="w-6 h-6" />
-              Connect Google Business
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-hidden flex flex-col glass-deep rounded-3xl border-0">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b border-slate-100">
+            <DialogTitle className="flex items-center gap-3 text-xl">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-50 to-orange-50 flex items-center justify-center">
+                <GoogleIcon className="w-7 h-7" />
+              </div>
+              <div>
+                <span className="block">Connect Google Business</span>
+                <span className="text-sm font-normal text-slate-500">Search your business name</span>
+              </div>
             </DialogTitle>
-            <DialogDescription>
-              Search for your business name to find and connect your Google Business Profile.
-            </DialogDescription>
           </DialogHeader>
-
-          <div className="space-y-4 mt-4">
-            {/* Search Input */}
+          
+          <div className="px-6 py-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <Input
                 value={googleSearch}
                 onChange={(e) => setGoogleSearch(e.target.value)}
-                placeholder="Search your business name..."
-                className="pl-10 h-12 rounded-xl border-slate-200"
+                placeholder="e.g., Sunrise Cafe, Mumbai"
+                className="pl-12 h-14 text-lg rounded-xl border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
+                autoFocus
                 data-testid="google-search-input"
               />
               {searchingGoogle && (
-                <RefreshCw className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 animate-spin" />
+                <RefreshCw className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-500 animate-spin" />
               )}
-            </div>
-
-            {/* Search Results */}
-            <AnimatePresence>
-              {googleResults.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="space-y-2 max-h-80 overflow-y-auto"
-                >
-                  {googleResults.map((result, index) => (
-                    <motion.button
-                      key={result.place_id}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      onClick={() => connectGoogleBusiness(result)}
-                      disabled={connectingGoogle}
-                      className={`w-full p-4 rounded-xl border-2 text-left transition-all hover:border-blue-400 hover:bg-blue-50 ${
-                        selectedGoogleBusiness?.place_id === result.place_id && connectingGoogle
-                          ? "border-blue-500 bg-blue-50"
-                          : "border-slate-200 bg-white"
-                      }`}
-                      data-testid={`google-result-${index}`}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium text-slate-900">{result.name}</p>
-                            {result.rating && (
-                              <div className="flex items-center gap-1 text-amber-500">
-                                <Star className="w-3 h-3 fill-current" />
-                                <span className="text-xs">{result.rating}</span>
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-1 text-sm text-slate-500 mt-1">
-                            <MapPin className="w-3 h-3" />
-                            {result.address}
-                          </div>
-                        </div>
-                        {selectedGoogleBusiness?.place_id === result.place_id && connectingGoogle ? (
-                          <RefreshCw className="w-5 h-5 text-blue-500 animate-spin" />
-                        ) : (
-                          <ArrowRight className="w-5 h-5 text-slate-400" />
-                        )}
-                      </div>
-                    </motion.button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* No Results */}
-            {googleSearch.length >= 2 && !searchingGoogle && googleResults.length === 0 && (
-              <div className="text-center py-8 text-slate-500">
-                <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p>No businesses found. Try a different search term.</p>
-              </div>
-            )}
-
-            {/* Help Text */}
-            <div className="p-4 rounded-xl bg-blue-50 border border-blue-100">
-              <p className="text-sm text-blue-800">
-                <strong>Tip:</strong> Enter your exact business name as it appears on Google Maps for best results.
-              </p>
             </div>
           </div>
+
+          <div className="flex-1 overflow-y-auto px-6 pb-4 space-y-3 hide-scrollbar">
+            <AnimatePresence mode="wait">
+              {googleResults.length > 0 ? (
+                googleResults.map((result, index) => (
+                  <SearchResultCard
+                    key={result.place_id || index}
+                    result={result}
+                    platform="google"
+                    onSelect={setSelectedGoogleBusiness}
+                    isSelected={selectedGoogleBusiness?.place_id === result.place_id}
+                    isConnecting={connectingGoogle}
+                  />
+                ))
+              ) : googleSearch.length >= 2 && !searchingGoogle ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center py-12"
+                >
+                  <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
+                    <Search className="w-8 h-8 text-slate-400" />
+                  </div>
+                  <p className="text-slate-500 font-medium">No businesses found</p>
+                  <p className="text-slate-400 text-sm mt-1">Try a different search term</p>
+                </motion.div>
+              ) : googleSearch.length < 2 ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center py-12"
+                >
+                  <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-4">
+                    <GoogleIcon className="w-8 h-8" />
+                  </div>
+                  <p className="text-slate-600 font-medium">Search for your business</p>
+                  <p className="text-slate-400 text-sm mt-1">Enter at least 2 characters to search</p>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+          </div>
+
+          {selectedGoogleBusiness && (
+            <div className="px-6 pb-6 pt-2 border-t border-slate-100">
+              <Button
+                onClick={connectGoogleBusiness}
+                disabled={connectingGoogle}
+                className="w-full h-14 rounded-xl text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-lg shadow-blue-500/30"
+                data-testid="confirm-google-connect"
+              >
+                {connectingGoogle ? (
+                  <>
+                    <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
+                    Connecting...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-5 h-5 mr-2" />
+                    Connect {selectedGoogleBusiness.name?.substring(0, 20)}...
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 
-      {/* Facebook Search Modal */}
+      {/* Facebook Connection Modal */}
       <Dialog open={showFacebookModal} onOpenChange={setShowFacebookModal}>
-        <DialogContent className="max-w-lg" data-testid="facebook-search-modal">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-3">
-              <FacebookIcon className="w-6 h-6" />
-              Connect Facebook Page
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-hidden flex flex-col glass-deep rounded-3xl border-0">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b border-slate-100">
+            <DialogTitle className="flex items-center gap-3 text-xl">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
+                <FacebookIcon className="w-7 h-7" />
+              </div>
+              <div>
+                <span className="block">Connect Facebook Page</span>
+                <span className="text-sm font-normal text-slate-500">Search your page name</span>
+              </div>
             </DialogTitle>
-            <DialogDescription>
-              Search for your Facebook Page to connect and manage recommendations.
-            </DialogDescription>
           </DialogHeader>
-
-          <div className="space-y-4 mt-4">
-            {/* Search Input */}
+          
+          <div className="px-6 py-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <Input
                 value={facebookSearch}
                 onChange={(e) => setFacebookSearch(e.target.value)}
-                placeholder="Search your Facebook Page name..."
-                className="pl-10 h-12 rounded-xl border-slate-200"
+                placeholder="e.g., My Business Page"
+                className="pl-12 h-14 text-lg rounded-xl border-slate-200 focus:border-indigo-400 focus:ring-indigo-400/20"
+                autoFocus
                 data-testid="facebook-search-input"
               />
               {searchingFacebook && (
-                <RefreshCw className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 animate-spin" />
+                <RefreshCw className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-500 animate-spin" />
               )}
-            </div>
-
-            {/* Search Results */}
-            <AnimatePresence>
-              {facebookResults.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="space-y-2 max-h-80 overflow-y-auto"
-                >
-                  {facebookResults.map((result, index) => (
-                    <motion.button
-                      key={result.page_id}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      onClick={() => connectFacebookPage(result)}
-                      disabled={connectingFacebook}
-                      className={`w-full p-4 rounded-xl border-2 text-left transition-all hover:border-indigo-400 hover:bg-indigo-50 ${
-                        selectedFacebookPage?.page_id === result.page_id && connectingFacebook
-                          ? "border-indigo-500 bg-indigo-50"
-                          : "border-slate-200 bg-white"
-                      }`}
-                      data-testid={`facebook-result-${index}`}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium text-slate-900">{result.name}</p>
-                          </div>
-                          <div className="flex items-center gap-3 text-sm text-slate-500 mt-1">
-                            <span className="flex items-center gap-1">
-                              <Globe className="w-3 h-3" />
-                              {result.category}
-                            </span>
-                            {result.likes && (
-                              <span className="flex items-center gap-1">
-                                <ThumbsUp className="w-3 h-3" />
-                                {result.likes.toLocaleString()} likes
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        {selectedFacebookPage?.page_id === result.page_id && connectingFacebook ? (
-                          <RefreshCw className="w-5 h-5 text-indigo-500 animate-spin" />
-                        ) : (
-                          <ArrowRight className="w-5 h-5 text-slate-400" />
-                        )}
-                      </div>
-                    </motion.button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* No Results */}
-            {facebookSearch.length >= 2 && !searchingFacebook && facebookResults.length === 0 && (
-              <div className="text-center py-8 text-slate-500">
-                <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p>No pages found. Try a different search term.</p>
-              </div>
-            )}
-
-            {/* Help Text */}
-            <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-100">
-              <p className="text-sm text-indigo-800">
-                <strong>Tip:</strong> Enter your Facebook Page name exactly as it appears on Facebook for best results.
-              </p>
             </div>
           </div>
+
+          <div className="flex-1 overflow-y-auto px-6 pb-4 space-y-3 hide-scrollbar">
+            <AnimatePresence mode="wait">
+              {facebookResults.length > 0 ? (
+                facebookResults.map((result, index) => (
+                  <SearchResultCard
+                    key={result.id || index}
+                    result={result}
+                    platform="facebook"
+                    onSelect={setSelectedFacebookPage}
+                    isSelected={selectedFacebookPage?.id === result.id}
+                    isConnecting={connectingFacebook}
+                  />
+                ))
+              ) : facebookSearch.length >= 2 && !searchingFacebook ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center py-12"
+                >
+                  <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
+                    <Search className="w-8 h-8 text-slate-400" />
+                  </div>
+                  <p className="text-slate-500 font-medium">No pages found</p>
+                  <p className="text-slate-400 text-sm mt-1">Try a different search term</p>
+                </motion.div>
+              ) : facebookSearch.length < 2 ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center py-12"
+                >
+                  <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center mx-auto mb-4">
+                    <FacebookIcon className="w-8 h-8" />
+                  </div>
+                  <p className="text-slate-600 font-medium">Search for your page</p>
+                  <p className="text-slate-400 text-sm mt-1">Enter at least 2 characters to search</p>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+          </div>
+
+          {selectedFacebookPage && (
+            <div className="px-6 pb-6 pt-2 border-t border-slate-100">
+              <Button
+                onClick={connectFacebookPage}
+                disabled={connectingFacebook}
+                className="w-full h-14 rounded-xl text-lg font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-500/30"
+                data-testid="confirm-facebook-connect"
+              >
+                {connectingFacebook ? (
+                  <>
+                    <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
+                    Connecting...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-5 h-5 mr-2" />
+                    Connect {selectedFacebookPage.name?.substring(0, 20)}...
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
-
-      {/* Help Section */}
-      <Card className="glass-card border-0">
-        <CardHeader>
-          <CardTitle className="text-lg">Need Help?</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-xl bg-slate-50">
-              <h4 className="font-medium text-slate-900 mb-2">Google Business Help</h4>
-              <p className="text-sm text-slate-600">
-                Search for your business name exactly as it appears on Google Maps. 
-                If you can&apos;t find it, make sure you have a Google Business Profile set up.
-              </p>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-50">
-              <h4 className="font-medium text-slate-900 mb-2">Facebook Page Help</h4>
-              <p className="text-sm text-slate-600">
-                Search for your Facebook Page name. Customers will be redirected 
-                to your Facebook Page to leave recommendations.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
