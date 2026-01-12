@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import axios from "axios";
 import { toast } from "sonner";
 import { AuthContext } from "../App";
@@ -13,23 +14,14 @@ import {
   Shield,
   CheckCircle2,
   XCircle,
-  ExternalLink,
   RefreshCw,
   Eye,
   EyeOff,
-  Copy,
-  HelpCircle,
-  Sparkles,
-  ArrowRight,
-  AlertCircle,
   Info,
+  ArrowRight,
+  Sparkles,
+  AlertCircle,
 } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../components/ui/accordion";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -120,20 +112,16 @@ export default function ApiSettings() {
     try {
       const response = await axios.post(`${API}/settings/test-connection/${platform}`, {}, { withCredentials: true });
       if (response.data.success) {
-        toast.success(`✅ ${platform === "google" ? "Google" : "Facebook"} connection successful!`);
+        toast.success(`${platform === "google" ? "Google" : "Facebook"} connection successful!`);
       } else {
-        toast.error(`❌ Connection failed: ${response.data.error || "Unknown error"}`);
+        toast.error(`Connection failed: ${response.data.error || "Unknown error"}`);
       }
     } catch (error) {
-      toast.error(`❌ Connection failed: ${error.response?.data?.detail || error.message}`);
+      const errorMsg = error.response?.data?.detail || error.message || "Connection failed";
+      toast.error(typeof errorMsg === 'string' ? errorMsg : "Connection failed");
     } finally {
       setTesting({ ...testing, [platform]: false });
     }
-  };
-
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    toast.success("Copied to clipboard!");
   };
 
   if (loading) {
@@ -154,45 +142,78 @@ export default function ApiSettings() {
           </div>
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
-              API Credentials
+              Advanced Settings
             </h1>
             <p className="text-slate-600">
-              Connect your own Google & Facebook accounts for real reviews
+              Optional API credentials for advanced features
             </p>
           </div>
         </div>
       </div>
 
-      {/* Current Status Banner */}
+      {/* Important Notice */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`p-4 rounded-2xl border-2 ${
-          integrationStatus?.overall_mode === "production"
-            ? "bg-emerald-50 border-emerald-200"
-            : "bg-amber-50 border-amber-200"
-        }`}
+        className="p-4 rounded-2xl border-2 bg-emerald-50 border-emerald-200"
       >
-        <div className="flex items-center gap-3">
-          {integrationStatus?.overall_mode === "production" ? (
-            <>
-              <CheckCircle2 className="w-6 h-6 text-emerald-600" />
-              <div>
-                <p className="font-semibold text-emerald-800">Live Mode Active</p>
-                <p className="text-sm text-emerald-700">Your reviews are syncing from real Google/Facebook accounts</p>
-              </div>
-            </>
-          ) : (
-            <>
-              <AlertCircle className="w-6 h-6 text-amber-600" />
-              <div>
-                <p className="font-semibold text-amber-800">Demo Mode</p>
-                <p className="text-sm text-amber-700">Add your API credentials below to enable live review sync</p>
-              </div>
-            </>
-          )}
+        <div className="flex items-start gap-3">
+          <CheckCircle2 className="w-6 h-6 text-emerald-600 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-emerald-800">You don&apos;t need this page!</p>
+            <p className="text-sm text-emerald-700 mt-1">
+              Review Master works perfectly without API keys. Just go to{" "}
+              <Link to="/integrations" className="underline font-medium">Integrations</Link>{" "}
+              and paste your Google/Facebook review link. That&apos;s all you need!
+            </p>
+          </div>
         </div>
       </motion.div>
+
+      {/* When to use this */}
+      <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+        <div className="flex items-start gap-3">
+          <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium text-amber-800">When would I need API keys?</p>
+            <p className="text-sm text-amber-700 mt-1">
+              API keys are only needed if you want to automatically fetch existing reviews from Google/Facebook 
+              into your dashboard. Most users don&apos;t need this feature.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Link to Integrations */}
+      <Link to="/integrations">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-6 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white cursor-pointer hover:from-indigo-600 hover:to-purple-700 transition-all"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                <Sparkles className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg">Simple Setup (Recommended)</h3>
+                <p className="text-indigo-100 text-sm">
+                  Connect Google/Facebook in 30 seconds - no API keys needed
+                </p>
+              </div>
+            </div>
+            <ArrowRight className="w-6 h-6" />
+          </div>
+        </motion.div>
+      </Link>
+
+      {/* Divider */}
+      <div className="flex items-center gap-4 py-4">
+        <div className="flex-1 h-px bg-slate-200" />
+        <span className="text-sm text-slate-400 font-medium">Advanced Options Below</span>
+        <div className="flex-1 h-px bg-slate-200" />
+      </div>
 
       {/* Google API Settings */}
       <motion.div
@@ -209,18 +230,18 @@ export default function ApiSettings() {
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Google Places API</CardTitle>
-                  <p className="text-sm text-slate-500">Enable real Google Business reviews</p>
+                  <p className="text-sm text-slate-500">For automatic review fetching</p>
                 </div>
               </div>
-              <Badge className={integrationStatus?.google?.real_api_enabled 
+              <Badge className={credentials.google_api_key
                 ? "bg-emerald-100 text-emerald-700" 
                 : "bg-slate-100 text-slate-600"
               }>
-                {integrationStatus?.google?.real_api_enabled ? "Active" : "Not Configured"}
+                {credentials.google_api_key ? "Configured" : "Not Set"}
               </Badge>
             </div>
           </CardHeader>
-          <CardContent className="p-6 space-y-6">
+          <CardContent className="p-6 space-y-4">
             {/* API Key Input */}
             <div className="space-y-2">
               <Label className="text-slate-700 font-medium flex items-center gap-2">
@@ -233,32 +254,30 @@ export default function ApiSettings() {
                   value={credentials.google_api_key}
                   onChange={(e) => setCredentials({ ...credentials, google_api_key: e.target.value })}
                   placeholder="AIzaSy..."
-                  className="pr-20 h-12 rounded-xl border-slate-200 font-mono text-sm"
+                  className="pr-12 h-12 rounded-xl border-slate-200 font-mono text-sm"
                   data-testid="google-api-key-input"
                 />
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowKeys({ ...showKeys, google: !showKeys.google })}
-                    className="h-8 w-8 p-0"
-                  >
-                    {showKeys.google ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </Button>
-                  {credentials.google_api_key && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => copyToClipboard(credentials.google_api_key)}
-                      className="h-8 w-8 p-0"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                  )}
-                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowKeys({ ...showKeys, google: !showKeys.google })}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+                >
+                  {showKeys.google ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </Button>
               </div>
+              <p className="text-xs text-slate-500">
+                Get this from{" "}
+                <a 
+                  href="https://console.cloud.google.com/apis/credentials" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline"
+                >
+                  Google Cloud Console
+                </a>
+              </p>
             </div>
 
             {/* Action Buttons */}
@@ -280,86 +299,9 @@ export default function ApiSettings() {
                 data-testid="test-google-btn"
               >
                 {testing.google ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
-                Test Connection
+                Test
               </Button>
             </div>
-
-            {/* Setup Instructions */}
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="google-setup" className="border rounded-xl px-4">
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-2 text-sm font-medium text-indigo-600">
-                    <HelpCircle className="w-4 h-4" />
-                    How to get your Google Places API Key (5 minutes)
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-4 py-4">
-                    <div className="flex gap-3">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm flex-shrink-0">1</div>
-                      <div>
-                        <p className="font-medium text-slate-900">Go to Google Cloud Console</p>
-                        <p className="text-sm text-slate-600 mt-1">Click the button below to open Google Cloud Console</p>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="mt-2 rounded-lg"
-                          onClick={() => window.open("https://console.cloud.google.com/apis/library/places-backend.googleapis.com", "_blank")}
-                        >
-                          Open Google Cloud Console
-                          <ExternalLink className="w-3 h-3 ml-2" />
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-3">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm flex-shrink-0">2</div>
-                      <div>
-                        <p className="font-medium text-slate-900">Enable Places API</p>
-                        <p className="text-sm text-slate-600 mt-1">Click &quot;Enable&quot; to activate the Places API for your project</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-3">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm flex-shrink-0">3</div>
-                      <div>
-                        <p className="font-medium text-slate-900">Create API Key</p>
-                        <p className="text-sm text-slate-600 mt-1">Go to &quot;Credentials&quot; → &quot;Create Credentials&quot; → &quot;API Key&quot;</p>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="mt-2 rounded-lg"
-                          onClick={() => window.open("https://console.cloud.google.com/apis/credentials", "_blank")}
-                        >
-                          Open Credentials Page
-                          <ExternalLink className="w-3 h-3 ml-2" />
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-3">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm flex-shrink-0">4</div>
-                      <div>
-                        <p className="font-medium text-slate-900">Copy & Paste</p>
-                        <p className="text-sm text-slate-600 mt-1">Copy your new API key and paste it above</p>
-                      </div>
-                    </div>
-
-                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4">
-                      <div className="flex items-start gap-2">
-                        <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <p className="font-medium text-amber-800">Free Tier Available</p>
-                          <p className="text-sm text-amber-700 mt-1">
-                            Google offers $200/month free credit. Most small businesses stay within the free tier.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
           </CardContent>
         </Card>
       </motion.div>
@@ -379,18 +321,18 @@ export default function ApiSettings() {
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Facebook Graph API</CardTitle>
-                  <p className="text-sm text-slate-500">Enable real Facebook Page reviews</p>
+                  <p className="text-sm text-slate-500">For automatic review fetching</p>
                 </div>
               </div>
-              <Badge className={integrationStatus?.facebook?.real_api_enabled 
+              <Badge className={credentials.facebook_app_id && credentials.facebook_app_secret
                 ? "bg-emerald-100 text-emerald-700" 
                 : "bg-slate-100 text-slate-600"
               }>
-                {integrationStatus?.facebook?.real_api_enabled ? "Active" : "Not Configured"}
+                {credentials.facebook_app_id && credentials.facebook_app_secret ? "Configured" : "Not Set"}
               </Badge>
             </div>
           </CardHeader>
-          <CardContent className="p-6 space-y-6">
+          <CardContent className="p-6 space-y-4">
             {/* App ID Input */}
             <div className="space-y-2">
               <Label className="text-slate-700 font-medium flex items-center gap-2">
@@ -432,6 +374,17 @@ export default function ApiSettings() {
                   {showKeys.facebook ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </Button>
               </div>
+              <p className="text-xs text-slate-500">
+                Get this from{" "}
+                <a 
+                  href="https://developers.facebook.com/apps" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline"
+                >
+                  Facebook Developers
+                </a>
+              </p>
             </div>
 
             {/* Action Buttons */}
@@ -443,7 +396,7 @@ export default function ApiSettings() {
                 data-testid="save-facebook-btn"
               >
                 {saving ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Shield className="w-4 h-4 mr-2" />}
-                Save Credentials
+                Save
               </Button>
               <Button
                 variant="outline"
@@ -453,117 +406,11 @@ export default function ApiSettings() {
                 data-testid="test-facebook-btn"
               >
                 {testing.facebook ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
-                Test Connection
+                Test
               </Button>
             </div>
-
-            {/* Setup Instructions */}
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="facebook-setup" className="border rounded-xl px-4">
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-2 text-sm font-medium text-indigo-600">
-                    <HelpCircle className="w-4 h-4" />
-                    How to get Facebook App credentials (10 minutes)
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-4 py-4">
-                    <div className="flex gap-3">
-                      <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm flex-shrink-0">1</div>
-                      <div>
-                        <p className="font-medium text-slate-900">Go to Facebook Developers</p>
-                        <p className="text-sm text-slate-600 mt-1">Open the Facebook for Developers portal</p>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="mt-2 rounded-lg"
-                          onClick={() => window.open("https://developers.facebook.com/apps", "_blank")}
-                        >
-                          Open Facebook Developers
-                          <ExternalLink className="w-3 h-3 ml-2" />
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-3">
-                      <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm flex-shrink-0">2</div>
-                      <div>
-                        <p className="font-medium text-slate-900">Create a New App</p>
-                        <p className="text-sm text-slate-600 mt-1">Click &quot;Create App&quot; → Choose &quot;Business&quot; type → Fill in details</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-3">
-                      <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm flex-shrink-0">3</div>
-                      <div>
-                        <p className="font-medium text-slate-900">Get App ID &amp; Secret</p>
-                        <p className="text-sm text-slate-600 mt-1">Go to &quot;Settings&quot; → &quot;Basic&quot; to find your App ID and App Secret</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-3">
-                      <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm flex-shrink-0">4</div>
-                      <div>
-                        <p className="font-medium text-slate-900">Add Page Reviews Permission</p>
-                        <p className="text-sm text-slate-600 mt-1">In your app, go to &quot;Add Products&quot; → Enable &quot;Facebook Login&quot; and request &quot;pages_read_engagement&quot; permission</p>
-                      </div>
-                    </div>
-
-                    <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 mt-4">
-                      <div className="flex items-start gap-2">
-                        <Info className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <p className="font-medium text-indigo-800">No Coding Required</p>
-                          <p className="text-sm text-indigo-700 mt-1">
-                            Just copy the App ID and Secret - we handle all the technical integration automatically.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
           </CardContent>
         </Card>
-      </motion.div>
-
-      {/* Help Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="p-6 rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100"
-      >
-        <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center">
-            <Sparkles className="w-6 h-6 text-indigo-600" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-slate-900 mb-1">Don&apos;t have API credentials?</h3>
-            <p className="text-slate-600 text-sm mb-3">
-              No problem! Review Master works perfectly in Demo Mode. You can still:
-            </p>
-            <ul className="space-y-2 text-sm text-slate-600">
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                Collect reviews via QR codes
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                Direct customers to Google/Facebook review pages
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                Generate AI-powered responses
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                Track private feedback from unhappy customers
-              </li>
-            </ul>
-          </div>
-        </div>
       </motion.div>
     </div>
   );
