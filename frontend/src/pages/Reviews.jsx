@@ -151,26 +151,6 @@ export default function Reviews() {
     }
   };
 
-  const getSentimentIcon = (sentiment) => {
-    switch (sentiment) {
-      case "positive":
-        return <ThumbsUp className="w-4 h-4 text-green-500" />;
-      case "negative":
-        return <ThumbsDown className="w-4 h-4 text-red-500" />;
-      default:
-        return <Minus className="w-4 h-4 text-slate-400" />;
-    }
-  };
-
-  const getPlatformBadge = (platform) => {
-    const colors = {
-      google: "bg-blue-100 text-blue-700",
-      facebook: "bg-indigo-100 text-indigo-700",
-      direct: "bg-teal-100 text-teal-700",
-    };
-    return colors[platform] || "bg-slate-100 text-slate-700";
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
