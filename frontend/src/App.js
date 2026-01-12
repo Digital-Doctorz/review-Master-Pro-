@@ -235,6 +235,16 @@ function AppRouter() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/api-settings"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <ApiSettings />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }
