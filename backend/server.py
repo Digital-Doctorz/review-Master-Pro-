@@ -1778,6 +1778,156 @@ async def test_webhook(
     }
 
 
+# ============ API CREDENTIALS SETTINGS ============
+
+class ApiCredentials(BaseModel):
+    google_api_key: Optional[str] = None
+    facebook_app_id: Optional[str] = None
+    facebook_app_secret: Optional[str] = None
+
+@api_router.get("/settings/api-credentials")
+async def get_api_credentials(user: User = Depends(get_current_user)):
+    """Get API credentials for user's business (masked)"""
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    creds = await db.api_credentials.find_one(
+        {"business_id": business["business_id"]},
+        {"_id": 0}
+    )
+    
+    if not creds:
+        return {
+            "google_api_key": "",
+            "facebook_app_id": "",
+            "facebook_app_secret": ""
+        }
+    
+    # Return masked values for display
+    return {
+        "google_api_key": creds.get("google_api_key", ""),
+        "facebook_app_id": creds.get("facebook_app_id", ""),
+        "facebook_app_secret": creds.get("facebook_app_secret", ""),
+        "google_configured": bool(creds.get("google_api_key")),
+        "facebook_configured": bool(creds.get("facebook_app_id") and creds.get("facebook_app_secret"))
+    }
+
+
+@api_router.put("/settings/api-credentials")
+async def update_api_credentials(
+    credentials: ApiCredentials,
+    user: User = Depends(get_current_user)
+):
+    """Update API credentials for user's business"""
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    update_data = {
+        "business_id": business["business_id"],
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    if credentials.google_api_key is not None:
+        update_data["google_api_key"] = credentials.google_api_key
+    if credentials.facebook_app_id is not None:
+        update_data["facebook_app_id"] = credentials.facebook_app_id
+    if credentials.facebook_app_secret is not None:
+        update_data["facebook_app_secret"] = credentials.facebook_app_secret
+    
+    await db.api_credentials.update_one(
+        {"business_id": business["business_id"]},
+        {"$set": update_data},
+        upsert=True
+    )
+    
+    return {"message": "API credentials updated"}
+
+
+@api_router.post("/settings/test-connection/{platform}")
+async def test_platform_connection(
+    platform: str,
+    user: User = Depends(get_current_user)
+):
+    """Test connection to platform API using stored credentials"""
+    if platform not in ["google", "facebook"]:
+        raise HTTPException(status_code=400, detail="Invalid platform")
+    
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    creds = await db.api_credentials.find_one(
+        {"business_id": business["business_id"]},
+        {"_id": 0}
+    )
+    
+    if not creds:
+        return {"success": False, "error": "No credentials configured"}
+    
+    if platform == "google":
+        api_key = creds.get("google_api_key")
+        if not api_key:
+            return {"success": False, "error": "Google API key not configured"}
+        
+        # Test the API key with a simple request
+        try:
+            async with httpx.AsyncClient() as client_http:
+                # Test with a simple places text search
+                resp = await client_http.get(
+                    "https://maps.googleapis.com/maps/api/place/textsearch/json",
+                    params={
+                        "query": "coffee shop",
+                        "key": api_key
+                    },
+                    timeout=10
+                )
+                data = resp.json()
+                
+                if data.get("status") == "OK":
+                    return {"success": True, "message": "Google API key is valid"}
+                elif data.get("status") == "REQUEST_DENIED":
+                    return {"success": False, "error": "Invalid API key or Places API not enabled"}
+                else:
+                    return {"success": False, "error": f"API error: {data.get('status')}"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    elif platform == "facebook":
+        app_id = creds.get("facebook_app_id")
+        app_secret = creds.get("facebook_app_secret")
+        
+        if not app_id or not app_secret:
+            return {"success": False, "error": "Facebook credentials not fully configured"}
+        
+        # Test by getting an app access token
+        try:
+            async with httpx.AsyncClient() as client_http:
+                resp = await client_http.get(
+                    "https://graph.facebook.com/oauth/access_token",
+                    params={
+                        "client_id": app_id,
+                        "client_secret": app_secret,
+                        "grant_type": "client_credentials"
+                    },
+                    timeout=10
+                )
+                
+                if resp.status_code == 200:
+                    data = resp.json()
+                    if data.get("access_token"):
+                        return {"success": True, "message": "Facebook credentials are valid"}
+                    else:
+                        return {"success": False, "error": "No access token returned"}
+                else:
+                    return {"success": False, "error": f"API error: {resp.status_code}"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    return {"success": False, "error": "Unknown error"}
+
+
 # ============ ROOT & HEALTH ============
 
 @api_router.get("/")
