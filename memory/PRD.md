@@ -5,9 +5,33 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## What's Been Implemented (January 2025)
 
+### MVP Features v3.2 - Self-Service API Credentials & Enhanced UX:
+
+**NEW - API Credentials Self-Service (January 12, 2025):**
+- [x] **API Settings Page** - `/app/frontend/src/pages/ApiSettings.jsx` - Users can enter their own Google Places API key and Facebook App credentials
+- [x] **Step-by-Step Instructions** - Accordion-style guides with direct links to Google Cloud Console and Facebook Developers
+- [x] **Test Connection** - Verify API credentials work before saving
+- [x] **Demo/Production Mode Banner** - Shows current integration status
+
+**NEW - Enhanced Integrations Page (January 12, 2025):**
+- [x] **Magic Search Modals** - Search modals for Google Business and Facebook Page discovery
+- [x] **User-Friendly Business Names** - Shows connected business names instead of cryptic IDs
+- [x] **Manual URL Setup** - Option to manually enter Google review link or Facebook page URL
+- [x] **Improved Status Indicators** - Clear connected/disconnected states with sync timestamps
+
+**NEW - Enhanced Public Review Flow (January 12, 2025):**
+- [x] **Channel Selection** - Customers choose where to post (Google, Facebook, or Direct)
+- [x] **Copy & Redirect** - Clear instructions to copy review text and redirect to actual platform review page
+- [x] **Platform Review Links** - Auto-redirect to Google Maps review page or Facebook reviews when selected
+
+**Backend Endpoints Added:**
+- `GET /api/settings/api-credentials` - Get user's saved API credentials
+- `PUT /api/settings/api-credentials` - Save Google/Facebook API credentials
+- `POST /api/settings/test-connection/{platform}` - Test API credentials
+
 ### MVP Features v3.1 - Bug Fixes & Code Quality:
 
-**NEW - Bug Fixes (January 12, 2025):**
+**Bug Fixes (January 12, 2025):**
 - [x] **[object Object] Bug Fixed** - Dashboard error handling improved, all API responses return proper data structures
 - [x] **ReviewCard Component Extracted** - `/app/frontend/src/components/ReviewCard.jsx` - Fixes unstable-nested-components ESLint error
 - [x] **Code Refactoring** - Reviews.jsx cleaned up with standalone ReviewCard component
@@ -47,19 +71,20 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ### For Business Owners:
 1. **60-Second Setup** - Connect Google/Facebook with just your business name
-2. **Smart Review Routing** - Low ratings (1-3 stars) go to private inbox, not public
-3. **AI Smart Replies** - Generate professional responses in seconds
-4. **QR Code Magic** - Print QR codes for easy customer reviews
-5. **Real-time Notifications** - Get alerted for urgent reviews via webhook/email
-6. **Analytics Dashboard** - Track sentiment trends and response rates
+2. **Self-Service API Credentials** - Enter your own Google Places API key and Facebook credentials
+3. **Smart Review Routing** - Low ratings (1-3 stars) go to private inbox, not public
+4. **AI Smart Replies** - Generate professional responses in seconds
+5. **QR Code Magic** - Print QR codes for easy customer reviews
+6. **Real-time Notifications** - Get alerted for urgent reviews via webhook/email
+7. **Analytics Dashboard** - Track sentiment trends and response rates
 
 ### For Customers:
 1. **AI Write Assist** - Help writing reviews with AI
 2. **Platform Choice** - Select where to post (Google, Facebook, or Direct)
-3. **Confetti Celebration** - Fun animation for 5-star ratings
-4. **Copy & Go** - Easy instructions for posting on external platforms
+3. **Copy & Redirect** - Automatic redirect to Google Maps or Facebook review page
+4. **Confetti Celebration** - Fun animation for 5-star ratings
 
-## API Endpoints (v3.0.0)
+## API Endpoints (v3.2.0)
 
 ### Core
 - `GET /api/` - Returns "Review Master API" with version 3.0.0
@@ -75,6 +100,11 @@ Build Review Master - a zero-friction review management platform focused on Goog
 - `GET /api/facebook/search?query=` - Magic search Facebook Pages
 - `POST /api/facebook/connect` - Connect Facebook Page
 - `GET /api/integration-status` - Get integration status (includes email)
+
+### API Credentials (NEW)
+- `GET /api/settings/api-credentials` - Get user's saved credentials
+- `PUT /api/settings/api-credentials` - Save Google/Facebook credentials
+- `POST /api/settings/test-connection/{platform}` - Test API credentials
 
 ### Reviews
 - `GET /api/reviews` - Get reviews with filters
