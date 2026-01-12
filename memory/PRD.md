@@ -205,9 +205,10 @@ FACEBOOK_APP_SECRET=your_fb_secret
 ```
 
 ## Testing
-- **Test Reports**: `/app/test_reports/iteration_11.json`
+- **Test Reports**: `/app/test_reports/iteration_12.json`
 - **Test Files**: 
-  - `/app/tests/test_iteration11_simplified_integrations.py` (15 tests) - Simplified integration flow
+  - `/app/tests/test_iteration12_instructions_update.py` (16 tests) - Updated instructions & clipboard fix
+  - `/app/tests/test_iteration11_simplified_integrations.py` (15 tests)
   - `/app/tests/test_iteration10_object_error.py` (18 tests)
   - `/app/tests/test_iteration9_features.py` (24 tests)
   - `/app/tests/test_bug_fixes_iteration8.py` (14 tests)
@@ -228,8 +229,10 @@ FACEBOOK_APP_SECRET=your_fb_secret
 - [x] **Self-service API credentials** (Jan 12, 2025)
 - [x] **Enhanced Integrations page with Magic Search** (Jan 12, 2025)
 - [x] **Public review channel selection and redirect** (Jan 12, 2025)
-- [x] **SUPER SIMPLE Integration** (Jan 12, 2025) - No API keys needed, just paste review link
-- [x] **Clipboard fallback** (Jan 12, 2025) - Fixed blocked Clipboard API error
+- [x] **SUPER SIMPLE Integration** (Jan 12, 2025) - No API keys needed
+- [x] **Clipboard fallback** (Jan 12, 2025) - Fixed blocked Clipboard API
+- [x] **Updated Google/Facebook instructions** (Jan 12, 2025) - Clear step-by-step with clickable links
+- [x] **Improved public review copy flow** (Jan 12, 2025) - Step locking for better UX
 
 ### P1 - High Priority
 - [ ] WhatsApp notifications for urgent reviews
