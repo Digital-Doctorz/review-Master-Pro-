@@ -294,11 +294,14 @@ export default function PublicReview() {
   };
 
   const getPlatformReviewLink = (platform) => {
-    if (platform === "google" && business?.google_review_link) {
-      return business.google_review_link;
+    if (platform === "google") {
+      return business?.google_review_link || business?.platforms?.google?.review_link;
     }
-    if (platform === "facebook" && business?.platforms?.facebook?.review_link) {
-      return business.platforms.facebook.review_link;
+    if (platform === "facebook") {
+      // Check multiple possible locations for Facebook review link
+      return business?.facebook_page_url 
+        || business?.platforms?.facebook?.review_link 
+        || business?.platforms?.facebook?.page_url;
     }
     return null;
   };
@@ -306,7 +309,11 @@ export default function PublicReview() {
   const openPlatformReview = (platform) => {
     const link = getPlatformReviewLink(platform);
     if (link) {
-      window.open(link, "_blank");
+      // For Facebook, append /reviews if not already there
+      const finalLink = platform === "facebook" && !link.includes("/reviews") 
+        ? `${link.replace(/\/$/, "")}/reviews` 
+        : link;
+      window.open(finalLink, "_blank");
     }
   };
 
