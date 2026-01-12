@@ -138,17 +138,22 @@ Build Review Master - a zero-friction review management platform focused on Goog
 ├── frontend/
 │   └── src/
 │       ├── components/
-│       │   ├── AnimatedLogo.jsx  # NEW animated logo
+│       │   ├── AnimatedLogo.jsx  # Animated logo
+│       │   ├── ReviewCard.jsx    # NEW standalone component
 │       │   └── Layout.jsx
 │       ├── pages/
 │       │   ├── Landing.jsx       # Rebranded
 │       │   ├── Dashboard.jsx
-│       │   ├── NotificationSettings.jsx  # NEW
+│       │   ├── Integrations.jsx  # ENHANCED with Magic Search
+│       │   ├── ApiSettings.jsx   # NEW API credentials page
+│       │   ├── NotificationSettings.jsx
 │       │   ├── WebhookSettings.jsx
-│       │   └── PublicReview.jsx  # Enhanced
+│       │   └── PublicReview.jsx  # ENHANCED with channel selection
 │       └── App.js
 └── tests/
-    ├── test_rebrand_and_notifications.py  # NEW
+    ├── test_iteration9_features.py  # NEW (24 tests)
+    ├── test_bug_fixes_iteration8.py
+    ├── test_rebrand_and_notifications.py
     └── test_notifications_and_public_review.py
 ```
 
@@ -164,15 +169,16 @@ WEBHOOK_BASE_URL=https://your-domain.com
 RESEND_API_KEY=re_your_key
 SENDER_EMAIL=notifications@yourdomain.com
 
-# Optional - Real API Integration
+# Optional - Real API Integration (users can also set via UI)
 GOOGLE_PLACES_API_KEY=your_google_key
 FACEBOOK_APP_ID=your_fb_app_id
 FACEBOOK_APP_SECRET=your_fb_secret
 ```
 
 ## Testing
-- **Test Reports**: `/app/test_reports/iteration_8.json`
+- **Test Reports**: `/app/test_reports/iteration_9.json`
 - **Test Files**: 
+  - `/app/tests/test_iteration9_features.py` (24 tests) - NEW
   - `/app/tests/test_bug_fixes_iteration8.py` (14 tests)
   - `/app/tests/test_rebrand_and_notifications.py` (11 tests)
   - `/app/tests/test_notifications_and_public_review.py` (21 tests)
