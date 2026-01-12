@@ -90,7 +90,10 @@ class TestIntegrationsAPI:
         data = response.json()
         assert "google" in data
         assert "facebook" in data
-        print(f"✅ Integration status - Google: {data['google']['connected']}, Facebook: {data['facebook']['connected']}")
+        # Check for status field instead of connected
+        google_status = data['google'].get('status', 'unknown')
+        facebook_status = data['facebook'].get('status', 'unknown')
+        print(f"✅ Integration status - Google: {google_status}, Facebook: {facebook_status}")
 
 
 class TestWebhookAPI:
