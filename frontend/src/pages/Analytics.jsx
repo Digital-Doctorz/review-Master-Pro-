@@ -87,16 +87,16 @@ export default function Analytics() {
       ]
     : [];
 
-  const ratingData = analytics
+  const ratingData = analytics?.rating_distribution
     ? Object.entries(analytics.rating_distribution).map(([rating, count]) => ({
         rating: `${rating} Star`,
-        count,
+        count: count || 0,
       }))
     : [];
 
-  const platformData = analytics
+  const platformData = analytics?.platform_breakdown
     ? Object.entries(analytics.platform_breakdown)
-        .filter(([_, count]) => count > 0)
+        .filter(([, count]) => count > 0)
         .map(([platform, count]) => ({
           name: platform.charAt(0).toUpperCase() + platform.slice(1),
           value: count,
