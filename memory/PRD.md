@@ -5,16 +5,23 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## What's Been Implemented (January 2025)
 
+### MVP Features v3.1 - Bug Fixes & Code Quality:
+
+**NEW - Bug Fixes (January 12, 2025):**
+- [x] **[object Object] Bug Fixed** - Dashboard error handling improved, all API responses return proper data structures
+- [x] **ReviewCard Component Extracted** - `/app/frontend/src/components/ReviewCard.jsx` - Fixes unstable-nested-components ESLint error
+- [x] **Code Refactoring** - Reviews.jsx cleaned up with standalone ReviewCard component
+
 ### MVP Features v3.0 - Rebrand & Enhancement:
 
-**NEW - Review Master Rebrand (January 11, 2025):**
+**Review Master Rebrand (January 11, 2025):**
 - [x] **Animated Logo** - `/app/frontend/src/components/AnimatedLogo.jsx` with shine effect and sparkles
 - [x] **Full Rebrand** - All "ReviewFlow" instances replaced with "Review Master"
 - [x] **Updated Color Scheme** - Purple/indigo gradient theme
 - [x] **New Tagline** - "60 Second Setup" messaging
 - [x] **API Version 3.0.0** - Updated backend version
 
-**NEW - Notification Settings Page:**
+**Notification Settings Page:**
 - [x] **Notification Preferences** - Email toggles for new reviews, private feedback, weekly summary
 - [x] **Email Configuration** - Set notification email address
 - [x] **Test Email** - Send test notification to verify setup
