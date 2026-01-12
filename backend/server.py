@@ -1233,8 +1233,6 @@ async def get_analytics_trends(days: int = 30, user: User = Depends(get_current_
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
     
-    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
-    
     reviews = await db.reviews.find(
         {"business_id": business["business_id"]},
         {"_id": 0}
