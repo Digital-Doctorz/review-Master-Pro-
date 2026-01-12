@@ -273,7 +273,7 @@ export default function Integrations() {
           Connect Your Platforms
         </h1>
         <p className="text-slate-600">
-          Just search your business name - we'll find it automatically. No technical skills required.
+          Just search your business name - we&apos;ll find it automatically. No technical skills required.
         </p>
       </div>
 
