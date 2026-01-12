@@ -1519,7 +1519,7 @@ async def handle_google_webhook(
     # Parse payload
     try:
         payload = await request.json()
-    except:
+    except Exception:
         payload = {}
     
     # Parse review data
@@ -1620,7 +1620,7 @@ async def handle_facebook_webhook(
     # Parse payload
     try:
         payload = await request.json()
-    except:
+    except Exception:
         payload = {}
     
     # Parse review data
