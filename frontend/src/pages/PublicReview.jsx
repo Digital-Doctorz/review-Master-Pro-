@@ -789,8 +789,8 @@ export default function PublicReview() {
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center mx-auto mb-4 shadow-lg">
                   <Zap className="w-8 h-8 text-white" />
                 </div>
-                <h2 className="text-xl font-bold text-slate-900">Almost Done!</h2>
-                <p className="text-slate-500 text-sm mt-1">Copy your review and paste it on {selectedPlatform === "google" ? "Google" : "Facebook"}</p>
+                <h2 className="text-xl font-bold text-slate-900">Post Your Review!</h2>
+                <p className="text-slate-500 text-sm mt-1">2 simple steps to share on {selectedPlatform === "google" ? "Google" : "Facebook"}</p>
               </div>
               
               {/* Review Preview */}
@@ -800,47 +800,68 @@ export default function PublicReview() {
                     <Star key={star} className={`w-4 h-4 ${star <= rating ? "fill-amber-400 text-amber-400" : "text-slate-200"}`} />
                   ))}
                 </div>
-                <p className="text-slate-700 text-sm line-clamp-3">{reviewText}</p>
+                <p className="text-slate-700 text-sm">{reviewText}</p>
               </div>
               
-              {/* Instructions */}
-              <div className="bg-indigo-50 rounded-xl p-4 mb-6 border border-indigo-100">
-                <h3 className="font-semibold text-indigo-900 mb-2 flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center">1</span>
-                  Copy your review
-                </h3>
-                <Button
-                  onClick={copyReviewToClipboard}
-                  variant={copied ? "default" : "outline"}
-                  className={`w-full rounded-xl ${copied ? "bg-emerald-500 hover:bg-emerald-600 text-white" : ""}`}
-                  data-testid="copy-review-btn"
-                >
-                  {copied ? (
-                    <>
-                      <CheckCircle2 className="w-4 h-4 mr-2" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-4 h-4 mr-2" />
-                      Copy Review Text
-                    </>
-                  )}
-                </Button>
+              {/* Step by Step Instructions */}
+              <div className="space-y-4 mb-6">
+                {/* Step 1: Copy */}
+                <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+                    <h3 className="font-semibold text-blue-900">Copy your review</h3>
+                  </div>
+                  <Button
+                    onClick={copyReviewToClipboard}
+                    variant={copied ? "default" : "outline"}
+                    className={`w-full rounded-xl h-12 ${copied ? "bg-emerald-500 hover:bg-emerald-600 text-white" : ""}`}
+                    data-testid="copy-review-btn"
+                  >
+                    {copied ? (
+                      <>
+                        <CheckCircle2 className="w-5 h-5 mr-2" />
+                        Review Copied! Ready to paste
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-5 h-5 mr-2" />
+                        Tap to Copy Review
+                      </>
+                    )}
+                  </Button>
+                </div>
                 
-                <h3 className="font-semibold text-indigo-900 mt-4 mb-2 flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center">2</span>
-                  Post on {selectedPlatform === "google" ? "Google" : "Facebook"}
-                </h3>
-                <Button
-                  onClick={() => openPlatformReview(selectedPlatform)}
-                  className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
-                  data-testid="open-platform-btn"
-                >
-                  {selectedPlatform === "google" ? <GoogleIcon className="w-5 h-5 mr-2" /> : <FacebookIcon className="w-5 h-5 mr-2" />}
-                  Open {selectedPlatform === "google" ? "Google Reviews" : "Facebook"}
-                  <ExternalLink className="w-4 h-4 ml-2" />
-                </Button>
+                {/* Step 2: Open & Paste */}
+                <div className={`rounded-xl p-4 border ${copied ? "bg-indigo-50 border-indigo-200" : "bg-slate-50 border-slate-200"}`}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className={`w-8 h-8 rounded-full ${copied ? "bg-indigo-600" : "bg-slate-400"} text-white text-sm font-bold flex items-center justify-center flex-shrink-0`}>2</span>
+                    <h3 className={`font-semibold ${copied ? "text-indigo-900" : "text-slate-500"}`}>
+                      Open {selectedPlatform === "google" ? "Google" : "Facebook"} & paste
+                    </h3>
+                  </div>
+                  <Button
+                    onClick={() => openPlatformReview(selectedPlatform)}
+                    disabled={!copied}
+                    className={`w-full rounded-xl h-12 ${copied 
+                      ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg" 
+                      : "bg-slate-200 text-slate-400 cursor-not-allowed"}`}
+                    data-testid="open-platform-btn"
+                  >
+                    {selectedPlatform === "google" ? <GoogleIcon className="w-5 h-5 mr-2" /> : <FacebookIcon className="w-5 h-5 mr-2" />}
+                    {copied ? (
+                      <>
+                        Open {selectedPlatform === "google" ? "Google Reviews" : "Facebook"} →
+                      </>
+                    ) : (
+                      "Copy review first"
+                    )}
+                  </Button>
+                  {copied && (
+                    <p className="text-xs text-indigo-600 text-center mt-2">
+                      Paste your review in the text box and submit!
+                    </p>
+                  )}
+                </div>
               </div>
               
               <Button
