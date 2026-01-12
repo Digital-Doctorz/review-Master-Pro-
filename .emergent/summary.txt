@@ -1,81 +1,85 @@
-<analysis>An analysis of the conversation history, including user requests, AI actions, and technical decisions, has been conducted to generate a handover summary.
+<analysis>**original_problem_statement:** The user's goal is to create Review Master (formerly ReviewFlow), a zero-knowledge review management platform for Google and Facebook. Key features include a seamless setup, real-time review monitoring via webhooks, AI-powered responses, and a smart review submission flow.
 
-**original_problem_statement:** The user wants to build ReviewFlow, a zero-knowledge review management platform focused on Google and Facebook reviews. The application should feature a seamless setup, real-time monitoring, and AI-powered responses.
-
-The most recent and critical user request is to fix a P0 bug where real-time reviews from connected Google and Facebook accounts are not appearing in the business owner's dashboard. The user has provided a detailed prompt outlining the required fixes, including robust token handling, correct API data mapping, and resilient error handling.
-
-Additionally, the user has requested several feature enhancements:
-- A smart review submission flow: ratings below 4 stars are sent as private feedback to the business owner, while ratings of 4 or more stars are prompted to be posted publicly on Google or Facebook.
-- AI-assisted review writing for customers.
-- A magic search feature for business owners to easily find and connect their Google and Facebook business pages.
-- A general UI/UX overhaul to be more catchy and attractive.
+Recent user requests have focused on rebranding the application, fixing a critical UI bug displaying [object Object] on the dashboard, and a major push for a premium, high-end mobile user experience. This includes a glassy effect aesthetic, a flawless mobile bottom navigation, and a Magic Search feature to make connecting Google and Facebook business pages exceptionally easy for non-technical users.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack application built with a FastAPI backend, React frontend, and MongoDB database.
-- **Frontend:** A multi-page React application with a glassmorphism theme. It includes a landing page, an authentication flow using Emergent-managed Google social login, and a dashboard for business owners. The dashboard features mock data for reviews, analytics, and integrations. A public-facing QR code review submission page has also been implemented.
-- **Backend:** A FastAPI server with endpoints for user authentication, mock data fetching, and the new magic search for Google and Facebook business pages. The Gemini 3 Flash LLM is integrated for AI features using the Emergent Universal Key.
-- **Integrations:** The structure for Google and Facebook integrations exists, but it currently uses mocked data and does not fetch or display real reviews.
+A full-stack application with a FastAPI backend, React frontend, and MongoDB database.
+
+-   **Frontend:** The app has been rebranded to Review Master and features an animated logo. It includes a landing page, Google social login, and a dashboard with pages for reviews, analytics, QR code generation, and settings (webhooks, notifications). A wow-factor public review page for QR codes is implemented. A premium mobile UI/UX overhaul has been started with updated CSS and a new bottom navigation layout.
+-   **Backend:** The backend supports a hybrid review system, fetching real reviews via Google/Facebook APIs if credentials are provided, or falling back to mock data. It features real-time review sync via webhooks, email notifications for new reviews using Resend, and AI features powered by Gemini 3 Flash. The code is modularized into a  directory.
+-   **Error Handling:** An  component has been added to the frontend, and  error handling has been improved to show user-friendly toast notifications.
 
 **Last working item**:
-- **Last item agent was working:** The agent was about to begin work on the critical P0 bug report from the user: real reviews are not being fetched and displayed on the dashboard after a user connects their Google or Facebook account.
-- **Status:** NOT STARTED
-- **Agent Testing Done:** N
-- **Which testing method agent to use?** both. The fix will involve significant backend changes to fetch real data and frontend changes to display it. The  should be used to perform end-to-end testing of the entire flow:
-    1. User signs up/logs in.
-    2. User connects a real Google/Facebook account.
-    3. The dashboard correctly displays real reviews from that account.
-- **User Testing Done:** N
+-   **Last item agent was working:** The agent was in the middle of a comprehensive mobile UI/UX enhancement. After updating the global CSS () with glassy styles and refactoring the mobile bottom navigation in , the next step was to overhaul the  page to create a more intuitive Magic Search flow for connecting business accounts.
+-   **Status:** IN PROGRESS
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** Frontend testing agent. The task involves significant UI/UX changes. The agent should verify the new glassy design, the enhanced mobile bottom navigation across different screen sizes, and the new, user-friendly integration search flow.
+-   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-- **Issue 1: (P0) Real reviews are not syncing or displaying on the dashboard.**
+-   **Issue 1: (P0)  rendering error on the dashboard.**
+-   **Issue 2: (P1) Unstable nested component in .**
 
-  - **Details**: This is the core functionality of the app, and it is currently not implemented. Users can connect their accounts, but no real data is fetched. The user provided a detailed prompt to fix this, but it references a different tech stack (Next.js/Supabase).
-  - **Attempted fixes:** None. The agent has only implemented the UI and mock backend for this flow.
-  - **Next debug checklist:**
-    1.  **CRITICAL CLARIFICATION:** Use the  tool to resolve the tech stack discrepancy. The user's latest instructions reference a Next.js/Supabase stack, but the application is built on FastAPI/React/MongoDB. Ask the user whether to:
-        a. Migrate the entire application to Next.js/Supabase.
-        b. Apply the *logic* from their instructions (token refresh, data mapping, error handling) to the existing FastAPI/React stack.
-    2.  **Assuming the user chooses to stick with the current stack (FastAPI/React):**
-        - **Backend ():**
-            - Replace mock data logic in the  endpoint with actual API calls to Google Places and Facebook Graph APIs.
-            - Implement a robust OAuth token refresh mechanism for both Google and Facebook to handle expired tokens, using the logic provided by the user as a reference.
-            - Correctly map the incoming data structures from the Google/Facebook API responses to the application's  model.
-            - Securely fetch and use user credentials (access tokens) stored during the integration process.
-        - **Frontend (, ):**
-            - Ensure the frontend components correctly call the updated backend endpoint.
-            - Update the UI to handle loading states, potential errors, and the structure of the real review data.
-  - **Why fix this issue and what will be achieved with the fix?** This is the central value proposition of the app. Fixing it will make the application functional and deliver on its core promise to users.
-  - **Status:** NOT STARTED
-  - **Is recurring issue?** N
-  - **Should Test frontend/backend/both after fix?** both
-  - **Blocked on other issue:** User clarification on the tech stack.
+**Issues Detail:**
+-   **Issue 1:**
+    -   **Attempted fixes:** The agent improved  error handling across multiple components to display user-friendly toast messages instead of raw error objects. A global  component was also added to the main layout. However, the fix has not been verified, and the root cause may still persist.
+    -   **Next debug checklist:**
+        1.  Verify that the error is gone by simulating API failures.
+        2.  If the issue persists, re-examine the data flow and state updates in , especially around how API responses (and errors from ) are processed and passed to child components.
+        3.  Ensure no component is attempting to render an error object directly.
+    -   **Why fix this issue and what will be achieved with the fix?** This is a critical UI bug that makes the app look broken. Fixing it will improve user trust and provide clear error feedback.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** both
+    -   **Blocked on other issue:** None
+
+-   **Issue 2:**
+    -   **Attempted fixes:** None. The agent identified the issue but was interrupted.
+    -   **Next debug checklist:**
+        1.  Open .
+        2.  Move the  component definition outside the  component.
+        3.  Pass the necessary state setters and handlers as props (callbacks) from  to the new standalone  component.
+        4.  Run the linter to confirm the fix.
+    -   **Why fix this issue and what will be achieved with the fix?** Improves React performance, adheres to best practices, and prevents potential state-related bugs.
+    -   **Status:** NOT STARTED
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** frontend
+    -   **Blocked on other issue:** None
 
 **In progress Task List**:
-There are no tasks currently in progress. The entire focus is blocked by the pending P0 issue.
+-   **Task 1: (P0) Enhance Mobile UI/UX and Integrations Page.**
+    -   **Where to resume:**
+        1.  Continue the overhaul of . Adapt the user's detailed Magic Search prompt to the current tech stack, implementing a user-friendly modal with clear loading, error, and result states.
+        2.  Apply the new glassy and premium CSS styles from  consistently across all key mobile components (e.g., Dashboard cards, modals, buttons).
+    -   **What will be achieved with this?** A significantly improved, professional, and intuitive user experience on mobile, directly addressing a core user request.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** both
+    -   **Blocked on something:** None
 
 **Upcoming and Future Tasks**
-- **Upcoming Tasks:**
-  - **P0: Implement Real Facebook Integration:** Implement the full data fetching and posting flow for Facebook reviews, moving beyond the current search-only functionality.
-  - **P1: Implement Webhook Support:** As mentioned in the original PRD, add webhook handlers to receive real-time review notifications from Google and Facebook, eliminating the need for periodic polling.
-- **Future Tasks:**
-  - Integrate Claude 4.5 for AI response generation.
-  - Add features for sharing responses via WhatsApp/Email.
-  - Implement team collaboration functionalities.
-  - Develop mobile applications for iOS/Android.
-  - Expand platform support to include Yelp and TripAdvisor.
+
+-   **Upcoming Tasks:**
+    -   **P0: Implement Robust Review Fetching & State Management:** Refactor the data fetching logic in the dashboard to use a custom  hook as detailed in the user's prompt. This should handle partial failures gracefully using  and manage loading/error states centrally.
+    -   **P1: Create In-App User-Friendly Integration Guide:** Build a guide (page or modal) using the content provided by the user to walk non-technical users through the account connection process.
+    -   **P1: Enhance AI Reply Workflow:** Implement the three distinct AI reply styles (Gratitude, Acknowledgment, Resolution) for different review ratings.
+    -   **P2: Implement WhatsApp Alerts:** Integrate a service like Twilio to send WhatsApp notifications for urgent reviews.
+
+-   **Future Tasks:**
+    -   Manual review import via screenshot OCR.
+    -   Team collaboration features.
+    -   Expand platform support to Yelp, TripAdvisor.
+    -   Develop native mobile applications.
 
 **Completed work in this session**
-- **MVP Scaffolding:** Created the initial full-stack application with a FastAPI backend, React frontend, and MongoDB.
-- **UI/UX Implementation:** Developed a multi-page frontend with a Glassmorphism theme, including a landing page, dashboard, review inbox, analytics, QR code generator, and settings pages.
-- **Smart Review Flow:** Implemented the customer-facing review submission form with conditional logic (private feedback for low ratings, public options for high ratings).
-- **Integration Search:** Built the magic search feature for business owners to find their Google and Facebook business pages.
-- **Bug Fixes:** Resolved multiple bugs, including frontend linting issues and a bug in the Facebook business search functionality, verified by the testing agent.
-- **Documentation:** Created and updated a  file summarizing the project's progress and features.
-
-**Earlier issues found/mentioned but not fixed**
-None. The agent has addressed all previously identified issues. The current challenge is the transition from a mocked MVP to a fully functional, data-driven application.
+-   **Hybrid API Integration:** Implemented backend logic to fetch real reviews from Google/Facebook if API keys are configured, falling back to mock data otherwise.
+-   **Backend Refactoring:** Modularized  by creating a  directory for reviews, webhooks, and email.
+-   **Real-Time Webhook Support:** Added endpoints and a frontend settings page for real-time review sync from Google and Facebook.
+-   **Email Notifications:** Integrated Resend to notify business owners of new reviews.
+-   **Enhanced Public Review Page:** Completely redesigned the QR code landing page with a multi-step flow, animations, AI assistance, and a polished UI.
+-   **Rebranding:** Renamed the application to Review Master and integrated a new animated logo throughout the app.
+-   **Comprehensive Testing:** Used the testing agent multiple times to verify new features and fix bugs in the backend logic and frontend flows.
 
 **Known issue recurrence from previous fork**
 N/A
@@ -84,76 +88,84 @@ N/A
 
 
 **Key Technical Concepts**
-- **Backend:** FastAPI, MongoDB (via Pydantic models)
-- **Frontend:** React, React Router, 
-- **Authentication:** Emergent-managed Google social login
-- **AI:** Gemini 3 Flash (via Emergent Universal Key)
-- **Styling:** Tailwind CSS, custom CSS for Glassmorphism theme
+-   **Backend:** FastAPI, MongoDB (Motor), Pydantic.
+-   **Frontend:** React, React Router, Framer Motion, Tailwind CSS, Axios, Sonner (toasts).
+-   **Authentication:** Emergent-managed Google social login.
+-   **AI:** Gemini 3 Flash via Emergent Universal Key.
+-   **Integrations:** Resend (Email), Google APIs, Facebook Graph API.
+-   **Real-time:** Webhooks.
 
 **key DB schema**
-The schemas are implicitly defined by Pydantic models in :
-- **Business**: Stores business profile information.
-- **PlatformConnection**: Stores credentials and connection status for Google/Facebook.
-- **Review**: Stores public review data (currently mocked).
-- **PrivateFeedback**: Stores feedback submitted for low-rated reviews.
+-   Schemas are defined implicitly via Pydantic models in  for **User**, **Business**, **PlatformConnection**, **Review**, **PrivateFeedback**, and **Webhook**.
 
 **changes in tech stack**
-The user's latest message suggests a potential pivot to a Next.js, Supabase, and PostgreSQL stack. This is a significant deviation from the current FastAPI, React, and MongoDB stack and requires immediate clarification.
+None. The stack is stable as FastAPI, React, and MongoDB.
 
 **All files of reference**
-- : The heart of the backend logic; needs to be updated for real data fetching.
-- : Handles the connection flow for Google and Facebook.
-- : The main view where real reviews should appear.
-- : The detailed review inbox view.
-- : The customer-facing review submission form.
-- : Contains the full project plan and implemented features.
+-   : Needs a complete overhaul for the Magic Search feature.
+-   : Location of the  bug.
+-   : Contains the new premium and glassy mobile styles.
+-   : Contains the updated mobile bottom navigation.
+-   : Contains the unstable nested component linting issue.
+-   : The main backend file.
+-   : Project documentation.
 
 **Areas that need refactoring**:
-The  file has become a monolith containing all backend logic. It should be refactored into a more modular structure, separating concerns into different files for API routes, services, and models, as originally proposed in the PRD.
+-   : The  component must be extracted to resolve the nested component issue and improve performance.
+-   : The data fetching logic should be moved into a dedicated custom hook () for better code structure and state management.
 
 **key api endpoints**
-- : Handles Google OAuth login.
-- , : Provides magic search for businesses.
-- : Fetches reviews (currently mocked).
-- : Handles public review submissions from the QR code page.
-- : Handles private feedback from the QR code page.
+-   : (GET) Fetches reviews for the dashboard.
+-   : (POST) Triggers a manual review sync.
+-   : (POST) Ingests real-time review data.
+-   : (GET/POST) Manages email notification preferences.
+-   : (POST) Provides AI assistance on the public review page.
 
 **Critical Info for New Agent**
-The most critical task is to address the user's latest request to fix the review synchronization. Before writing any code, you **MUST** use the  tool to clarify the tech stack discrepancy. The user's detailed fix instructions are for a **Next.js/Supabase** stack, while the current application is **FastAPI/React/MongoDB**. Confirm with the user whether to migrate the entire stack or adapt the provided *logic* (token refresh, data mapping, error handling) to the existing application architecture. Do not proceed until this ambiguity is resolved.
+-   **Primary Focus:** The user's top priority is fixing the visual bugs and elevating the app's UI/UX to a premium, high-end level, especially on mobile. The Magic Search feature for integrations is a critical part of this.
+-   **Execution Order:**
+    1.  **Resume Mobile UX & Integrations (Task 1):** Immediately continue the work on the mobile UI. Overhaul  to implement the user-friendly Magic Search modal.
+    2.  **Fix  Bug (Issue 1):** After the UX work, rigorously test and permanently fix the error rendering bug on the dashboard.
+    3.  **Fix Nested Component (Issue 2):** Quickly refactor  to resolve the linting error.
+-   **Adapt User Prompts:** The user provides excellent, detailed prompts that are often written for a Next.js/Supabase stack. You must adapt the *logic, UI, and UX concepts* from these prompts to the project's existing FastAPI/React/MongoDB architecture. Do not attempt a tech stack migration.
 
 **documents and test reports created in this job**
-- 
-- 
-- 
-- 
-- 
-- 
+-   
+-   
+-   
+-   
+-   
+-   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User (Critical):** Reported that real reviews are not showing in the dashboard after connecting accounts. Provided a detailed P0 bug fix prompt for a Next.js/Supabase architecture, outlining issues with data mapping, token refresh, and state management.
-2.  **User:** Reported that Facebook search and review fetching were not working.
-3.  **User:** Requested major enhancements: smart rating-based review routing (<4 stars private, >=4 public), AI-assisted review writing, Google Business magic search, and a UI overhaul.
-4.  **User:** Requested the implementation of real Google & Facebook integrations with a zero-knowledge setup.
-5.  **User:** Provided initial project choices: start with mock integrations, use Gemini 3 Flash, Emergent-managed Google Auth, and a light theme.
-6.  **Agent (Pending):** Acknowledged the critical bug report and was about to ask clarifying questions.
+1.  **User:** Requested a premium mobile UX with glassy effects and a fixed bottom navigation, along with a simplified integration process. (PENDING)
+2.  **User:** Provided a screenshot of the  error and requested a fix. (IN PROGRESS)
+3.  **User:** Requested a full rebrand to Review Master and provided a comprehensive prompt with numerous bug fixes and feature enhancements. (Partially Completed)
+4.  **User:** Requested email notifications, a wow effect UI, and enhancements to the QR code review flow. (Completed)
+5.  **User:** Confirmed adding webhook support. (Completed)
 
 **Project Health Check:**
-- **Broken:** The core functionality of fetching and displaying real reviews is not implemented, rendering the app's primary purpose non-functional.
+-   **Broken:** The dashboard currently has a critical UI bug that displays  when an error occurs, making the application appear unprofessional and broken to the user.
+-   **Mocked:** The review system's fallback to mock data is a development feature. The reliability of the real integration flow is paramount.
 
 **3rd Party Integrations**
-- **Gemini 3 Flash:** Integrated for AI text generation. Uses Emergent LLM Key.
-- **Emergent-managed Google Auth:** Integrated for user authentication. Requires no user-provided key.
-- **Google Places API:** Partially integrated for business search. A full review-fetching implementation is required, which will necessitate user-provided credentials/OAuth permissions.
-- **Facebook Graph API:** Partially integrated for business search. A full review-fetching implementation is required, which will necessitate user-provided credentials/OAuth permissions.
+-   **Gemini 3 Flash:** (AI) Uses Emergent LLM Key.
+-   **Emergent-managed Google Auth:** (Authentication).
+-   **Resend:** (Email) Requires user API key.
+-   **Google Places/My Business API:** (Reviews) Requires user OAuth.
+-   **Facebook Graph API:** (Reviews) Requires user OAuth.
 
 **Testing status**
-- **Testing agent used after significant changes:** YES
-- **Troubleshoot agent used after agent stuck in loop:** NO
-- **Test files created:** None. Testing was performed by the testing agent.
-- **Known regressions:** None.
+-   **Testing agent used after significant changes:** YES
+-   **Test files created:** 
+-   **Known regressions:** The  rendering error appeared after the last set of major enhancements.
 
 **Credentials to test flow:**
-N/A (Testing of the real integration flow will require connecting to actual Google and Facebook test accounts).
+-   User login is handled by Emergent-managed Google Auth.
+-   Testing the real review fetching requires connecting a personal or test Google/Facebook account that manages a business profile/page.
+-   The Resend API key in  must be configured for email notifications to function.
 
 **What agent forgot to execute**
-The agent followed the user's initial mock-first approach and did not proactively implement the real data-fetching logic for reviews. This has now become the main blocking issue. The logic to handle real-world API interactions (like token refreshes and data mapping) was not built, leading to the current P0 bug.</analysis>
+-   The agent did not fully resolve the  bug, leading to a user report.
+-   The agent identified but did not fix the unstable-nested-components linting error in .
+-   The agent has not yet implemented the more robust  custom hook for state management as detailed in the user's prompt, instead opting for more localized fixes.</analysis>
