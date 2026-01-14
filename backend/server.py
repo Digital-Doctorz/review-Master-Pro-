@@ -741,7 +741,8 @@ async def get_user_plan(user: User = Depends(get_current_user)):
         plan_doc["created_at"] = plan_doc["created_at"].isoformat()
         await db.user_plans.insert_one(plan_doc)
         plan = plan_doc
-        del plan["_id"] if "_id" in plan else None
+        if "_id" in plan:
+            del plan["_id"]
     
     # Get location count
     location_count = await db.locations.count_documents({"user_id": user.user_id, "is_active": True})
