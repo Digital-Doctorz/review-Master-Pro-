@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
+import { AuthContext } from "../App";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import {
@@ -40,7 +41,29 @@ const COLORS = {
   teal: "#14b8a6",
 };
 
+// Demo analytics data
+const DEMO_ANALYTICS = {
+  average_rating: 4.7,
+  total_reviews: 1284,
+  response_rate: 98,
+  positive_ratio: 89,
+  sentiment_breakdown: { positive: 1142, neutral: 98, negative: 44 },
+  platform_breakdown: { google: 856, facebook: 428 },
+  rating_distribution: { 1: 12, 2: 32, 3: 98, 4: 384, 5: 758 }
+};
+
+const DEMO_TRENDS = [
+  { date: "Jan 1", reviews: 42, rating: 4.5 },
+  { date: "Jan 8", reviews: 38, rating: 4.6 },
+  { date: "Jan 15", reviews: 51, rating: 4.7 },
+  { date: "Jan 22", reviews: 45, rating: 4.8 },
+  { date: "Jan 29", reviews: 62, rating: 4.7 },
+  { date: "Feb 5", reviews: 55, rating: 4.6 },
+  { date: "Feb 12", reviews: 48, rating: 4.8 }
+];
+
 export default function Analytics() {
+  const { isDemo } = useContext(AuthContext);
   const [analytics, setAnalytics] = useState(null);
   const [trends, setTrends] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,6 +73,14 @@ export default function Analytics() {
   }, []);
 
   const fetchAnalytics = async () => {
+    // In demo mode, use demo data
+    if (isDemo) {
+      setAnalytics(DEMO_ANALYTICS);
+      setTrends(DEMO_TRENDS);
+      setLoading(false);
+      return;
+    }
+    
     try {
       const defaultAnalytics = { 
         average_rating: 0, 
