@@ -232,18 +232,53 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8" data-testid="dashboard-page">
+      {/* Demo Mode Banner */}
+      {isDemo && showDemoBanner && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-3 rounded-xl flex items-center justify-between"
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-white/20 rounded-lg">
+              <Play className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="font-semibold">You&apos;re viewing a demo of Review Master</p>
+              <p className="text-sm text-white/80">Explore all features with sample data. No data will be saved.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={exitDemo}
+              variant="secondary"
+              size="sm"
+              className="bg-white text-indigo-600 hover:bg-white/90 rounded-full"
+            >
+              Start Free Trial
+            </Button>
+            <button 
+              onClick={() => setShowDemoBanner(false)}
+              className="p-1 hover:bg-white/20 rounded-full transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </motion.div>
+      )}
+
       {/* Welcome Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight-custom">
-            Welcome back, {user?.name?.split(" ")[0]}!
+            Welcome{isDemo ? " to Demo" : " back"}, {user?.name?.split(" ")[0] || "User"}!
           </h1>
           <p className="text-slate-600 mt-1">
-            Here&apos;s how {business?.name} is performing today.
+            Here&apos;s how {business?.name || "your business"} is performing today.
           </p>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
-          {connectedPlatforms.length > 0 && (
+          {!isDemo && connectedPlatforms.length > 0 && (
             <Button
               variant="outline"
               size="sm"
@@ -256,17 +291,19 @@ export default function Dashboard() {
               {syncing ? "Syncing..." : "Sync Reviews"}
             </Button>
           )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={refreshing}
-            className="rounded-full"
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
-          {integrationStatus?.overall_mode === "demo" ? (
+          {!isDemo && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="rounded-full"
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
+          )}
+          {isDemo || integrationStatus?.overall_mode === "demo" ? (
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 text-amber-600 text-sm font-medium" data-testid="demo-mode-badge">
               <CloudOff className="w-4 h-4" />
               Demo Mode
@@ -276,7 +313,7 @@ export default function Dashboard() {
               <span className="w-2 h-2 rounded-full bg-green-500 live-indicator" />
               Live Data
             </div>
-          )}
+          )}}
         </div>
       </div>
 
