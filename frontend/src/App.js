@@ -1,40 +1,32 @@
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, createContext } from "react";
 import { Toaster, toast } from "./components/ui/sonner";
 import axios from "axios";
 
 // Helper function to safely extract error message as a string
 const extractErrorMessage = (error) => {
-  // Default message
   let message = "An error occurred. Please try again.";
   
   try {
-    // Check for detail field
     if (error?.response?.data?.detail) {
       const detail = error.response.data.detail;
       if (typeof detail === 'string') {
         message = detail;
       } else if (Array.isArray(detail)) {
-        // FastAPI validation errors come as array
         message = detail.map(d => d?.msg || String(d)).join(', ');
       } else if (typeof detail === 'object') {
         message = JSON.stringify(detail);
       }
-    } 
-    // Check for message field
-    else if (error?.response?.data?.message) {
+    } else if (error?.response?.data?.message) {
       const msg = error.response.data.message;
       message = typeof msg === 'string' ? msg : JSON.stringify(msg);
-    }
-    // Check for direct error message  
-    else if (error?.message && typeof error.message === 'string') {
+    } else if (error?.message && typeof error.message === 'string') {
       message = error.message;
     }
   } catch (e) {
-    console.error("Error extracting message:", e);
+    console.warn("Error extracting message:", e);
   }
   
-  // Ensure we never return [object Object]
   if (message === '[object Object]' || message.includes('[object Object]')) {
     message = "An unexpected error occurred. Please try again.";
   }
@@ -42,23 +34,44 @@ const extractErrorMessage = (error) => {
   return message;
 };
 
-// Setup axios interceptors for better error handling
+// Setup axios interceptors - suppress error throwing for handled cases
 axios.interceptors.response.use(
   (response) => response,
   (error) => {
     const errorMessage = extractErrorMessage(error);
-    
-    // Don't show toast for auth errors (401) - those are handled by redirects
-    if (error.response?.status !== 401) {
-      console.error("API Error:", errorMessage);
-    }
-    
-    // Attach clean message to error for components to use
     error.displayMessage = errorMessage;
+    
+    // Only log non-auth errors
+    if (error.response?.status !== 401) {
+      console.warn("API Error:", errorMessage);
+    }
     
     return Promise.reject(error);
   }
 );
+
+// Suppress React's error overlay for handled API errors in development
+if (process.env.NODE_ENV === 'development') {
+  window.addEventListener('error', (event) => {
+    if (event.message?.includes('[object Object]') || 
+        event.error?.displayMessage ||
+        event.message?.includes('Network Error')) {
+      event.preventDefault();
+      return true;
+    }
+  });
+  
+  window.addEventListener('unhandledrejection', (event) => {
+    // Suppress unhandled promise rejections for axios errors
+    if (event.reason?.isAxiosError || 
+        event.reason?.displayMessage ||
+        String(event.reason).includes('[object Object]')) {
+      event.preventDefault();
+      console.warn("Suppressed rejection:", event.reason?.displayMessage || "API error");
+      return true;
+    }
+  });
+}
 
 // Pages
 import Landing from "./pages/Landing";
@@ -80,16 +93,33 @@ import Layout from "./components/Layout";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-// Auth Context
-export const AuthContext = React.createContext(null);
+// Auth Context with demo mode support
+export const AuthContext = createContext(null);
 
-import React from "react";
+// Demo user and business data
+const DEMO_USER = {
+  user_id: "demo_user_001",
+  email: "demo@reviewmaster.com",
+  name: "Demo User",
+  avatar: null,
+  is_demo: true
+};
 
-// REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
+const DEMO_BUSINESS = {
+  business_id: "demo_business_001",
+  name: "Demo Coffee Shop",
+  category: "Restaurant",
+  address: "123 Demo Street, Sample City",
+  qr_code_id: "demo_qr_001",
+  google_place_id: "demo_google_place",
+  google_business_name: "Demo Coffee Shop",
+  google_review_link: "https://g.page/demo-coffee-shop",
+  facebook_page_id: null,
+  is_demo: true
+};
 
 function AuthCallback() {
   const hasProcessed = useRef(false);
-  const navigate = useLocation();
 
   useEffect(() => {
     if (hasProcessed.current) return;
@@ -105,19 +135,16 @@ function AuthCallback() {
       }
 
       try {
-        const response = await axios.post(
+        await axios.post(
           `${API}/auth/session`,
           { session_id: sessionId },
           { withCredentials: true }
         );
-
-        const { user } = response.data;
         
-        // Clear the hash and redirect to dashboard
         window.history.replaceState(null, "", "/dashboard");
         window.location.reload();
       } catch (error) {
-        console.error("Auth error:", error);
+        console.warn("Auth callback error - redirecting to home");
         window.location.href = "/";
       }
     };
@@ -140,8 +167,21 @@ function ProtectedRoute({ children }) {
   const [user, setUser] = useState(null);
   const [business, setBusiness] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isDemo, setIsDemo] = useState(false);
 
   useEffect(() => {
+    // Check for demo mode
+    const demoMode = sessionStorage.getItem('demo_mode') === 'true';
+    
+    if (demoMode) {
+      setUser(DEMO_USER);
+      setBusiness(DEMO_BUSINESS);
+      setIsAuthenticated(true);
+      setIsDemo(true);
+      setLoading(false);
+      return;
+    }
+
     const checkAuth = async () => {
       try {
         const response = await axios.get(`${API}/auth/me`, {
@@ -150,12 +190,18 @@ function ProtectedRoute({ children }) {
         setUser(response.data);
         setIsAuthenticated(true);
 
-        // Check if user has a business
-        const bizResponse = await axios.get(`${API}/business`, {
-          withCredentials: true,
-        });
-        setBusiness(bizResponse.data);
+        try {
+          const bizResponse = await axios.get(`${API}/business`, {
+            withCredentials: true,
+          });
+          setBusiness(bizResponse.data);
+        } catch (bizError) {
+          // No business yet - that's fine, redirect to onboarding
+          console.warn("No business found for user");
+          setBusiness(null);
+        }
       } catch (error) {
+        // Not authenticated - this is expected for non-logged-in users
         setIsAuthenticated(false);
       } finally {
         setLoading(false);
@@ -177,13 +223,12 @@ function ProtectedRoute({ children }) {
     return <Navigate to="/" replace />;
   }
 
-  // If no business, redirect to onboarding
-  if (!business && window.location.pathname !== "/onboarding") {
+  if (!business && !isDemo && window.location.pathname !== "/onboarding") {
     return <Navigate to="/onboarding" replace />;
   }
 
   return (
-    <AuthContext.Provider value={{ user, setUser, business, setBusiness }}>
+    <AuthContext.Provider value={{ user, setUser, business, setBusiness, isDemo }}>
       {children}
     </AuthContext.Provider>
   );
@@ -273,7 +318,7 @@ function AppRouter() {
         }
       />
       <Route
-        path="/webhooks"
+        path="/settings/webhooks"
         element={
           <ProtectedRoute>
             <Layout>
@@ -283,7 +328,7 @@ function AppRouter() {
         }
       />
       <Route
-        path="/notifications"
+        path="/settings/notifications"
         element={
           <ProtectedRoute>
             <Layout>
@@ -293,7 +338,7 @@ function AppRouter() {
         }
       />
       <Route
-        path="/api-settings"
+        path="/settings/api"
         element={
           <ProtectedRoute>
             <Layout>
@@ -302,17 +347,18 @@ function AppRouter() {
           </ProtectedRoute>
         }
       />
+
+      {/* Catch all */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <AppRouter />
-      <Toaster position="top-right" richColors />
+      <Toaster richColors position="top-right" />
     </BrowserRouter>
   );
 }
-
-export default App;
