@@ -20,17 +20,18 @@ import {
   ExternalLink,
   Sparkles,
   Star,
+  Play,
 } from "lucide-react";
 
 const FRONTEND_URL = window.location.origin;
 
 export default function QRGenerator() {
-  const { business } = useContext(AuthContext);
+  const { business, isDemo } = useContext(AuthContext);
   const qrRef = useRef(null);
   const [qrSize, setQrSize] = useState("256");
   const [downloadFormat, setDownloadFormat] = useState("png");
 
-  const reviewUrl = `${FRONTEND_URL}/review/${business?.qr_code_id}`;
+  const reviewUrl = `${FRONTEND_URL}/review/${business?.qr_code_id || "demo_qr_001"}`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(reviewUrl);
