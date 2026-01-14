@@ -249,12 +249,22 @@ export default function Landing() {
 
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Button
-                  onClick={handleGoogleLogin}
+                  onClick={handleDemoMode}
                   size="lg"
                   className="rounded-full px-8 py-7 text-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow hover:-translate-y-0.5 active:translate-y-0"
+                  data-testid="hero-demo-btn"
+                >
+                  <Play className="w-5 h-5 mr-2" />
+                  See A Demo
+                </Button>
+                <Button
+                  onClick={handleGoogleLogin}
+                  size="lg"
+                  variant="outline"
+                  className="rounded-full px-8 py-7 text-lg border-2 border-slate-300 text-slate-700 hover:bg-slate-50 hover:-translate-y-0.5 active:translate-y-0"
                   data-testid="hero-cta-btn"
                 >
-                  Start Free - No Card Required
+                  Start Free Trial
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </div>
