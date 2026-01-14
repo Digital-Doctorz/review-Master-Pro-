@@ -41,36 +41,52 @@ export default function Dashboard() {
 
   const fetchDashboardData = useCallback(async () => {
     try {
+      // Default fallback data structures
+      const defaultAnalytics = { 
+        average_rating: 0, 
+        total_reviews: 0, 
+        response_rate: 0, 
+        positive_ratio: 0,
+        sentiment_breakdown: { positive: 0, neutral: 0, negative: 0 }
+      };
+      
       const [analyticsRes, reviewsRes, privateRes, platformsRes, statusRes] = await Promise.all([
         axios.get(`${API}/analytics/overview`, { withCredentials: true }).catch((err) => {
-          console.error("Analytics fetch error:", err?.response?.data || err.message);
-          return { data: { average_rating: 0, total_reviews: 0, response_rate: 0, positive_ratio: 0 } };
+          console.error("Analytics fetch error:", err?.displayMessage || err?.message);
+          return { data: defaultAnalytics };
         }),
         axios.get(`${API}/reviews?limit=10&is_private=false`, { withCredentials: true }).catch((err) => {
-          console.error("Reviews fetch error:", err?.response?.data || err.message);
+          console.error("Reviews fetch error:", err?.displayMessage || err?.message);
           return { data: [] };
         }),
         axios.get(`${API}/reviews/private`, { withCredentials: true }).catch((err) => {
-          console.error("Private reviews fetch error:", err?.response?.data || err.message);
+          console.error("Private reviews fetch error:", err?.displayMessage || err?.message);
           return { data: [] };
         }),
         axios.get(`${API}/platforms`, { withCredentials: true }).catch((err) => {
-          console.error("Platforms fetch error:", err?.response?.data || err.message);
+          console.error("Platforms fetch error:", err?.displayMessage || err?.message);
           return { data: [] };
         }),
         axios.get(`${API}/integration-status`, { withCredentials: true }).catch((err) => {
-          console.error("Integration status fetch error:", err?.response?.data || err.message);
+          console.error("Integration status fetch error:", err?.displayMessage || err?.message);
           return { data: null };
         }),
       ]);
 
-      setAnalytics(analyticsRes.data);
-      setReviews(Array.isArray(reviewsRes.data) ? reviewsRes.data : []);
-      setPrivateReviews(Array.isArray(privateRes.data) ? privateRes.data : []);
-      setPlatforms(Array.isArray(platformsRes.data) ? platformsRes.data : []);
-      setIntegrationStatus(statusRes.data);
+      // Safely extract and validate data
+      const analytics = analyticsRes?.data || defaultAnalytics;
+      // Ensure sentiment_breakdown exists
+      if (!analytics.sentiment_breakdown) {
+        analytics.sentiment_breakdown = { positive: 0, neutral: 0, negative: 0 };
+      }
+      
+      setAnalytics(analytics);
+      setReviews(Array.isArray(reviewsRes?.data) ? reviewsRes.data : []);
+      setPrivateReviews(Array.isArray(privateRes?.data) ? privateRes.data : []);
+      setPlatforms(Array.isArray(platformsRes?.data) ? platformsRes.data : []);
+      setIntegrationStatus(statusRes?.data || null);
     } catch (error) {
-      console.error("Error fetching dashboard data:", error?.message || error);
+      console.error("Error fetching dashboard data:", error?.displayMessage || error?.message || "Unknown error");
     } finally {
       setLoading(false);
       setRefreshing(false);
