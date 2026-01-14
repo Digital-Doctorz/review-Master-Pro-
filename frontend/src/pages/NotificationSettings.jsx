@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { toast } from "sonner";
+import { AuthContext } from "../App";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -18,36 +19,64 @@ import {
   AlertCircle,
   Send,
   Zap,
+  Play,
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Demo notification settings
+const DEMO_NOTIFICATION_SETTINGS = {
+  email_enabled: true,
+  email_address: "demo@reviewmaster.com",
+  notify_on_new_review: true,
+  notify_on_negative_review: true,
+  notify_on_response_needed: true,
+  daily_digest: false,
+  weekly_summary: true,
+  urgency_threshold: 3,
+  instant_alerts: true
+};
+
 export default function NotificationSettings() {
+  const { isDemo } = useContext(AuthContext);
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
 
   const fetchSettings = useCallback(async () => {
+    // Demo mode - use demo data
+    if (isDemo) {
+      setSettings(DEMO_NOTIFICATION_SETTINGS);
+      setLoading(false);
+      return;
+    }
+    
     try {
       const response = await axios.get(`${API}/notifications/settings`, {
         withCredentials: true,
       });
       setSettings(response.data);
     } catch (error) {
-      console.error("Error fetching settings:", error);
+      console.warn("Error fetching settings:", error?.displayMessage || error?.message);
       toast.error("Failed to load notification settings");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isDemo]);
 
   useEffect(() => {
     fetchSettings();
   }, [fetchSettings]);
 
   const updateSettings = async (updates) => {
+    if (isDemo) {
+      toast.info("Demo mode - settings won't be saved");
+      setSettings((prev) => ({ ...prev, ...updates }));
+      return;
+    }
+    
     setSaving(true);
     try {
       await axios.put(`${API}/notifications/settings`, updates, {
@@ -56,7 +85,7 @@ export default function NotificationSettings() {
       setSettings((prev) => ({ ...prev, ...updates }));
       toast.success("Settings updated");
     } catch (error) {
-      console.error("Error updating settings:", error);
+      console.warn("Error updating settings:", error?.displayMessage || error?.message);
       toast.error("Failed to update settings");
     } finally {
       setSaving(false);
