@@ -338,7 +338,7 @@ function AppRouter() {
         }
       />
       <Route
-        path="/api-settings"
+        path="/advanced-settings"
         element={
           <ProtectedRoute>
             <Layout>

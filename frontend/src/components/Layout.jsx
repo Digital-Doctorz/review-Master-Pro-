@@ -41,7 +41,7 @@ const navItems = [
   { path: "/qr-generator", label: "QR Code", icon: QrCode },
   { path: "/webhooks", label: "Webhooks", icon: Webhook },
   { path: "/notifications", label: "Notifications", icon: Bell },
-  { path: "/api-settings", label: "API Keys", icon: Key },
+  { path: "/advanced-settings", label: "API Keys", icon: Key },
   { path: "/settings", label: "Settings", icon: Settings },
 ];
 
