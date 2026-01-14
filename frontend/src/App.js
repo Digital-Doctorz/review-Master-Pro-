@@ -318,7 +318,7 @@ function AppRouter() {
         }
       />
       <Route
-        path="/settings/webhooks"
+        path="/webhooks"
         element={
           <ProtectedRoute>
             <Layout>
@@ -328,7 +328,7 @@ function AppRouter() {
         }
       />
       <Route
-        path="/settings/notifications"
+        path="/notifications"
         element={
           <ProtectedRoute>
             <Layout>
@@ -338,7 +338,7 @@ function AppRouter() {
         }
       />
       <Route
-        path="/settings/api"
+        path="/api-settings"
         element={
           <ProtectedRoute>
             <Layout>
