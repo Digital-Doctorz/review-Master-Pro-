@@ -82,6 +82,12 @@ export default function Layout({ children }) {
           <Link to="/dashboard">
             <AnimatedLogo size="default" />
           </Link>
+          {isDemo && (
+            <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 text-amber-700 text-xs font-medium">
+              <Play className="w-3 h-3" />
+              Demo Mode - No data saved
+            </div>
+          )}
         </div>
 
         {/* Navigation */}
