@@ -18,20 +18,21 @@ import {
   CheckCircle2,
   XCircle,
   RefreshCw,
-  Search,
-  ExternalLink,
   Sparkles,
   Zap,
   Shield,
-  Clock,
-  Star,
-  MapPin,
-  ArrowRight,
-  Copy,
-  AlertCircle,
-  Info,
   Globe,
-  HelpCircle,
+  MapPin,
+  Plus,
+  Building2,
+  Copy,
+  ExternalLink,
+  Info,
+  Crown,
+  ArrowRight,
+  Trash2,
+  Edit3,
+  Star,
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -61,22 +62,16 @@ const copyToClipboard = async (text, successMessage = "Copied!") => {
       await navigator.clipboard.writeText(text);
       toast.success(successMessage);
     } else {
-      // Fallback for older browsers or non-secure contexts
       const textArea = document.createElement("textarea");
       textArea.value = text;
       textArea.style.position = "fixed";
       textArea.style.left = "-999999px";
-      textArea.style.top = "-999999px";
       document.body.appendChild(textArea);
       textArea.focus();
       textArea.select();
-      try {
-        document.execCommand("copy");
-        toast.success(successMessage);
-      } catch (err) {
-        toast.error("Copy failed. Please copy manually.");
-      }
+      document.execCommand("copy");
       document.body.removeChild(textArea);
+      toast.success(successMessage);
     }
   } catch (err) {
     toast.error("Copy failed. Please copy manually.");
@@ -85,111 +80,149 @@ const copyToClipboard = async (text, successMessage = "Copied!") => {
 
 export default function Integrations() {
   const { business, setBusiness } = useContext(AuthContext);
-  const [platforms, setPlatforms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState({});
   
-  // Setup modal states
-  const [setupModal, setSetupModal] = useState({ open: false, platform: null, step: 1 });
+  // User plan & locations
+  const [userPlan, setUserPlan] = useState(null);
+  const [locations, setLocations] = useState([]);
+  
+  // Modal states
+  const [setupModal, setSetupModal] = useState({ open: false, platform: null, locationId: null });
+  const [locationModal, setLocationModal] = useState({ open: false, editing: null });
   const [reviewLink, setReviewLink] = useState("");
-  const [businessName, setBusinessName] = useState("");
+  const [platformName, setPlatformName] = useState("");
   const [connecting, setConnecting] = useState(false);
+  
+  // New location form
+  const [newLocationName, setNewLocationName] = useState("");
+  const [newLocationAddress, setNewLocationAddress] = useState("");
 
   useEffect(() => {
-    loadPlatforms();
+    loadData();
   }, []);
 
-  useEffect(() => {
-    if (business?.name) {
-      setBusinessName(business.name);
-    }
-  }, [business]);
-
-  const loadPlatforms = async () => {
+  const loadData = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get(`${API}/platforms`, { withCredentials: true });
-      setPlatforms(response.data || []);
+      const [planRes, locationsRes, businessRes] = await Promise.all([
+        axios.get(`${API}/user/plan`, { withCredentials: true }).catch(() => null),
+        axios.get(`${API}/locations`, { withCredentials: true }).catch(() => null),
+        axios.get(`${API}/business`, { withCredentials: true }).catch(() => null)
+      ]);
+      
+      if (planRes?.data) setUserPlan(planRes.data);
+      if (locationsRes?.data) setLocations(locationsRes.data.locations || []);
+      if (businessRes?.data) setBusiness(businessRes.data);
+      
+      // If no locations exist, create one from business data
+      if ((!locationsRes?.data?.locations || locationsRes.data.locations.length === 0) && businessRes?.data) {
+        await createInitialLocation(businessRes.data);
+      }
     } catch (error) {
-      console.error("Error loading platforms:", error);
+      console.error("Error loading data:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleConnect = async () => {
+  const createInitialLocation = async (businessData) => {
+    try {
+      const response = await axios.post(`${API}/locations`, {
+        name: businessData.name,
+        address: businessData.address || ""
+      }, { withCredentials: true });
+      
+      if (response.data.location) {
+        // If business has existing integrations, connect them to this location
+        const locationId = response.data.location.location_id;
+        
+        if (businessData.google_review_link) {
+          await axios.post(`${API}/locations/${locationId}/connect/google`, {
+            review_link: businessData.google_review_link,
+            platform_name: businessData.google_business_name
+          }, { withCredentials: true });
+        }
+        
+        if (businessData.facebook_page_url || businessData.facebook_review_link) {
+          await axios.post(`${API}/locations/${locationId}/connect/facebook`, {
+            review_link: businessData.facebook_review_link || `${businessData.facebook_page_url}/reviews`,
+            platform_name: businessData.facebook_page_name
+          }, { withCredentials: true });
+        }
+        
+        // Reload locations
+        const locRes = await axios.get(`${API}/locations`, { withCredentials: true });
+        if (locRes.data) setLocations(locRes.data.locations || []);
+      }
+    } catch (error) {
+      console.error("Error creating initial location:", error);
+    }
+  };
+
+  const handleConnectPlatform = async () => {
     if (!reviewLink.trim()) {
-      toast.error("Please enter your Google Review link");
+      toast.error("Please enter your review link");
       return;
     }
     
     setConnecting(true);
     
     try {
-      const platform = setupModal.platform;
+      const { platform, locationId } = setupModal;
       
-      if (platform === "google") {
-        // Extract Place ID from Google URL if present
-        let placeId = `google_${Date.now()}`;
-        if (reviewLink.includes("placeid=")) {
-          placeId = reviewLink.split("placeid=")[1].split("&")[0];
-        } else if (reviewLink.includes("/place/")) {
-          // Extract from Google Maps URL
-          const match = reviewLink.match(/place\/([^\/]+)/);
-          if (match) placeId = `place_${match[1].substring(0, 20)}`;
-        }
-        
-        await axios.post(`${API}/google/connect`, {
-          place_id: placeId,
-          name: businessName || business?.name || "My Business",
-          review_link: reviewLink
+      if (locationId) {
+        // Connect to specific location
+        await axios.post(`${API}/locations/${locationId}/connect/${platform}`, {
+          review_link: reviewLink,
+          platform_name: platformName || undefined
         }, { withCredentials: true });
       } else {
-        // Facebook
-        let pageId = `fb_${Date.now()}`;
-        if (reviewLink.includes("facebook.com/")) {
-          const parts = reviewLink.split("facebook.com/")[1];
-          if (parts) pageId = parts.split("/")[0].split("?")[0];
+        // Connect to main business (legacy support)
+        if (platform === "google") {
+          await axios.post(`${API}/google/connect`, {
+            place_id: `google_${Date.now()}`,
+            name: platformName || business?.name,
+            review_link: reviewLink
+          }, { withCredentials: true });
+        } else {
+          await axios.post(`${API}/facebook/connect`, {
+            page_id: `fb_${Date.now()}`,
+            name: platformName || business?.name,
+            url: reviewLink.replace("/reviews", ""),
+            review_link: reviewLink.includes("/reviews") ? reviewLink : `${reviewLink}/reviews`
+          }, { withCredentials: true });
         }
-        
-        await axios.post(`${API}/facebook/connect`, {
-          page_id: pageId,
-          name: businessName || business?.name || "My Business",
-          url: reviewLink.replace("/reviews", ""),
-          review_link: reviewLink.includes("/reviews") ? reviewLink : `${reviewLink}/reviews`
-        }, { withCredentials: true });
       }
       
-      // Refresh business data
-      const bizResponse = await axios.get(`${API}/business`, { withCredentials: true });
-      setBusiness(bizResponse.data);
-      
       toast.success(`${platform === "google" ? "Google" : "Facebook"} connected successfully! 🎉`);
-      setSetupModal({ open: false, platform: null, step: 1 });
+      setSetupModal({ open: false, platform: null, locationId: null });
       setReviewLink("");
-      loadPlatforms();
+      setPlatformName("");
+      loadData();
     } catch (error) {
-      console.error("Connect error:", error);
-      toast.error("Failed to connect. Please try again.");
+      const errorMsg = error.response?.data?.detail || "Failed to connect. Please try again.";
+      toast.error(typeof errorMsg === 'string' ? errorMsg : "Connection failed");
     } finally {
       setConnecting(false);
     }
   };
 
-  const handleDisconnect = async (platform) => {
-    if (!window.confirm(`Are you sure you want to disconnect ${platform === "google" ? "Google Business" : "Facebook Page"}?`)) {
+  const handleDisconnect = async (locationId, platform) => {
+    if (!window.confirm(`Are you sure you want to disconnect ${platform === "google" ? "Google" : "Facebook"}?`)) {
       return;
     }
     
     try {
-      await axios.post(`${API}/platforms/${platform}/disconnect`, {}, { withCredentials: true });
-      
-      const bizResponse = await axios.get(`${API}/business`, { withCredentials: true });
-      setBusiness(bizResponse.data);
+      if (locationId) {
+        await axios.post(`${API}/locations/${locationId}/disconnect/${platform}`, {}, { withCredentials: true });
+      } else {
+        await axios.post(`${API}/platforms/${platform}/disconnect`, {}, { withCredentials: true });
+      }
       
       toast.success("Platform disconnected");
-      loadPlatforms();
+      loadData();
     } catch (error) {
-      console.error("Disconnect error:", error);
       toast.error("Failed to disconnect");
     }
   };
@@ -204,24 +237,54 @@ export default function Integrations() {
       });
       
       toast.success(`Reviews synced from ${platform}!`);
-      loadPlatforms();
     } catch (error) {
-      console.error("Sync error:", error);
       toast.error("Sync failed. Please try again.");
     } finally {
       setSyncing({ ...syncing, [platform]: false });
     }
   };
 
-  const getGoogleConnection = () => platforms.find(p => p.platform === "google");
-  const getFacebookConnection = () => platforms.find(p => p.platform === "facebook");
-  
-  const googleConnected = getGoogleConnection()?.status === "connected";
-  const facebookConnected = getFacebookConnection()?.status === "connected";
+  const handleCreateLocation = async () => {
+    if (!newLocationName.trim()) {
+      toast.error("Please enter a location name");
+      return;
+    }
+    
+    try {
+      await axios.post(`${API}/locations`, {
+        name: newLocationName,
+        address: newLocationAddress || null
+      }, { withCredentials: true });
+      
+      toast.success("Location created! 🎉");
+      setLocationModal({ open: false, editing: null });
+      setNewLocationName("");
+      setNewLocationAddress("");
+      loadData();
+    } catch (error) {
+      const errorMsg = error.response?.data?.detail || "Failed to create location";
+      toast.error(typeof errorMsg === 'string' ? errorMsg : "Failed to create location");
+    }
+  };
 
-  const openSetupModal = (platform) => {
-    setSetupModal({ open: true, platform, step: 1 });
+  const handleDeleteLocation = async (locationId) => {
+    if (!window.confirm("Are you sure you want to delete this location?")) {
+      return;
+    }
+    
+    try {
+      await axios.delete(`${API}/locations/${locationId}`, { withCredentials: true });
+      toast.success("Location deleted");
+      loadData();
+    } catch (error) {
+      toast.error("Failed to delete location");
+    }
+  };
+
+  const openConnectModal = (platform, locationId = null) => {
+    setSetupModal({ open: true, platform, locationId });
     setReviewLink("");
+    setPlatformName("");
   };
 
   if (loading) {
@@ -231,6 +294,9 @@ export default function Integrations() {
       </div>
     );
   }
+
+  const canAddLocation = userPlan?.can_add_location || locations.length < (userPlan?.max_locations || 1);
+  const hasFacebookFeature = userPlan?.features?.includes("facebook_integration") || userPlan?.plan_name !== "starter";
 
   return (
     <div className="space-y-8" data-testid="integrations-page">
@@ -242,21 +308,54 @@ export default function Integrations() {
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 mb-4"
         >
           <Sparkles className="w-4 h-4 text-indigo-600" />
-          <span className="text-sm font-medium text-indigo-700">Super Easy Setup</span>
+          <span className="text-sm font-medium text-indigo-700">Platform Integrations</span>
         </motion.div>
         <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight mb-2">
           Connect Your Review Platforms
         </h1>
         <p className="text-slate-600">
-          Just paste your Google or Facebook review link. That&apos;s it! No API keys needed.
+          Connect Google & Facebook to collect reviews. Settings are saved automatically.
         </p>
       </div>
+
+      {/* Plan Status Banner */}
+      {userPlan && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-4xl mx-auto p-4 rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100"
+        >
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                <Crown className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="font-semibold text-slate-900 capitalize">{userPlan.plan_name} Plan</p>
+                <p className="text-sm text-slate-600">
+                  {locations.length} of {userPlan.max_locations} locations used
+                </p>
+              </div>
+            </div>
+            {!canAddLocation && (
+              <Button
+                size="sm"
+                className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+                onClick={() => window.location.href = "/#pricing"}
+              >
+                <ArrowRight className="w-4 h-4 mr-1" />
+                Upgrade Plan
+              </Button>
+            )}
+          </div>
+        </motion.div>
+      )}
 
       {/* Benefits Bar */}
       <div className="flex flex-wrap justify-center gap-4 text-sm">
         {[
-          { icon: Zap, label: "30-Second Setup", color: "text-amber-600" },
-          { icon: Shield, label: "No Coding", color: "text-emerald-600" },
+          { icon: Zap, label: "Auto-Saved", color: "text-amber-600" },
+          { icon: Shield, label: "Secure", color: "text-emerald-600" },
           { icon: Globe, label: "Works Instantly", color: "text-blue-600" },
         ].map((benefit) => (
           <div key={benefit.label} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-100 shadow-sm">
@@ -266,212 +365,246 @@ export default function Integrations() {
         ))}
       </div>
 
-      {/* Platform Cards */}
-      <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        {/* Google Business Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-        >
-          <Card className="glass-card border-0 overflow-hidden h-full">
-            <CardHeader className="border-b border-slate-100">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
-                    <GoogleIcon className="w-7 h-7" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg font-semibold">Google Reviews</CardTitle>
-                    <p className="text-sm text-slate-500">
-                      {googleConnected ? "Connected" : "Google Maps & Business"}
-                    </p>
-                  </div>
-                </div>
-                <Badge className={googleConnected 
-                  ? "bg-emerald-100 text-emerald-700" 
-                  : "bg-slate-100 text-slate-600"
-                }>
-                  {googleConnected ? "Active" : "Not Connected"}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="p-6">
-              {googleConnected ? (
-                <div className="space-y-4">
-                  {/* Connected Info */}
-                  <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-100">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
-                        <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+      {/* Locations Grid */}
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Add Location Button */}
+        {canAddLocation && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <Button
+              onClick={() => setLocationModal({ open: true, editing: null })}
+              variant="outline"
+              className="w-full h-16 rounded-2xl border-2 border-dashed border-indigo-200 hover:border-indigo-400 hover:bg-indigo-50/50 text-indigo-600"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Add New Location
+            </Button>
+          </motion.div>
+        )}
+
+        {/* Location Cards */}
+        {locations.map((location, index) => (
+          <motion.div
+            key={location.location_id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <Card className="glass-card border-0 overflow-hidden">
+              <CardHeader className="border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
+                      <Building2 className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <CardTitle className="text-lg font-semibold">{location.name}</CardTitle>
+                        {location.is_primary && (
+                          <Badge className="bg-amber-100 text-amber-700 text-xs">Primary</Badge>
+                        )}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-emerald-900 truncate">
-                          {business?.google_business_name || business?.name}
+                      {location.address && (
+                        <p className="text-sm text-slate-500 flex items-center gap-1">
+                          <MapPin className="w-3 h-3" />
+                          {location.address}
                         </p>
-                        <p className="text-xs text-emerald-700">Connected & Ready</p>
-                      </div>
+                      )}
                     </div>
                   </div>
-                  
-                  {/* Review Link */}
-                  {business?.google_review_link && (
-                    <div className="p-3 rounded-lg bg-slate-50 border border-slate-100">
-                      <p className="text-xs text-slate-500 mb-1">Your Google Review Link:</p>
+                  <div className="flex items-center gap-2">
+                    {locations.length > 1 && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteLocation(location.location_id)}
+                        className="text-slate-400 hover:text-rose-600"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="grid md:grid-cols-2 gap-4">
+                  {/* Google Integration */}
+                  <div className={`p-4 rounded-xl border-2 transition-all ${
+                    location.google_review_link 
+                      ? "bg-emerald-50 border-emerald-200" 
+                      : "bg-slate-50 border-slate-200"
+                  }`}>
+                    <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <code className="text-xs text-slate-700 flex-1 truncate">
-                          {business.google_review_link.substring(0, 50)}...
-                        </code>
+                        <GoogleIcon className="w-5 h-5" />
+                        <span className="font-medium text-slate-900">Google Reviews</span>
+                      </div>
+                      <Badge className={location.google_review_link 
+                        ? "bg-emerald-100 text-emerald-700" 
+                        : "bg-slate-100 text-slate-600"
+                      }>
+                        {location.google_review_link ? "Connected" : "Not Connected"}
+                      </Badge>
+                    </div>
+                    
+                    {location.google_review_link ? (
+                      <div className="space-y-3">
+                        <p className="text-sm text-emerald-700 font-medium">
+                          {location.google_business_name || location.name}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => copyToClipboard(location.google_review_link, "Link copied!")}
+                            className="flex-1 rounded-lg text-xs"
+                          >
+                            <Copy className="w-3 h-3 mr-1" />
+                            Copy Link
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDisconnect(location.location_id, "google")}
+                            className="rounded-lg text-xs text-rose-600 hover:bg-rose-50"
+                          >
+                            <XCircle className="w-3 h-3 mr-1" />
+                            Disconnect
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={() => openConnectModal("google", location.location_id)}
+                        className="w-full rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+                        size="sm"
+                      >
+                        <Plus className="w-4 h-4 mr-1" />
+                        Connect Google
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Facebook Integration */}
+                  <div className={`p-4 rounded-xl border-2 transition-all ${
+                    location.facebook_review_link || location.facebook_page_url
+                      ? "bg-indigo-50 border-indigo-200" 
+                      : "bg-slate-50 border-slate-200"
+                  } ${!hasFacebookFeature ? "opacity-60" : ""}`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <FacebookIcon className="w-5 h-5" />
+                        <span className="font-medium text-slate-900">Facebook</span>
+                      </div>
+                      {!hasFacebookFeature ? (
+                        <Badge className="bg-amber-100 text-amber-700">
+                          <Crown className="w-3 h-3 mr-1" />
+                          Growth+
+                        </Badge>
+                      ) : (
+                        <Badge className={location.facebook_review_link || location.facebook_page_url
+                          ? "bg-indigo-100 text-indigo-700" 
+                          : "bg-slate-100 text-slate-600"
+                        }>
+                          {location.facebook_review_link || location.facebook_page_url ? "Connected" : "Not Connected"}
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    {!hasFacebookFeature ? (
+                      <div className="text-center py-2">
+                        <p className="text-xs text-slate-500 mb-2">Upgrade to Growth plan</p>
                         <Button
-                          variant="ghost"
                           size="sm"
-                          className="h-7 px-2"
-                          onClick={() => copyToClipboard(business.google_review_link, "Link copied!")}
+                          variant="outline"
+                          className="rounded-lg text-xs"
+                          onClick={() => window.location.href = "/#pricing"}
                         >
-                          <Copy className="w-3 h-3" />
+                          Upgrade
                         </Button>
                       </div>
-                    </div>
-                  )}
-                  
-                  {/* Actions */}
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDisconnect("google")}
-                      className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg"
-                    >
-                      <XCircle className="w-4 h-4 mr-1" />
-                      Disconnect
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => handleSync("google")}
-                      disabled={syncing.google}
-                      className="bg-emerald-600 hover:bg-emerald-700 rounded-lg flex-1"
-                    >
-                      {syncing.google ? (
-                        <RefreshCw className="w-4 h-4 mr-1 animate-spin" />
-                      ) : (
-                        <RefreshCw className="w-4 h-4 mr-1" />
-                      )}
-                      Sync Reviews
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <p className="text-sm text-slate-600">
-                    Connect your Google Business to let customers leave reviews directly on Google Maps.
-                  </p>
-                  <Button
-                    onClick={() => openSetupModal("google")}
-                    className="w-full rounded-xl h-12 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg shadow-blue-500/25"
-                    data-testid="connect-google-btn"
-                  >
-                    <MapPin className="w-5 h-5 mr-2" />
-                    Connect Google Reviews
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Facebook Page Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <Card className="glass-card border-0 overflow-hidden h-full">
-            <CardHeader className="border-b border-slate-100">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
-                    <FacebookIcon className="w-7 h-7" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg font-semibold">Facebook Reviews</CardTitle>
-                    <p className="text-sm text-slate-500">
-                      {facebookConnected ? "Connected" : "Facebook Page Reviews"}
-                    </p>
-                  </div>
-                </div>
-                <Badge className={facebookConnected 
-                  ? "bg-emerald-100 text-emerald-700" 
-                  : "bg-slate-100 text-slate-600"
-                }>
-                  {facebookConnected ? "Active" : "Not Connected"}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="p-6">
-              {facebookConnected ? (
-                <div className="space-y-4">
-                  {/* Connected Info */}
-                  <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-100">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
-                        <CheckCircle2 className="w-5 h-5 text-indigo-600" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-indigo-900 truncate">
-                          {business?.facebook_page_name || business?.name}
+                    ) : location.facebook_review_link || location.facebook_page_url ? (
+                      <div className="space-y-3">
+                        <p className="text-sm text-indigo-700 font-medium">
+                          {location.facebook_page_name || location.name}
                         </p>
-                        <p className="text-xs text-indigo-700">Connected & Ready</p>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => copyToClipboard(
+                              location.facebook_review_link || `${location.facebook_page_url}/reviews`, 
+                              "Link copied!"
+                            )}
+                            className="flex-1 rounded-lg text-xs"
+                          >
+                            <Copy className="w-3 h-3 mr-1" />
+                            Copy Link
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDisconnect(location.location_id, "facebook")}
+                            className="rounded-lg text-xs text-rose-600 hover:bg-rose-50"
+                          >
+                            <XCircle className="w-3 h-3 mr-1" />
+                            Disconnect
+                          </Button>
+                        </div>
                       </div>
+                    ) : (
+                      <Button
+                        onClick={() => openConnectModal("facebook", location.location_id)}
+                        className="w-full rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white"
+                        size="sm"
+                      >
+                        <Plus className="w-4 h-4 mr-1" />
+                        Connect Facebook
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                {/* QR Code Info */}
+                <div className="mt-4 p-3 rounded-lg bg-slate-50 border border-slate-100">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Star className="w-4 h-4 text-amber-500" />
+                      <span className="text-sm text-slate-600">QR Code ID: <code className="text-xs bg-white px-2 py-0.5 rounded">{location.qr_code_id}</code></span>
                     </div>
-                  </div>
-                  
-                  {/* Actions */}
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDisconnect("facebook")}
-                      className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg"
-                    >
-                      <XCircle className="w-4 h-4 mr-1" />
-                      Disconnect
-                    </Button>
                     <Button
                       size="sm"
-                      onClick={() => handleSync("facebook")}
-                      disabled={syncing.facebook}
-                      className="bg-indigo-600 hover:bg-indigo-700 rounded-lg flex-1"
+                      variant="ghost"
+                      className="text-xs text-indigo-600"
+                      onClick={() => window.location.href = "/qr-generator"}
                     >
-                      {syncing.facebook ? (
-                        <RefreshCw className="w-4 h-4 mr-1 animate-spin" />
-                      ) : (
-                        <RefreshCw className="w-4 h-4 mr-1" />
-                      )}
-                      Sync Reviews
+                      Generate QR
+                      <ArrowRight className="w-3 h-3 ml-1" />
                     </Button>
                   </div>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  <p className="text-sm text-slate-600">
-                    Connect your Facebook Page to collect and manage Facebook recommendations.
-                  </p>
-                  <Button
-                    onClick={() => openSetupModal("facebook")}
-                    className="w-full rounded-xl h-12 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white shadow-lg shadow-indigo-500/25"
-                    data-testid="connect-facebook-btn"
-                  >
-                    <Globe className="w-5 h-5 mr-2" />
-                    Connect Facebook Page
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+
+        {/* No Locations Message */}
+        {locations.length === 0 && (
+          <div className="text-center py-12">
+            <Building2 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">No Locations Yet</h3>
+            <p className="text-slate-500 mb-4">Add your first business location to get started</p>
+            <Button onClick={() => setLocationModal({ open: true, editing: null })}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Location
+            </Button>
+          </div>
+        )}
       </div>
 
-      {/* How It Works */}
+      {/* Pro Tip */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -481,34 +614,25 @@ export default function Integrations() {
         <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100">
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
-              <HelpCircle className="w-5 h-5 text-amber-600" />
+              <Info className="w-5 h-5 text-amber-600" />
             </div>
             <div>
-              <h3 className="font-semibold text-amber-900 mb-2">How does this work?</h3>
-              <ol className="text-amber-800 text-sm space-y-2">
-                <li className="flex items-start gap-2">
-                  <span className="w-5 h-5 rounded-full bg-amber-200 text-amber-800 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</span>
-                  <span>When customers scan your QR code, they&apos;ll write a review on Review Master</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="w-5 h-5 rounded-full bg-amber-200 text-amber-800 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</span>
-                  <span>If they give 4-5 stars, they can copy their review and post it on Google/Facebook</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="w-5 h-5 rounded-full bg-amber-200 text-amber-800 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</span>
-                  <span>Low ratings (1-3 stars) stay private so you can address issues directly</span>
-                </li>
-              </ol>
+              <h3 className="font-semibold text-amber-900 mb-1">Your settings are saved automatically</h3>
+              <p className="text-amber-800 text-sm">
+                Once you connect Google or Facebook, your integration stays active forever. 
+                You can edit or disconnect anytime from this page.
+              </p>
             </div>
           </div>
         </div>
       </motion.div>
 
-      {/* Setup Modal */}
+      {/* Connect Platform Modal */}
       <Dialog open={setupModal.open} onOpenChange={(open) => {
         if (!open) {
-          setSetupModal({ open: false, platform: null, step: 1 });
+          setSetupModal({ open: false, platform: null, locationId: null });
           setReviewLink("");
+          setPlatformName("");
         }
       }}>
         <DialogContent className="sm:max-w-lg">
@@ -524,87 +648,83 @@ export default function Integrations() {
           </DialogHeader>
           
           <div className="space-y-6 py-4">
-            {/* Step 1: Find your link */}
-            <div className="space-y-4">
-              <div className="p-4 rounded-xl bg-blue-50 border border-blue-100">
-                <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
-                  <Info className="w-4 h-4" />
-                  {setupModal.platform === "google" 
-                    ? "How to get your Google Review link" 
-                    : "How to get your Facebook Review link"}
-                </h4>
-                {setupModal.platform === "google" ? (
-                  <div className="space-y-3">
-                    <p className="text-sm text-blue-800 font-medium">From Google Business Profile (Owner):</p>
-                    <ol className="text-sm text-blue-800 space-y-2">
-                      <li className="flex items-start gap-2">
-                        <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
-                        <span>Sign in to <a href="https://business.google.com" target="_blank" rel="noopener noreferrer" className="font-medium underline hover:text-blue-600">Google Business Profile</a></span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
-                        <span>Select your business</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
-                        <span>Click <strong>&quot;Ask for reviews&quot;</strong></span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>
-                        <span>Copy the review link shown</span>
-                      </li>
-                    </ol>
-                    <div className="mt-3">
-                      <a 
-                        href="https://business.google.com" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
-                      >
-                        <Globe className="w-4 h-4" />
-                        Open Google Business Profile
-                      </a>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <ol className="text-sm text-blue-800 space-y-2">
-                      <li className="flex items-start gap-2">
-                        <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
-                        <span>Open your <a href="https://www.facebook.com/pages" target="_blank" rel="noopener noreferrer" className="font-medium underline hover:text-blue-600">Facebook Business Page</a></span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
-                        <span>Click the <strong>Reviews</strong> (or Recommendations) tab</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
-                        <span>Click <strong>&quot;Write a review&quot;</strong></span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>
-                        <span>Copy the page URL from the browser address bar</span>
-                      </li>
-                    </ol>
-                    <div className="mt-3">
-                      <a 
-                        href="https://www.facebook.com/pages" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors"
-                      >
-                        <Globe className="w-4 h-4" />
-                        Open Facebook Pages
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </div>
+            {/* Instructions */}
+            <div className="p-4 rounded-xl bg-blue-50 border border-blue-100">
+              <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                <Info className="w-4 h-4" />
+                {setupModal.platform === "google" 
+                  ? "How to get your Google Review link" 
+                  : "How to get your Facebook Review link"}
+              </h4>
+              {setupModal.platform === "google" ? (
+                <div className="space-y-3">
+                  <p className="text-sm text-blue-800 font-medium">From Google Business Profile:</p>
+                  <ol className="text-sm text-blue-800 space-y-2">
+                    <li className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                      <span>Sign in to <a href="https://business.google.com" target="_blank" rel="noopener noreferrer" className="font-medium underline hover:text-blue-600">Google Business Profile</a></span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                      <span>Select your business</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+                      <span>Click <strong>&quot;Ask for reviews&quot;</strong></span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>
+                      <span>Copy the review link shown</span>
+                    </li>
+                  </ol>
+                  <a 
+                    href="https://business.google.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors mt-2"
+                  >
+                    <Globe className="w-4 h-4" />
+                    Open Google Business Profile
+                  </a>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <ol className="text-sm text-blue-800 space-y-2">
+                    <li className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                      <span>Open your <a href="https://www.facebook.com/pages" target="_blank" rel="noopener noreferrer" className="font-medium underline hover:text-blue-600">Facebook Business Page</a></span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                      <span>Click the <strong>Reviews</strong> (or Recommendations) tab</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+                      <span>Click <strong>&quot;Write a review&quot;</strong></span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>
+                      <span>Copy the page URL from the browser</span>
+                    </li>
+                  </ol>
+                  <a 
+                    href="https://www.facebook.com/pages" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors mt-2"
+                  >
+                    <Globe className="w-4 h-4" />
+                    Open Facebook Pages
+                  </a>
+                </div>
+              )}
+            </div>
 
-              {/* Input */}
+            {/* Input Fields */}
+            <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-700">
-                  Paste your {setupModal.platform === "google" ? "Google Review" : "Facebook Page"} link here:
+                  Paste your {setupModal.platform === "google" ? "Google Review" : "Facebook Page"} link:
                 </label>
                 <Input
                   value={reviewLink}
@@ -619,15 +739,14 @@ export default function Integrations() {
                 />
               </div>
 
-              {/* Business Name (optional override) */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-700">
                   Business Name (optional):
                 </label>
                 <Input
-                  value={businessName}
-                  onChange={(e) => setBusinessName(e.target.value)}
-                  placeholder={business?.name || "Your Business Name"}
+                  value={platformName}
+                  onChange={(e) => setPlatformName(e.target.value)}
+                  placeholder="Your business name on the platform"
                   className="h-12 rounded-xl"
                 />
               </div>
@@ -635,7 +754,7 @@ export default function Integrations() {
 
             {/* Connect Button */}
             <Button
-              onClick={handleConnect}
+              onClick={handleConnectPlatform}
               disabled={connecting || !reviewLink.trim()}
               className="w-full h-12 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
               data-testid="confirm-connect-btn"
@@ -648,15 +767,67 @@ export default function Integrations() {
               ) : (
                 <>
                   <CheckCircle2 className="w-5 h-5 mr-2" />
-                  Connect {setupModal.platform === "google" ? "Google" : "Facebook"}
+                  Connect & Save
                 </>
               )}
             </Button>
 
-            {/* Help text */}
             <p className="text-xs text-center text-slate-500">
-              Don&apos;t worry - we don&apos;t need any API keys or technical setup. Just paste your link!
+              Your settings will be saved permanently to your account.
             </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Location Modal */}
+      <Dialog open={locationModal.open} onOpenChange={(open) => {
+        if (!open) {
+          setLocationModal({ open: false, editing: null });
+          setNewLocationName("");
+          setNewLocationAddress("");
+        }
+      }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <Building2 className="w-6 h-6 text-indigo-600" />
+              Add New Location
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">
+                Location Name *
+              </label>
+              <Input
+                value={newLocationName}
+                onChange={(e) => setNewLocationName(e.target.value)}
+                placeholder="e.g., Downtown Branch, Main Street Location"
+                className="h-12 rounded-xl"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">
+                Address (optional)
+              </label>
+              <Input
+                value={newLocationAddress}
+                onChange={(e) => setNewLocationAddress(e.target.value)}
+                placeholder="123 Main Street, City"
+                className="h-12 rounded-xl"
+              />
+            </div>
+
+            <Button
+              onClick={handleCreateLocation}
+              disabled={!newLocationName.trim()}
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Create Location
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
