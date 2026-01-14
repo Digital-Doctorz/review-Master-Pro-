@@ -211,11 +211,12 @@ export default function Landing() {
             <a href="#testimonials" className="text-slate-600 hover:text-slate-900 transition-colors">Reviews</a>
           </div>
           <Button
-            onClick={handleGoogleLogin}
+            onClick={handleDemoMode}
             className="rounded-full px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow"
-            data-testid="nav-login-btn"
+            data-testid="nav-demo-btn"
           >
-            Get Started Free
+            <Play className="w-4 h-4 mr-2" />
+            See A Demo
           </Button>
         </div>
       </nav>
