@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { AnimatedLogo } from "../components/AnimatedLogo";
@@ -25,6 +26,7 @@ import {
   Bell,
   Globe,
   X,
+  Play,
 } from "lucide-react";
 
 // Google Icon
