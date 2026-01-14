@@ -64,6 +64,45 @@ class UserSession(BaseModel):
     expires_at: datetime
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class UserPlan(BaseModel):
+    """User subscription plan"""
+    model_config = ConfigDict(extra="ignore")
+    plan_id: str = Field(default_factory=lambda: f"plan_{uuid.uuid4().hex[:8]}")
+    user_id: str
+    plan_name: str = "starter"  # starter, growth, enterprise
+    max_locations: int = 1
+    max_reviews_per_month: int = 100
+    features: List[str] = Field(default_factory=lambda: ["google_integration", "qr_codes", "ai_responses"])
+    price_monthly: int = 499
+    price_yearly: int = 399
+    billing_cycle: str = "monthly"  # monthly, yearly
+    status: str = "active"  # active, cancelled, expired
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    expires_at: Optional[datetime] = None
+
+class Location(BaseModel):
+    """Business location for multi-location support"""
+    model_config = ConfigDict(extra="ignore")
+    location_id: str = Field(default_factory=lambda: f"loc_{uuid.uuid4().hex[:8]}")
+    user_id: str
+    name: str
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    # Google Integration
+    google_place_id: Optional[str] = None
+    google_business_name: Optional[str] = None
+    google_review_link: Optional[str] = None
+    # Facebook Integration
+    facebook_page_id: Optional[str] = None
+    facebook_page_name: Optional[str] = None
+    facebook_page_url: Optional[str] = None
+    facebook_review_link: Optional[str] = None
+    # QR Code
+    qr_code_id: str = Field(default_factory=lambda: f"qr_{uuid.uuid4().hex[:8]}")
+    is_primary: bool = False
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 class Business(BaseModel):
     model_config = ConfigDict(extra="ignore")
     business_id: str = Field(default_factory=lambda: f"biz_{uuid.uuid4().hex[:12]}")
@@ -74,7 +113,7 @@ class Business(BaseModel):
     phone: Optional[str] = None
     website: Optional[str] = None
     logo_url: Optional[str] = None
-    qr_code_id: str = Field(default_factory=lambda: uuid.uuid4().hex[:8])
+    qr_code_id: str = Field(default_factory=lambda: f"qr_{uuid.uuid4().hex[:8]}")
     # Google Business Integration
     google_place_id: Optional[str] = None
     google_business_name: Optional[str] = None
@@ -83,6 +122,7 @@ class Business(BaseModel):
     facebook_page_id: Optional[str] = None
     facebook_page_name: Optional[str] = None
     facebook_page_url: Optional[str] = None
+    facebook_review_link: Optional[str] = None
     setup_completed: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
