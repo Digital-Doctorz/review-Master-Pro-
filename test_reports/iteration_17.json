@@ -1,0 +1,121 @@
+{
+  "summary": "Iteration 17 - Navigation Fix Testing Complete. Fixed critical bug where /api-settings route returned 404 due to conflict with /api prefix. Renamed route to /advanced-settings. All navigation workflows now work correctly in demo mode.",
+
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "fixed_bugs": [
+      {
+        "component": "App.js & Layout.jsx",
+        "issue": "Route /api-settings returned 404 because it conflicted with /api prefix used for backend routing",
+        "fix": "Renamed route from /api-settings to /advanced-settings",
+        "priority": "CRITICAL"
+      }
+    ]
+  },
+
+  "passed_tests": [
+    "Landing page loads correctly",
+    "See A Demo button works (both nav and hero)",
+    "Demo mode banner visible on dashboard",
+    "Demo mode badge visible in sidebar",
+    "Navigation: Dashboard -> Integrations works",
+    "Navigation: Dashboard -> Reviews works",
+    "Navigation: Dashboard -> Analytics works",
+    "Navigation: Dashboard -> QR Code works",
+    "Navigation: Dashboard -> Webhooks works",
+    "Navigation: Dashboard -> Notifications works",
+    "Navigation: Dashboard -> API Keys works (now at /advanced-settings)",
+    "Navigation: Dashboard -> Settings works",
+    "Webhooks page loads with demo data",
+    "Notifications page loads with demo settings",
+    "API Keys page loads with demo credentials",
+    "Settings page shows demo business info",
+    "QR Code page generates QR with demo business ID",
+    "Exit Demo button works from user menu",
+    "No [object Object] errors on any page",
+    "Backend /api/health returns healthy",
+    "Backend /api/ returns API info"
+  ],
+
+  "test_report_links": [
+    "/app/tests/test_iteration17_navigation.py",
+    "/app/test_reports/pytest/iteration17_pytest_results.xml"
+  ],
+
+  "action_items": [],
+
+  "critical_code_review_comments": [
+    "FIXED: Route /api-settings conflicted with /api prefix - renamed to /advanced-settings",
+    "All navigation routes now work correctly",
+    "Demo mode implementation is clean and functional"
+  ],
+
+  "updated_files": [
+    "/app/frontend/src/App.js - Changed route from /api-settings to /advanced-settings",
+    "/app/frontend/src/components/Layout.jsx - Updated navItems path from /api-settings to /advanced-settings"
+  ],
+
+  "success_rate": {
+    "backend": "100% (4/4 health tests passed)",
+    "frontend": "100% (all navigation and demo mode features working)"
+  },
+
+  "test_credentials": {
+    "note": "Demo mode - just click 'See A Demo' button to test all features"
+  },
+
+  "seed_data_creation": "Demo mode uses hardcoded sample data - no database seeding required",
+
+  "mocked_apis": {
+    "has_mocked_apis": true,
+    "mocked_apis_list": [
+      "Demo mode uses MOCKED/hardcoded data for all pages",
+      "DEMO_WEBHOOK_CONFIG, DEMO_WEBHOOK_EVENTS in WebhookSettings.jsx",
+      "DEMO_NOTIFICATION_SETTINGS in NotificationSettings.jsx",
+      "DEMO_INTEGRATION_STATUS in ApiSettings.jsx"
+    ]
+  },
+
+  "features_verified": {
+    "navigation_webhooks": {
+      "status": "WORKING",
+      "route": "/webhooks"
+    },
+    "navigation_notifications": {
+      "status": "WORKING",
+      "route": "/notifications"
+    },
+    "navigation_api_keys": {
+      "status": "WORKING",
+      "route": "/advanced-settings (renamed from /api-settings)"
+    },
+    "navigation_settings": {
+      "status": "WORKING",
+      "route": "/settings"
+    },
+    "navigation_qr_code": {
+      "status": "WORKING",
+      "route": "/qr-generator"
+    },
+    "demo_mode": {
+      "status": "WORKING",
+      "details": "All pages show demo data when in demo mode"
+    },
+    "exit_demo": {
+      "status": "WORKING",
+      "details": "Clears session and returns to landing page"
+    }
+  },
+
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+
+  "context_for_next_testing_agent": "Iteration 17 fixed a critical routing bug. The /api-settings route was returning 404 because it conflicted with the /api prefix used for backend routing. Renamed to /advanced-settings. All navigation workflows now work correctly. Demo mode is activated by clicking 'See A Demo' button on landing page."
+}
