@@ -44,7 +44,7 @@ const FacebookIcon = ({ className = "w-6 h-6" }) => (
 );
 
 export default function ApiSettings() {
-  const { business } = useContext(AuthContext);
+  const { business, isDemo } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState({ google: false, facebook: false });
@@ -58,12 +58,30 @@ export default function ApiSettings() {
   
   const [integrationStatus, setIntegrationStatus] = useState(null);
 
+  // Demo integration status
+  const DEMO_INTEGRATION_STATUS = {
+    google: { connected: true, mode: "demo" },
+    facebook: { connected: true, mode: "demo" },
+    overall_mode: "demo"
+  };
+
   useEffect(() => {
     loadCredentials();
     loadIntegrationStatus();
   }, []);
 
   const loadCredentials = async () => {
+    // Demo mode - use placeholder data
+    if (isDemo) {
+      setCredentials({
+        google_api_key: "demo_google_api_key_xxx",
+        facebook_app_id: "demo_facebook_app_id",
+        facebook_app_secret: "demo_facebook_secret_xxx",
+      });
+      setLoading(false);
+      return;
+    }
+    
     try {
       const response = await axios.get(`${API}/settings/api-credentials`, { withCredentials: true });
       if (response.data) {
@@ -74,22 +92,32 @@ export default function ApiSettings() {
         });
       }
     } catch (error) {
-      console.error("Error loading credentials:", error);
+      console.warn("Error loading credentials:", error?.displayMessage || error?.message);
     } finally {
       setLoading(false);
     }
   };
 
   const loadIntegrationStatus = async () => {
+    if (isDemo) {
+      setIntegrationStatus(DEMO_INTEGRATION_STATUS);
+      return;
+    }
+    
     try {
       const response = await axios.get(`${API}/integration-status`, { withCredentials: true });
       setIntegrationStatus(response.data);
     } catch (error) {
-      console.error("Error loading status:", error);
+      console.warn("Error loading status:", error?.displayMessage || error?.message);
     }
   };
 
   const handleSave = async (platform) => {
+    if (isDemo) {
+      toast.info("Demo mode - credentials won't be saved");
+      return;
+    }
+    
     setSaving(true);
     try {
       const payload = platform === "google" 
@@ -100,7 +128,7 @@ export default function ApiSettings() {
       toast.success(`${platform === "google" ? "Google" : "Facebook"} credentials saved!`);
       loadIntegrationStatus();
     } catch (error) {
-      console.error("Error saving credentials:", error);
+      console.warn("Error saving credentials:", error?.displayMessage || error?.message);
       toast.error("Failed to save credentials");
     } finally {
       setSaving(false);
@@ -108,6 +136,15 @@ export default function ApiSettings() {
   };
 
   const handleTestConnection = async (platform) => {
+    if (isDemo) {
+      toast.info("Demo mode - connection test simulated");
+      setTesting({ ...testing, [platform]: true });
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      toast.success(`${platform === "google" ? "Google" : "Facebook"} connection successful!`);
+      setTesting({ ...testing, [platform]: false });
+      return;
+    }
+    
     setTesting({ ...testing, [platform]: true });
     try {
       const response = await axios.post(`${API}/settings/test-connection/${platform}`, {}, { withCredentials: true });
