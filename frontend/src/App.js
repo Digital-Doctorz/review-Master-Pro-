@@ -3,29 +3,58 @@ import { useState, useEffect, useRef } from "react";
 import { Toaster, toast } from "./components/ui/sonner";
 import axios from "axios";
 
+// Helper function to safely extract error message as a string
+const extractErrorMessage = (error) => {
+  // Default message
+  let message = "An error occurred. Please try again.";
+  
+  try {
+    // Check for detail field
+    if (error?.response?.data?.detail) {
+      const detail = error.response.data.detail;
+      if (typeof detail === 'string') {
+        message = detail;
+      } else if (Array.isArray(detail)) {
+        // FastAPI validation errors come as array
+        message = detail.map(d => d?.msg || String(d)).join(', ');
+      } else if (typeof detail === 'object') {
+        message = JSON.stringify(detail);
+      }
+    } 
+    // Check for message field
+    else if (error?.response?.data?.message) {
+      const msg = error.response.data.message;
+      message = typeof msg === 'string' ? msg : JSON.stringify(msg);
+    }
+    // Check for direct error message  
+    else if (error?.message && typeof error.message === 'string') {
+      message = error.message;
+    }
+  } catch (e) {
+    console.error("Error extracting message:", e);
+  }
+  
+  // Ensure we never return [object Object]
+  if (message === '[object Object]' || message.includes('[object Object]')) {
+    message = "An unexpected error occurred. Please try again.";
+  }
+  
+  return message;
+};
+
 // Setup axios interceptors for better error handling
 axios.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Extract a user-friendly error message
-    let errorMessage = "An error occurred. Please try again.";
-    
-    if (error.response?.data?.detail) {
-      errorMessage = typeof error.response.data.detail === 'string' 
-        ? error.response.data.detail 
-        : JSON.stringify(error.response.data.detail);
-    } else if (error.response?.data?.message) {
-      errorMessage = typeof error.response.data.message === 'string'
-        ? error.response.data.message
-        : JSON.stringify(error.response.data.message);
-    } else if (error.message) {
-      errorMessage = error.message;
-    }
+    const errorMessage = extractErrorMessage(error);
     
     // Don't show toast for auth errors (401) - those are handled by redirects
     if (error.response?.status !== 401) {
       console.error("API Error:", errorMessage);
     }
+    
+    // Attach clean message to error for components to use
+    error.displayMessage = errorMessage;
     
     return Promise.reject(error);
   }
