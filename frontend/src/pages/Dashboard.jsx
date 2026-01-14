@@ -111,6 +111,18 @@ export default function Dashboard() {
   };
 
   const fetchDashboardData = useCallback(async () => {
+    // If in demo mode, use demo data
+    if (isDemo) {
+      setAnalytics(DEMO_ANALYTICS);
+      setReviews(DEMO_REVIEWS);
+      setPrivateReviews([]);
+      setPlatforms(DEMO_PLATFORMS);
+      setIntegrationStatus({ overall_mode: "demo" });
+      setLoading(false);
+      setRefreshing(false);
+      return;
+    }
+
     try {
       // Default fallback data structures
       const defaultAnalytics = { 
@@ -123,23 +135,23 @@ export default function Dashboard() {
       
       const [analyticsRes, reviewsRes, privateRes, platformsRes, statusRes] = await Promise.all([
         axios.get(`${API}/analytics/overview`, { withCredentials: true }).catch((err) => {
-          console.error("Analytics fetch error:", err?.displayMessage || err?.message);
+          console.warn("Analytics fetch error:", err?.displayMessage || err?.message);
           return { data: defaultAnalytics };
         }),
         axios.get(`${API}/reviews?limit=10&is_private=false`, { withCredentials: true }).catch((err) => {
-          console.error("Reviews fetch error:", err?.displayMessage || err?.message);
+          console.warn("Reviews fetch error:", err?.displayMessage || err?.message);
           return { data: [] };
         }),
         axios.get(`${API}/reviews/private`, { withCredentials: true }).catch((err) => {
-          console.error("Private reviews fetch error:", err?.displayMessage || err?.message);
+          console.warn("Private reviews fetch error:", err?.displayMessage || err?.message);
           return { data: [] };
         }),
         axios.get(`${API}/platforms`, { withCredentials: true }).catch((err) => {
-          console.error("Platforms fetch error:", err?.displayMessage || err?.message);
+          console.warn("Platforms fetch error:", err?.displayMessage || err?.message);
           return { data: [] };
         }),
         axios.get(`${API}/integration-status`, { withCredentials: true }).catch((err) => {
-          console.error("Integration status fetch error:", err?.displayMessage || err?.message);
+          console.warn("Integration status fetch error:", err?.displayMessage || err?.message);
           return { data: null };
         }),
       ]);
