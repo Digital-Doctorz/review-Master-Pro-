@@ -79,7 +79,7 @@ const copyToClipboard = async (text, successMessage = "Copied!") => {
 };
 
 export default function Integrations() {
-  const { business, setBusiness } = useContext(AuthContext);
+  const { business, setBusiness, isDemo } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState({});
   
@@ -98,11 +98,41 @@ export default function Integrations() {
   const [newLocationName, setNewLocationName] = useState("");
   const [newLocationAddress, setNewLocationAddress] = useState("");
 
+  // Demo data
+  const DEMO_PLAN = {
+    plan: "growth",
+    max_locations: 3,
+    current_locations: 1,
+    can_add_location: true,
+    features: ["google_integration", "facebook_integration", "qr_codes", "ai_responses", "email_notifications"]
+  };
+  
+  const DEMO_LOCATIONS = [
+    {
+      location_id: "demo_loc_1",
+      name: "Demo Coffee Shop - Main",
+      address: "123 Demo Street, Sample City",
+      google_connected: true,
+      google_name: "Demo Coffee Shop",
+      facebook_connected: true,
+      facebook_name: "Demo Coffee FB",
+      is_primary: true
+    }
+  ];
+
   useEffect(() => {
     loadData();
   }, []);
 
   const loadData = async () => {
+    // In demo mode, use demo data
+    if (isDemo) {
+      setUserPlan(DEMO_PLAN);
+      setLocations(DEMO_LOCATIONS);
+      setLoading(false);
+      return;
+    }
+    
     setLoading(true);
     try {
       const [planRes, locationsRes, businessRes] = await Promise.all([
@@ -120,7 +150,7 @@ export default function Integrations() {
         await createInitialLocation(businessRes.data);
       }
     } catch (error) {
-      console.error("Error loading data:", error);
+      console.warn("Error loading data:", error?.displayMessage || error?.message);
     } finally {
       setLoading(false);
     }
