@@ -128,10 +128,10 @@ export default function Layout({ children }) {
                 </Avatar>
                 <div className="flex-1 text-left">
                   <p className="text-sm font-medium text-slate-900 truncate">
-                    {user?.name}
+                    {user?.name || "Demo User"}
                   </p>
                   <p className="text-xs text-slate-500 truncate">
-                    {business?.name}
+                    {business?.name || "Demo Business"}
                   </p>
                 </div>
               </button>
@@ -150,7 +150,7 @@ export default function Layout({ children }) {
                 data-testid="logout-btn"
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                Log out
+                {isDemo ? "Exit Demo" : "Log out"}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
