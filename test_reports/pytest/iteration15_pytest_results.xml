@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="12" time="1.026" timestamp="2026-01-14T17:38:50.552504+00:00" hostname="agent-env-319b4c75-b602-464a-a173-9a4f6eba2fc2"><testcase classname="tests.test_iteration15_location_management.TestHealthAndAuth" name="test_health_check" time="0.077"><failure message="requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)">/root/.venv/lib/python3.11/site-packages/requests/models.py:976: in json
+    return complexjson.loads(self.text, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:355: in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+E   json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+tests/test_iteration15_location_management.py:28: in test_health_check
+    data = response.json()
+           ^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/requests/models.py:980: in json
+    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)
+E   requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)</failure></testcase><testcase classname="tests.test_iteration15_location_management.TestHealthAndAuth" name="test_auth_me_with_session" time="0.045" /><testcase classname="tests.test_iteration15_location_management.TestUserPlan" name="test_get_user_plan" time="0.059" /><testcase classname="tests.test_iteration15_location_management.TestBusinessSetup" name="test_create_business_if_not_exists" time="0.124" /><testcase classname="tests.test_iteration15_location_management.TestLocations" name="test_get_locations" time="0.113" /><testcase classname="tests.test_iteration15_location_management.TestLocations" name="test_create_location" time="0.096" /><testcase classname="tests.test_iteration15_location_management.TestLocations" name="test_delete_location" time="0.076" /><testcase classname="tests.test_iteration15_location_management.TestLocationPlatformConnections" name="test_connect_google_to_location" time="0.076" /><testcase classname="tests.test_iteration15_location_management.TestLocationPlatformConnections" name="test_connect_facebook_to_location" time="0.076" /><testcase classname="tests.test_iteration15_location_management.TestAnalytics" name="test_analytics_overview_structure" time="0.044" /><testcase classname="tests.test_iteration15_location_management.TestPlatforms" name="test_get_platforms" time="0.041" /><testcase classname="tests.test_iteration15_location_management.TestIntegrationStatus" name="test_integration_status" time="0.076" /></testsuite></testsuites>
