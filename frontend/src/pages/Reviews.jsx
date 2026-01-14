@@ -45,8 +45,81 @@ import { ReviewCard } from "../components/ReviewCard";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Demo reviews data
+const DEMO_REVIEWS = [
+  {
+    review_id: "demo_r1",
+    author_name: "Sarah Johnson",
+    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sarah",
+    platform: "google",
+    rating: 5,
+    text: "Absolutely fantastic experience! The food was amazing and service was top-notch. Will definitely come back!",
+    sentiment: "positive",
+    response: "Thank you Sarah! We're thrilled you enjoyed your visit. See you again soon!",
+    created_at: new Date().toISOString()
+  },
+  {
+    review_id: "demo_r2",
+    author_name: "Rahul Mehta",
+    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=rahul",
+    platform: "facebook",
+    rating: 5,
+    text: "Best coffee in town! The ambiance is perfect for work meetings. Highly recommend the cold brew.",
+    sentiment: "positive",
+    response: null,
+    created_at: new Date(Date.now() - 86400000).toISOString()
+  },
+  {
+    review_id: "demo_r3",
+    author_name: "Anita Kumar",
+    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=anita",
+    platform: "google",
+    rating: 4,
+    text: "Great food but parking was a bit difficult. Otherwise a lovely experience!",
+    sentiment: "positive",
+    response: "Thank you Anita! We're working on improving parking options. Appreciate your feedback!",
+    created_at: new Date(Date.now() - 172800000).toISOString()
+  },
+  {
+    review_id: "demo_r4",
+    author_name: "Vikram Singh",
+    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=vikram",
+    platform: "google",
+    rating: 5,
+    text: "The chai latte here is exceptional! Staff is very friendly and the place has good vibes.",
+    sentiment: "positive",
+    response: null,
+    created_at: new Date(Date.now() - 259200000).toISOString()
+  },
+  {
+    review_id: "demo_r5",
+    author_name: "Priya Sharma",
+    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=priya",
+    platform: "facebook",
+    rating: 3,
+    text: "Food was okay but took too long to arrive. Hope they improve the wait time.",
+    sentiment: "neutral",
+    response: "Thank you for your feedback Priya. We're working on reducing wait times!",
+    created_at: new Date(Date.now() - 345600000).toISOString()
+  }
+];
+
+const DEMO_PRIVATE_REVIEWS = [
+  {
+    review_id: "demo_pr1",
+    author_name: "Anonymous Customer",
+    platform: "direct",
+    rating: 2,
+    text: "The food was cold when it arrived. Disappointed with the service today.",
+    sentiment: "negative",
+    contact_email: "customer@example.com",
+    is_private: true,
+    created_at: new Date(Date.now() - 100000000).toISOString()
+  }
+];
+
 export default function Reviews() {
-  const { business } = useContext(AuthContext);
+  const { business, isDemo } = useContext(AuthContext);
   const [searchParams] = useSearchParams();
   const [reviews, setReviews] = useState([]);
   const [privateReviews, setPrivateReviews] = useState([]);
@@ -63,6 +136,14 @@ export default function Reviews() {
   });
 
   const fetchReviews = useCallback(async () => {
+    // In demo mode, use demo data
+    if (isDemo) {
+      setReviews(DEMO_REVIEWS);
+      setPrivateReviews(DEMO_PRIVATE_REVIEWS);
+      setLoading(false);
+      return;
+    }
+    
     try {
       const params = new URLSearchParams();
       if (filters.platform !== "all") params.append("platform", filters.platform);
