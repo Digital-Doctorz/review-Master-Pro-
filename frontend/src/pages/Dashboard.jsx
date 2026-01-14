@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { AuthContext } from "../App";
@@ -23,13 +23,78 @@ import {
   Link2,
   Cloud,
   CloudOff,
+  Info,
+  X,
+  Play,
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Demo data for demonstration mode
+const DEMO_ANALYTICS = {
+  average_rating: 4.7,
+  total_reviews: 1284,
+  response_rate: 98,
+  positive_ratio: 89,
+  sentiment_breakdown: { positive: 1142, neutral: 98, negative: 44 }
+};
+
+const DEMO_REVIEWS = [
+  {
+    review_id: "demo_1",
+    author_name: "Sarah J.",
+    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sarah",
+    platform: "google",
+    rating: 5,
+    text: "Absolutely fantastic experience! The food was amazing and service was top-notch. Will definitely come back!",
+    sentiment: "positive",
+    response: "Thank you Sarah! We're thrilled you enjoyed your visit. See you again soon!",
+    created_at: new Date().toISOString()
+  },
+  {
+    review_id: "demo_2",
+    author_name: "Rahul M.",
+    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=rahul",
+    platform: "facebook",
+    rating: 5,
+    text: "Best coffee in town! The ambiance is perfect for work meetings. Highly recommend the cold brew.",
+    sentiment: "positive",
+    response: null,
+    created_at: new Date(Date.now() - 86400000).toISOString()
+  },
+  {
+    review_id: "demo_3",
+    author_name: "Anita K.",
+    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=anita",
+    platform: "google",
+    rating: 4,
+    text: "Great food but parking was a bit difficult. Otherwise a lovely experience!",
+    sentiment: "positive",
+    response: "Thank you Anita! We're working on improving parking options. Appreciate your feedback!",
+    created_at: new Date(Date.now() - 172800000).toISOString()
+  },
+  {
+    review_id: "demo_4",
+    author_name: "Priya S.",
+    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=priya",
+    platform: "google",
+    rating: 5,
+    text: "The desserts here are to die for! Tried the chocolate lava cake and it was heavenly.",
+    sentiment: "positive",
+    response: null,
+    created_at: new Date(Date.now() - 259200000).toISOString()
+  }
+];
+
+const DEMO_PLATFORMS = [
+  { platform: "google", status: "connected", last_sync: new Date().toISOString() },
+  { platform: "facebook", status: "connected", last_sync: new Date().toISOString() }
+];
+
 export default function Dashboard() {
-  const { user, business } = useContext(AuthContext);
+  const { user, business, isDemo } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [analytics, setAnalytics] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [privateReviews, setPrivateReviews] = useState([]);
@@ -38,6 +103,12 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [syncing, setSyncing] = useState(false);
+  const [showDemoBanner, setShowDemoBanner] = useState(true);
+
+  const exitDemo = () => {
+    sessionStorage.removeItem('demo_mode');
+    navigate('/');
+  };
 
   const fetchDashboardData = useCallback(async () => {
     try {
