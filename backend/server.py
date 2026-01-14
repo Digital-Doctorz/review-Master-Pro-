@@ -601,13 +601,14 @@ async def connect_facebook_page(
     page_name = data.get("page_name") or data.get("name", business["name"])
     review_link = data.get("review_link", f"{page_url}/reviews" if page_url else f"https://facebook.com/{page_id}/reviews")
     
-    # Update business with Facebook info
+    # Update business with Facebook info (including review_link)
     await db.businesses.update_one(
         {"user_id": user.user_id},
         {"$set": {
             "facebook_page_id": page_id,
             "facebook_page_name": page_name,
-            "facebook_page_url": page_url or f"https://facebook.com/{page_id}"
+            "facebook_page_url": page_url or f"https://facebook.com/{page_id}",
+            "facebook_review_link": review_link
         }}
     )
     
