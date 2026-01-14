@@ -112,10 +112,11 @@ export default function Integrations() {
       location_id: "demo_loc_1",
       name: "Demo Coffee Shop - Main",
       address: "123 Demo Street, Sample City",
-      google_connected: true,
-      google_name: "Demo Coffee Shop",
-      facebook_connected: true,
-      facebook_name: "Demo Coffee FB",
+      google_review_link: "https://g.page/demo-coffee-shop/review",
+      google_business_name: "Demo Coffee Shop",
+      facebook_review_link: "https://facebook.com/democoffeeshop/reviews",
+      facebook_page_name: "Demo Coffee FB",
+      qr_code_id: "demo_qr_001",
       is_primary: true
     }
   ];
