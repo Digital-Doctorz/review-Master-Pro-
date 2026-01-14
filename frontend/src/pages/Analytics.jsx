@@ -51,21 +51,43 @@ export default function Analytics() {
 
   const fetchAnalytics = async () => {
     try {
+      const defaultAnalytics = { 
+        average_rating: 0, 
+        total_reviews: 0, 
+        response_rate: 0, 
+        positive_ratio: 0, 
+        sentiment_breakdown: { positive: 0, neutral: 0, negative: 0 }, 
+        platform_breakdown: {},
+        rating_distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+      };
+      
       const [overviewRes, trendsRes] = await Promise.all([
         axios.get(`${API}/analytics/overview`, { withCredentials: true }).catch((err) => {
-          console.error("Analytics overview fetch error:", err?.response?.data || err.message);
-          return { data: { average_rating: 0, total_reviews: 0, response_rate: 0, positive_ratio: 0, sentiment_breakdown: { positive: 0, neutral: 0, negative: 0 }, platform_breakdown: [] } };
+          console.error("Analytics overview fetch error:", err?.displayMessage || err?.message);
+          return { data: defaultAnalytics };
         }),
         axios.get(`${API}/analytics/trends?days=30`, { withCredentials: true }).catch((err) => {
-          console.error("Analytics trends fetch error:", err?.response?.data || err.message);
+          console.error("Analytics trends fetch error:", err?.displayMessage || err?.message);
           return { data: [] };
         }),
       ]);
 
-      setAnalytics(overviewRes.data);
-      setTrends(Array.isArray(trendsRes.data) ? trendsRes.data : []);
+      // Safely extract analytics data with defaults
+      const analytics = overviewRes?.data || defaultAnalytics;
+      if (!analytics.sentiment_breakdown) {
+        analytics.sentiment_breakdown = { positive: 0, neutral: 0, negative: 0 };
+      }
+      if (!analytics.platform_breakdown) {
+        analytics.platform_breakdown = {};
+      }
+      if (!analytics.rating_distribution) {
+        analytics.rating_distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      }
+
+      setAnalytics(analytics);
+      setTrends(Array.isArray(trendsRes?.data) ? trendsRes.data : []);
     } catch (error) {
-      console.error("Error fetching analytics:", error?.message || error);
+      console.error("Error fetching analytics:", error?.displayMessage || error?.message || "Unknown error");
     } finally {
       setLoading(false);
     }
