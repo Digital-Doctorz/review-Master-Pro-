@@ -169,29 +169,31 @@ export default function Dashboard() {
       setPlatforms(Array.isArray(platformsRes?.data) ? platformsRes.data : []);
       setIntegrationStatus(statusRes?.data || null);
     } catch (error) {
-      console.error("Error fetching dashboard data:", error?.displayMessage || error?.message || "Unknown error");
+      console.warn("Error fetching dashboard data:", error?.displayMessage || error?.message || "Unknown error");
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [isDemo]);
 
   useEffect(() => {
     fetchDashboardData();
   }, [fetchDashboardData]);
 
   const handleRefresh = () => {
+    if (isDemo) return; // Don't refresh in demo mode
     setRefreshing(true);
     fetchDashboardData();
   };
 
   const handleSyncReviews = async () => {
+    if (isDemo) return; // Don't sync in demo mode
     setSyncing(true);
     try {
       await axios.post(`${API}/reviews/sync`, {}, { withCredentials: true });
       await fetchDashboardData();
     } catch (error) {
-      console.error("Error syncing reviews:", error);
+      console.warn("Error syncing reviews:", error?.displayMessage || error?.message);
     } finally {
       setSyncing(false);
     }
