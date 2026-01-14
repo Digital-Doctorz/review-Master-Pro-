@@ -42,18 +42,23 @@ const categories = [
 ];
 
 export default function Settings() {
-  const { user, business, setBusiness } = useContext(AuthContext);
+  const { user, business, setBusiness, isDemo } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: business?.name || "",
+    name: business?.name || (isDemo ? "Demo Coffee Shop" : ""),
     category: business?.category || "Restaurant",
-    address: business?.address || "",
-    phone: business?.phone || "",
-    website: business?.website || "",
+    address: business?.address || (isDemo ? "123 Demo Street, Sample City" : ""),
+    phone: business?.phone || (isDemo ? "+1 (555) 123-4567" : ""),
+    website: business?.website || (isDemo ? "https://democoffeeshop.com" : ""),
   });
 
   const handleSave = async (e) => {
     e.preventDefault();
+
+    if (isDemo) {
+      toast.info("Demo mode - settings won't be saved");
+      return;
+    }
 
     if (!formData.name.trim()) {
       toast.error("Business name is required");
