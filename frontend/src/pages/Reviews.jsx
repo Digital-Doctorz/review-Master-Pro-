@@ -154,11 +154,11 @@ export default function Reviews() {
 
       const [publicRes, privateRes] = await Promise.all([
         axios.get(`${API}/reviews?${params.toString()}`, { withCredentials: true }).catch((err) => {
-          console.error("Public reviews fetch error:", err?.displayMessage || err?.message);
+          console.warn("Public reviews fetch error:", err?.displayMessage || err?.message);
           return { data: [] };
         }),
         axios.get(`${API}/reviews/private`, { withCredentials: true }).catch((err) => {
-          console.error("Private reviews fetch error:", err?.displayMessage || err?.message);
+          console.warn("Private reviews fetch error:", err?.displayMessage || err?.message);
           return { data: [] };
         }),
       ]);
@@ -166,11 +166,11 @@ export default function Reviews() {
       setReviews(Array.isArray(publicRes?.data) ? publicRes.data : []);
       setPrivateReviews(Array.isArray(privateRes?.data) ? privateRes.data : []);
     } catch (error) {
-      console.error("Error fetching reviews:", error?.displayMessage || error?.message || "Unknown error");
+      console.warn("Error fetching reviews:", error?.displayMessage || error?.message || "Unknown error");
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, [filters, isDemo]);
 
   useEffect(() => {
     fetchReviews();
@@ -178,6 +178,20 @@ export default function Reviews() {
 
   const generateAIResponse = async (tone = "professional") => {
     if (!selectedReview) return;
+    
+    // In demo mode, return a sample response
+    if (isDemo) {
+      setGeneratingAI(true);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const demoResponses = {
+        professional: "Thank you for taking the time to share your feedback. We truly value your input and are committed to providing the best experience possible. We hope to see you again soon!",
+        friendly: "Thanks so much for your kind words! 😊 We're thrilled you had a great experience with us. Can't wait to see you again!",
+        formal: "Dear Valued Customer, Thank you for your thoughtful review. Your feedback is invaluable to us. We remain committed to excellence and look forward to serving you again."
+      };
+      setResponseText(demoResponses[tone] || demoResponses.professional);
+      setGeneratingAI(false);
+      return;
+    }
 
     setGeneratingAI(true);
     try {
