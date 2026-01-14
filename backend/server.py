@@ -698,6 +698,332 @@ async def disconnect_platform(platform: str, user: User = Depends(get_current_us
     
     return {"message": f"{platform.capitalize()} disconnected"}
 
+
+# ============ USER PLAN & SUBSCRIPTION ENDPOINTS ============
+
+PLAN_CONFIGS = {
+    "starter": {
+        "name": "Starter",
+        "max_locations": 1,
+        "max_reviews_per_month": 100,
+        "features": ["google_integration", "qr_codes", "ai_responses", "email_notifications", "basic_analytics"],
+        "price_monthly": 499,
+        "price_yearly": 399
+    },
+    "growth": {
+        "name": "Growth",
+        "max_locations": 3,
+        "max_reviews_per_month": 500,
+        "features": ["google_integration", "facebook_integration", "qr_codes", "ai_responses", "email_notifications", "whatsapp_alerts", "advanced_analytics", "private_feedback", "custom_branding"],
+        "price_monthly": 999,
+        "price_yearly": 799
+    },
+    "enterprise": {
+        "name": "Enterprise",
+        "max_locations": 999,
+        "max_reviews_per_month": 999999,
+        "features": ["google_integration", "facebook_integration", "qr_codes", "ai_responses", "email_notifications", "whatsapp_alerts", "advanced_analytics", "private_feedback", "custom_branding", "api_access", "white_label", "dedicated_support"],
+        "price_monthly": 2499,
+        "price_yearly": 1999
+    }
+}
+
+@api_router.get("/user/plan")
+async def get_user_plan(user: User = Depends(get_current_user)):
+    """Get user's subscription plan"""
+    plan = await db.user_plans.find_one({"user_id": user.user_id}, {"_id": 0})
+    
+    if not plan:
+        # Create default starter plan for new users
+        default_plan = UserPlan(user_id=user.user_id, plan_name="starter")
+        plan_doc = default_plan.model_dump()
+        plan_doc["created_at"] = plan_doc["created_at"].isoformat()
+        await db.user_plans.insert_one(plan_doc)
+        plan = plan_doc
+        del plan["_id"] if "_id" in plan else None
+    
+    # Get location count
+    location_count = await db.locations.count_documents({"user_id": user.user_id, "is_active": True})
+    
+    return {
+        **plan,
+        "current_locations": location_count,
+        "can_add_location": location_count < plan.get("max_locations", 1)
+    }
+
+
+@api_router.post("/user/plan/upgrade")
+async def upgrade_plan(
+    plan_name: str = Body(..., embed=True),
+    billing_cycle: str = Body("monthly", embed=True),
+    user: User = Depends(get_current_user)
+):
+    """Upgrade user plan"""
+    if plan_name not in PLAN_CONFIGS:
+        raise HTTPException(status_code=400, detail="Invalid plan name")
+    
+    plan_config = PLAN_CONFIGS[plan_name]
+    
+    # Update or create plan
+    plan_data = {
+        "user_id": user.user_id,
+        "plan_name": plan_name,
+        "max_locations": plan_config["max_locations"],
+        "max_reviews_per_month": plan_config["max_reviews_per_month"],
+        "features": plan_config["features"],
+        "price_monthly": plan_config["price_monthly"],
+        "price_yearly": plan_config["price_yearly"],
+        "billing_cycle": billing_cycle,
+        "status": "active",
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.user_plans.update_one(
+        {"user_id": user.user_id},
+        {"$set": plan_data},
+        upsert=True
+    )
+    
+    return {"message": f"Plan upgraded to {plan_name}", "plan": plan_data}
+
+
+# ============ LOCATIONS ENDPOINTS ============
+
+@api_router.get("/locations")
+async def get_locations(user: User = Depends(get_current_user)):
+    """Get all locations for user"""
+    locations = await db.locations.find(
+        {"user_id": user.user_id, "is_active": True},
+        {"_id": 0}
+    ).to_list(100)
+    
+    # Get user plan to check limits
+    plan = await db.user_plans.find_one({"user_id": user.user_id}, {"_id": 0})
+    max_locations = plan.get("max_locations", 1) if plan else 1
+    
+    return {
+        "locations": locations,
+        "total": len(locations),
+        "max_locations": max_locations,
+        "can_add_more": len(locations) < max_locations
+    }
+
+
+@api_router.post("/locations")
+async def create_location(
+    name: str = Body(...),
+    address: str = Body(None),
+    user: User = Depends(get_current_user)
+):
+    """Create a new location"""
+    # Check plan limits
+    plan = await db.user_plans.find_one({"user_id": user.user_id}, {"_id": 0})
+    max_locations = plan.get("max_locations", 1) if plan else 1
+    
+    current_count = await db.locations.count_documents({"user_id": user.user_id, "is_active": True})
+    
+    if current_count >= max_locations:
+        raise HTTPException(
+            status_code=403, 
+            detail=f"Location limit reached. Your plan allows {max_locations} location(s). Please upgrade to add more."
+        )
+    
+    # Create location
+    location = Location(
+        user_id=user.user_id,
+        name=name,
+        address=address,
+        is_primary=current_count == 0  # First location is primary
+    )
+    
+    location_doc = location.model_dump()
+    location_doc["created_at"] = location_doc["created_at"].isoformat()
+    
+    await db.locations.insert_one(location_doc)
+    
+    # Remove _id for response
+    location_doc.pop("_id", None)
+    
+    return {"message": "Location created", "location": location_doc}
+
+
+@api_router.put("/locations/{location_id}")
+async def update_location(
+    location_id: str,
+    name: str = Body(None),
+    address: str = Body(None),
+    is_primary: bool = Body(None),
+    user: User = Depends(get_current_user)
+):
+    """Update a location"""
+    location = await db.locations.find_one(
+        {"location_id": location_id, "user_id": user.user_id},
+        {"_id": 0}
+    )
+    
+    if not location:
+        raise HTTPException(status_code=404, detail="Location not found")
+    
+    update_data = {}
+    if name is not None:
+        update_data["name"] = name
+    if address is not None:
+        update_data["address"] = address
+    if is_primary is not None:
+        update_data["is_primary"] = is_primary
+        # If setting as primary, unset other primary locations
+        if is_primary:
+            await db.locations.update_many(
+                {"user_id": user.user_id, "location_id": {"$ne": location_id}},
+                {"$set": {"is_primary": False}}
+            )
+    
+    if update_data:
+        update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+        await db.locations.update_one(
+            {"location_id": location_id},
+            {"$set": update_data}
+        )
+    
+    return {"message": "Location updated"}
+
+
+@api_router.delete("/locations/{location_id}")
+async def delete_location(location_id: str, user: User = Depends(get_current_user)):
+    """Delete a location (soft delete)"""
+    location = await db.locations.find_one(
+        {"location_id": location_id, "user_id": user.user_id},
+        {"_id": 0}
+    )
+    
+    if not location:
+        raise HTTPException(status_code=404, detail="Location not found")
+    
+    await db.locations.update_one(
+        {"location_id": location_id},
+        {"$set": {"is_active": False, "deleted_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"message": "Location deleted"}
+
+
+@api_router.post("/locations/{location_id}/connect/{platform}")
+async def connect_location_platform(
+    location_id: str,
+    platform: str,
+    review_link: str = Body(..., embed=True),
+    platform_name: str = Body(None, embed=True),
+    user: User = Depends(get_current_user)
+):
+    """Connect Google or Facebook to a specific location"""
+    if platform not in ["google", "facebook"]:
+        raise HTTPException(status_code=400, detail="Invalid platform. Use 'google' or 'facebook'")
+    
+    location = await db.locations.find_one(
+        {"location_id": location_id, "user_id": user.user_id, "is_active": True},
+        {"_id": 0}
+    )
+    
+    if not location:
+        raise HTTPException(status_code=404, detail="Location not found")
+    
+    # Check if user has Facebook feature in their plan
+    if platform == "facebook":
+        plan = await db.user_plans.find_one({"user_id": user.user_id}, {"_id": 0})
+        features = plan.get("features", []) if plan else []
+        if "facebook_integration" not in features:
+            raise HTTPException(
+                status_code=403,
+                detail="Facebook integration is not available in your plan. Please upgrade to Growth or Enterprise."
+            )
+    
+    update_data = {
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    if platform == "google":
+        # Extract place_id from Google URL if present
+        place_id = f"google_{location_id}_{int(datetime.now().timestamp())}"
+        if "placeid=" in review_link:
+            place_id = review_link.split("placeid=")[1].split("&")[0]
+        
+        update_data.update({
+            "google_place_id": place_id,
+            "google_business_name": platform_name or location["name"],
+            "google_review_link": review_link
+        })
+    else:
+        # Facebook
+        page_id = f"fb_{location_id}_{int(datetime.now().timestamp())}"
+        if "facebook.com/" in review_link:
+            parts = review_link.split("facebook.com/")[1]
+            page_id = parts.split("/")[0].split("?")[0]
+        
+        fb_review_link = review_link if "/reviews" in review_link else f"{review_link.rstrip('/')}/reviews"
+        
+        update_data.update({
+            "facebook_page_id": page_id,
+            "facebook_page_name": platform_name or location["name"],
+            "facebook_page_url": review_link.replace("/reviews", ""),
+            "facebook_review_link": fb_review_link
+        })
+    
+    await db.locations.update_one(
+        {"location_id": location_id},
+        {"$set": update_data}
+    )
+    
+    return {
+        "message": f"{platform.capitalize()} connected successfully",
+        "location_id": location_id,
+        "platform": platform
+    }
+
+
+@api_router.post("/locations/{location_id}/disconnect/{platform}")
+async def disconnect_location_platform(
+    location_id: str,
+    platform: str,
+    user: User = Depends(get_current_user)
+):
+    """Disconnect Google or Facebook from a specific location"""
+    if platform not in ["google", "facebook"]:
+        raise HTTPException(status_code=400, detail="Invalid platform")
+    
+    location = await db.locations.find_one(
+        {"location_id": location_id, "user_id": user.user_id, "is_active": True},
+        {"_id": 0}
+    )
+    
+    if not location:
+        raise HTTPException(status_code=404, detail="Location not found")
+    
+    update_data = {
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    if platform == "google":
+        update_data.update({
+            "google_place_id": None,
+            "google_business_name": None,
+            "google_review_link": None
+        })
+    else:
+        update_data.update({
+            "facebook_page_id": None,
+            "facebook_page_name": None,
+            "facebook_page_url": None,
+            "facebook_review_link": None
+        })
+    
+    await db.locations.update_one(
+        {"location_id": location_id},
+        {"$set": update_data}
+    )
+    
+    return {"message": f"{platform.capitalize()} disconnected from location"}
+
+
 # ============ REVIEW ENDPOINTS ============
 
 async def send_review_email_notification(
