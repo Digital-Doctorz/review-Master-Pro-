@@ -48,12 +48,20 @@ const FacebookIcon = ({ className = "w-6 h-6" }) => (
 
 export default function Landing() {
   const [billingCycle, setBillingCycle] = useState("monthly");
+  const navigate = useNavigate();
 
   const handleGoogleLogin = () => {
     const redirectUrl = window.location.origin + "/dashboard";
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(
       redirectUrl
     )}`;
+  };
+
+  const handleDemoMode = () => {
+    // Set demo mode in session storage
+    sessionStorage.setItem('demo_mode', 'true');
+    // Navigate to dashboard
+    navigate('/dashboard');
   };
 
   const features = [
