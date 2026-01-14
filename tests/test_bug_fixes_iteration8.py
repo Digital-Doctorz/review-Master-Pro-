@@ -14,7 +14,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://smartreviewer.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://feedback-hub-128.preview.emergentagent.com').rstrip('/')
 
 # Test session token - created during test setup
 SESSION_TOKEN = "test_session_1768232703190"
