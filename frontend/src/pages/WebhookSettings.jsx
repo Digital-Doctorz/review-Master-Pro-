@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { toast } from "sonner";
+import { AuthContext } from "../App";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
@@ -20,12 +21,48 @@ import {
   ExternalLink,
   TestTube,
   AlertCircle,
+  Play,
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Demo webhook config
+const DEMO_WEBHOOK_CONFIG = {
+  webhook_id: "demo_webhook_001",
+  endpoint_url: "https://your-server.com/webhook",
+  secret_key: "whsec_demo_secret_key_12345",
+  is_active: true,
+  events: ["review.created", "review.updated", "response.sent"],
+  created_at: new Date().toISOString()
+};
+
+const DEMO_WEBHOOK_EVENTS = [
+  {
+    event_id: "evt_demo_1",
+    event_type: "review.created",
+    status: "delivered",
+    created_at: new Date().toISOString(),
+    payload_preview: '{"review_id": "r123", "rating": 5, "text": "Great service!"}'
+  },
+  {
+    event_id: "evt_demo_2",
+    event_type: "response.sent",
+    status: "delivered",
+    created_at: new Date(Date.now() - 3600000).toISOString(),
+    payload_preview: '{"review_id": "r122", "response": "Thank you!"}'
+  },
+  {
+    event_id: "evt_demo_3",
+    event_type: "review.created",
+    status: "failed",
+    created_at: new Date(Date.now() - 7200000).toISOString(),
+    payload_preview: '{"review_id": "r121", "rating": 4}'
+  }
+];
+
 export default function WebhookSettings() {
+  const { isDemo } = useContext(AuthContext);
   const [config, setConfig] = useState(null);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,6 +71,14 @@ export default function WebhookSettings() {
   const [copied, setCopied] = useState(null);
 
   const fetchWebhookConfig = useCallback(async () => {
+    // Demo mode - use demo data
+    if (isDemo) {
+      setConfig(DEMO_WEBHOOK_CONFIG);
+      setEvents(DEMO_WEBHOOK_EVENTS);
+      setLoading(false);
+      return;
+    }
+    
     try {
       const [configRes, eventsRes] = await Promise.all([
         axios.get(`${API}/webhooks/config`, { withCredentials: true }),
@@ -42,18 +87,24 @@ export default function WebhookSettings() {
       setConfig(configRes.data);
       setEvents(eventsRes.data.events || []);
     } catch (error) {
-      console.error("Error fetching webhook config:", error);
+      console.warn("Error fetching webhook config:", error?.displayMessage || error?.message);
       toast.error("Failed to load webhook settings");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isDemo]);
 
   useEffect(() => {
     fetchWebhookConfig();
   }, [fetchWebhookConfig]);
 
   const updateSettings = async (settings) => {
+    if (isDemo) {
+      toast.info("Demo mode - settings won't be saved");
+      setConfig((prev) => ({ ...prev, ...settings }));
+      return;
+    }
+    
     setSaving(true);
     try {
       await axios.put(`${API}/webhooks/config`, settings, { withCredentials: true });
