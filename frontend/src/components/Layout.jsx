@@ -16,6 +16,7 @@ import {
   Bell,
   Webhook,
   Key,
+  Play,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -45,18 +46,26 @@ const navItems = [
 ];
 
 export default function Layout({ children }) {
-  const { user, business } = useContext(AuthContext);
+  const { user, business, isDemo } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
+    // If in demo mode, just clear session and go home
+    if (isDemo) {
+      sessionStorage.removeItem('demo_mode');
+      toast.success("Demo session ended");
+      navigate("/");
+      return;
+    }
+    
     try {
       await axios.post(`${API}/auth/logout`, {}, { withCredentials: true });
       toast.success("Logged out successfully");
       navigate("/");
     } catch (error) {
-      console.error("Logout error:", error);
+      console.warn("Logout error:", error?.displayMessage || error?.message);
       navigate("/");
     }
   };
