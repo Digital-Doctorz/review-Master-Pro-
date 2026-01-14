@@ -5,38 +5,41 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## What's Been Implemented (January 2025)
 
-### MVP Features v3.6 - Multi-Location Support & Bug Fixes:
+### Latest - v3.7 Demo Mode & Bug Fixes (January 14, 2025):
 
-**Multi-Location Management (January 14, 2025):**
-- [x] **User Subscription Plans** - Starter (1 location), Growth (3 locations), Enterprise (unlimited)
-- [x] **GET /api/user/plan** - Returns plan details with max_locations, current_locations, can_add_location
-- [x] **Location CRUD APIs** - GET, POST, PUT, DELETE for /api/locations
-- [x] **Location-Platform Connect** - /api/locations/{id}/connect/{google|facebook}
-- [x] **Plan Limit Enforcement** - 403 error when location limit reached
-- [x] **Facebook Plan Restriction** - Facebook integration requires Growth+ plan
-- [x] **Frontend Integrations UI** - Updated to show plan status, location cards, connection status
+**Demo Mode Feature:**
+- [x] "See A Demo" button replaces "Get Started Free" in navigation and hero section
+- [x] Demo mode activates via sessionStorage flag (`demo_mode: true`)
+- [x] Demo dashboard with pre-filled sample data:
+  - Demo user: "Demo User" (demo@reviewmaster.com)
+  - Demo business: "Demo Coffee Shop"
+  - Demo reviews: 1284 reviews, 4.7 rating, 98% response rate
+  - Sample reviews from Sarah J., Rahul M., Anita K., Priya S.
+  - Demo analytics with sentiment breakdown and charts
+- [x] Demo banner: "You're viewing a demo of Review Master - Explore all features with sample data. No data will be saved."
+- [x] Demo badge in sidebar: "Demo Mode - No data saved"
+- [x] Exit Demo button clears session and returns to landing page
+- [x] No data persistence in demo mode - session resets on logout
 
-**[object Object] Bug Fix (January 14, 2025):**
-- [x] **extractErrorMessage Helper** - Global helper in App.js to safely extract error messages
-- [x] **Dashboard Error Handling** - Added sentiment_breakdown defaults, proper error handling
-- [x] **Analytics Error Handling** - Added rating_distribution, platform_breakdown defaults
-- [x] **Reviews Error Handling** - Updated error logging to use displayMessage
+**[object Object] Bug Fix (VERIFIED FIXED):**
+- [x] `extractErrorMessage` helper function in App.js safely extracts error messages
+- [x] Global error suppression for `[object Object]` and axios errors in development
+- [x] Dashboard, Analytics, Reviews pages all have proper error handling
+- [x] All console.error replaced with console.warn for cleaner logs
+- [x] No [object Object] error appears on any page after login
 
-**Backend Fixes (January 14, 2025):**
-- [x] **Fixed Syntax Error** - Corrected invalid `del` statement in server.py
-- [x] **Added Body Import** - Fixed NameError for Body in plan upgrade endpoint
+### Previous Features (v3.0-3.6)
 
-### Previous Features (v3.0-3.5)
+**Multi-Location Support (v3.6):**
+- [x] User subscription plans: Starter (1 loc), Growth (3 locs), Enterprise (unlimited)
+- [x] Location CRUD APIs: GET, POST, PUT, DELETE /api/locations
+- [x] Plan limit enforcement with 403 errors
+- [x] Facebook requires Growth+ plan
 
 **Simplified Integration Flow:**
-- [x] No API keys required - Users just paste their Google/Facebook review link
+- [x] No API keys required - paste Google/Facebook review link
 - [x] Clipboard fallback for secure contexts
 - [x] Step-by-step connection instructions
-
-**Review Master Rebrand:**
-- [x] Animated logo with shine effect
-- [x] Purple/indigo gradient theme
-- [x] "60 Second Setup" messaging
 
 **Core Features:**
 - [x] Email notification service (Resend API)
@@ -54,73 +57,49 @@ Build Review Master - a zero-friction review management platform focused on Goog
 - **Email**: Resend API (optional)
 - **Auth**: Emergent-managed Google OAuth
 
-## Key Features
+## Demo Mode Implementation
 
-### For Business Owners:
-1. **Multi-Location Support** - Manage 1-999 locations based on plan
-2. **Plan-Based Limits** - Starter (1 loc), Growth (3 locs), Enterprise (unlimited)
-3. **60-Second Setup** - Connect Google/Facebook with just a review link
-4. **Smart Review Routing** - Low ratings go to private inbox
-5. **AI Smart Replies** - Generate professional responses
-6. **QR Code Magic** - Print QR codes for customer reviews
-7. **Real-time Notifications** - Email alerts for urgent reviews
-8. **Analytics Dashboard** - Track sentiment and response rates
+### How It Works:
+1. User clicks "See A Demo" button on landing page
+2. `sessionStorage.setItem('demo_mode', 'true')` is set
+3. App.js `ProtectedRoute` checks for demo mode flag
+4. If demo mode: provides DEMO_USER and DEMO_BUSINESS context
+5. All pages (Dashboard, Analytics, Reviews, Integrations) check `isDemo` from context
+6. If demo mode: use hardcoded sample data instead of API calls
+7. Exit Demo: clears sessionStorage and redirects to landing
 
-### For Customers:
-1. **AI Write Assist** - Help writing reviews with AI
-2. **Platform Choice** - Select where to post (Google, Facebook, Direct)
-3. **Copy & Redirect** - Automatic redirect to review pages
-4. **Confetti Celebration** - Fun animation for 5-star ratings
+### Demo Data:
+```javascript
+// Demo User
+{
+  user_id: "demo_user_001",
+  email: "demo@reviewmaster.com",
+  name: "Demo User",
+  is_demo: true
+}
 
-## API Endpoints (v3.6.0)
+// Demo Business
+{
+  business_id: "demo_business_001",
+  name: "Demo Coffee Shop",
+  address: "123 Demo Street, Sample City"
+}
 
-### Core
-- `GET /api/` - Returns version info
-- `GET /api/health` - Health check
-- `GET /health` - Root health check for deployment
-
-### Authentication
-- `POST /api/auth/session` - Exchange Emergent session for local session
-- `GET /api/auth/me` - Get current user
-
-### User Plans (NEW)
-- `GET /api/user/plan` - Get user's subscription plan with location limits
-- `POST /api/user/plan/upgrade` - Upgrade to a new plan
-
-### Locations (NEW)
-- `GET /api/locations` - List all locations with plan limits
-- `POST /api/locations` - Create new location (enforces plan limit)
-- `PUT /api/locations/{id}` - Update location
-- `DELETE /api/locations/{id}` - Soft delete location
-- `POST /api/locations/{id}/connect/{platform}` - Connect Google/Facebook
-- `POST /api/locations/{id}/disconnect/{platform}` - Disconnect platform
-
-### Business & Integrations
-- `GET /api/business` - Get user's business
-- `POST /api/business` - Create business
-- `GET /api/platforms` - Get platform connections
-- `GET /api/integration-status` - Get integration status
-
-### Reviews
-- `GET /api/reviews` - Get reviews with filters
-- `POST /api/reviews/sync` - Manual sync from platforms
-- `POST /api/public/review` - Submit review from QR page
-- `POST /api/public/ai/write-assist` - AI review generation
-
-### Analytics
-- `GET /api/analytics/overview` - Overview with sentiment_breakdown
-- `GET /api/analytics/trends` - Trend data over time
-
-### Notifications
-- `GET /api/notifications/settings` - Get notification preferences
-- `PUT /api/notifications/settings` - Update notifications
-- `POST /api/notifications/test` - Send test email
+// Demo Analytics
+{
+  average_rating: 4.7,
+  total_reviews: 1284,
+  response_rate: 98,
+  positive_ratio: 89,
+  sentiment_breakdown: { positive: 1142, neutral: 98, negative: 44 }
+}
+```
 
 ## Code Architecture
 ```
 /app/
 ├── backend/
-│   ├── server.py           # Main FastAPI app (v3.6.0)
+│   ├── server.py           # Main FastAPI app (v3.7.0)
 │   ├── services/
 │   │   ├── google_reviews.py   
 │   │   ├── facebook_reviews.py 
@@ -132,54 +111,41 @@ Build Review Master - a zero-friction review management platform focused on Goog
 │       ├── components/
 │       │   ├── AnimatedLogo.jsx
 │       │   ├── ErrorBoundary.jsx
-│       │   ├── Layout.jsx
+│       │   ├── Layout.jsx         # Demo badge, Exit Demo
 │       │   └── ReviewCard.jsx
 │       ├── pages/
 │       │   ├── ApiSettings.jsx
-│       │   ├── Dashboard.jsx      # Updated error handling
-│       │   ├── Integrations.jsx   # Multi-location UI
-│       │   ├── Analytics.jsx      # Updated error handling
-│       │   ├── Landing.jsx
+│       │   ├── Dashboard.jsx      # Demo mode + banner
+│       │   ├── Integrations.jsx   # Demo locations
+│       │   ├── Analytics.jsx      # Demo analytics
+│       │   ├── Landing.jsx        # See A Demo button
 │       │   ├── PublicReview.jsx
-│       │   └── Reviews.jsx        # Updated error handling
-│       └── App.js                 # extractErrorMessage helper
+│       │   └── Reviews.jsx        # Demo reviews
+│       └── App.js                 # Demo context + error handling
 └── tests/
-    └── test_iteration15_location_management.py
-```
-
-## Plan Configurations
-```javascript
-{
-  "starter": {
-    "max_locations": 1,
-    "features": ["google_integration", "qr_codes", "ai_responses", "email_notifications", "basic_analytics"],
-    "price_monthly": 499
-  },
-  "growth": {
-    "max_locations": 3,
-    "features": ["google_integration", "facebook_integration", "qr_codes", "ai_responses", ...],
-    "price_monthly": 999
-  },
-  "enterprise": {
-    "max_locations": 999,
-    "features": ["all features", "white_label", "dedicated_support"],
-    "price_monthly": 2499
-  }
-}
+    └── test_iteration16_demo_mode.py
 ```
 
 ## Testing
-- **Test Reports**: `/app/test_reports/iteration_15.json`
-- **Test Files**: `/app/tests/test_iteration15_location_management.py`
-- **Success Rate**: Backend 92%, Frontend 100%
-- **All Frontend Pages Load Without [object Object] Error**
+- **Test Reports**: `/app/test_reports/iteration_16.json`
+- **Test Files**: `/app/tests/test_iteration16_demo_mode.py`
+- **Success Rate**: Backend 100%, Frontend 100%
+- **[object Object] Bug**: VERIFIED FIXED - no errors on any page
+
+## Deployment Status
+- **Health Check**: `/api/health` returns `{"status":"healthy"}`
+- **Backend**: Running on port 8001
+- **Frontend**: Running on port 3000
+- **MongoDB**: Connected locally
+- **Preview URL**: https://feedback-hub-128.preview.emergentagent.com
 
 ## Prioritized Backlog
 
 ### P0 - Critical (Completed ✅)
-- [x] Multi-location support with plan limits
+- [x] Demo mode feature
 - [x] [object Object] bug fix
-- [x] Backend syntax fixes
+- [x] Multi-location support
+- [x] Deployment health endpoints
 
 ### P1 - High Priority
 - [ ] **Payment Integration (Stripe)** - Process subscriptions for plans
@@ -195,16 +161,20 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## Environment Variables
 ```
-# Required
+# Required (backend/.env)
 MONGO_URL=mongodb://localhost:27017
 DB_NAME=test_database
+CORS_ORIGINS=*
 EMERGENT_LLM_KEY=your_key
 WEBHOOK_BASE_URL=https://your-domain.com
+
+# Required (frontend/.env)
+REACT_APP_BACKEND_URL=https://your-domain.com
 
 # Optional - Email
 RESEND_API_KEY=re_your_key
 
-# Optional - Real API (or use paste-link method)
+# Optional - Real API
 GOOGLE_PLACES_API_KEY=your_google_key
 FACEBOOK_APP_ID=your_fb_app_id
 ```
