@@ -225,31 +225,87 @@ export default function Reviews() {
 
     setSubmitting(true);
     try {
-      await axios.post(
+      // For demo mode, show success without API call
+      if (isDemo) {
+        toast.success("Demo: Response would be posted to " + selectedReview.platform);
+        setSelectedReview(null);
+        setResponseText("");
+        return;
+      }
+
+      // Post response to the correct platform
+      const response = await axios.post(
         `${API}/reviews/${selectedReview.review_id}/respond`,
         {
           review_id: selectedReview.review_id,
           response_text: responseText,
+          platform: selectedReview.platform,
         },
         { withCredentials: true }
       );
 
-      toast.success("Response saved successfully!");
+      // Show success with platform-specific message
+      if (response.data.posted_live) {
+        toast.success(`Response posted live on ${selectedReview.platform.charAt(0).toUpperCase() + selectedReview.platform.slice(1)}!`);
+      } else {
+        toast.success("Response saved! Will be posted when connected to " + selectedReview.platform);
+      }
+
       setSelectedReview(null);
       setResponseText("");
       fetchReviews();
     } catch (error) {
-      console.error("Error submitting response:", error);
+      console.warn("Error submitting response:", error?.displayMessage || error?.message);
       toast.error("Failed to save response");
     } finally {
       setSubmitting(false);
     }
   };
 
+  // Send reply via WhatsApp for direct/private reviews
+  const sendWhatsAppReply = (review) => {
+    if (!review.contact_phone || !responseText.trim()) {
+      toast.error("No WhatsApp number available for this reviewer");
+      return;
+    }
+    
+    // Format phone number (remove spaces, add country code if needed)
+    let phone = review.contact_phone.replace(/\s/g, '').replace(/[^0-9+]/g, '');
+    if (!phone.startsWith('+')) {
+      phone = '+91' + phone; // Default to India country code
+    }
+    
+    // Encode message
+    const message = encodeURIComponent(responseText);
+    
+    // Open WhatsApp with pre-filled message
+    const whatsappUrl = `https://wa.me/${phone.replace('+', '')}?text=${message}`;
+    window.open(whatsappUrl, '_blank');
+    
+    toast.success("Opening WhatsApp to send reply...");
+  };
+
+  // Send reply via Email for direct/private reviews
+  const sendEmailReply = (review) => {
+    if (!review.contact_email || !responseText.trim()) {
+      toast.error("No email available for this reviewer");
+      return;
+    }
+    
+    const subject = encodeURIComponent(`Re: Your feedback for ${business?.name || 'our business'}`);
+    const body = encodeURIComponent(responseText);
+    
+    // Open default email client
+    const mailtoUrl = `mailto:${review.contact_email}?subject=${subject}&body=${body}`;
+    window.open(mailtoUrl, '_blank');
+    
+    toast.success("Opening email client to send reply...");
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <RefreshCw className="w-8 h-8 text-sky-500 animate-spin" />
+        <RefreshCw className="w-8 h-8 text-indigo-500 animate-spin" />
       </div>
     );
   }
