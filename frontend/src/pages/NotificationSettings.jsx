@@ -429,7 +429,7 @@ export default function NotificationSettings() {
                       <strong>b.</strong> After signing up, go to <strong>API Keys</strong> in the sidebar
                     </p>
                     <p className="text-sm text-slate-600">
-                      <strong>c.</strong> Click <strong>"Create API Key"</strong>, give it a name (e.g., "Review Master")
+                      <strong>c.</strong> Click <strong>&quot;Create API Key&quot;</strong>, give it a name (e.g., &quot;Review Master&quot;)
                     </p>
                     <p className="text-sm text-slate-600">
                       <strong>d.</strong> Copy the API key (starts with <code className="bg-slate-200 px-1 rounded">re_</code>)
@@ -457,7 +457,7 @@ export default function NotificationSettings() {
                 <div className="flex-1 space-y-3">
                   <h4 className="font-semibold text-slate-900">Share Your API Key</h4>
                   <p className="text-sm text-slate-600">
-                    Once you have the API key, share it with our support team and we'll enable email notifications for you within 24 hours.
+                    Once you have the API key, share it with our support team and we&apos;ll enable email notifications for you within 24 hours.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Button
@@ -489,12 +489,12 @@ export default function NotificationSettings() {
                 <div className="flex-1 space-y-3">
                   <h4 className="font-semibold text-slate-900">Start Receiving Notifications!</h4>
                   <p className="text-sm text-slate-600">
-                    Once we enable email for your account, you'll see a green "Email Active" badge on this page. 
+                    Once we enable email for your account, you&apos;ll see a green &quot;Email Active&quot; badge on this page. 
                     Enter your email address above and start receiving instant alerts!
                   </p>
                   <div className="flex items-center gap-2 text-green-600 bg-green-50 p-3 rounded-lg">
                     <CheckCircle2 className="w-5 h-5" />
-                    <span className="text-sm font-medium">You'll be notified when setup is complete</span>
+                    <span className="text-sm font-medium">You&apos;ll be notified when setup is complete</span>
                   </div>
                 </div>
               </div>
@@ -507,7 +507,7 @@ export default function NotificationSettings() {
                 <div>
                   <p className="text-sm text-amber-800 font-medium">Need Help?</p>
                   <p className="text-sm text-amber-700 mt-1">
-                    If you're having trouble, our support team is happy to help you set up email notifications for free. 
+                    If you&apos;re having trouble, our support team is happy to help you set up email notifications for free. 
                     Just reach out!
                   </p>
                 </div>
