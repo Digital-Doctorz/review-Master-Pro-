@@ -16,10 +16,21 @@ import random
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+# MongoDB connection - with proper error handling for deployment
+mongo_url = os.environ.get('MONGO_URL')
+if not mongo_url:
+    raise RuntimeError("MONGO_URL environment variable is required")
+
+# Create MongoDB client with retry settings for Atlas
+client = AsyncIOMotorClient(
+    mongo_url,
+    serverSelectionTimeoutMS=5000,
+    connectTimeoutMS=10000,
+    socketTimeoutMS=10000,
+    retryWrites=True,
+    w='majority'
+)
+db = client[os.environ.get('DB_NAME', 'review_master')]
 
 # Emergent LLM Key
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
@@ -30,6 +41,16 @@ from services import email_service
 
 # Create the main app
 app = FastAPI(title="Review Master API")
+
+# CORS middleware - MUST be added before routes
+cors_origins = os.environ.get('CORS_ORIGINS', '*')
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=cors_origins.split(',') if cors_origins != '*' else ['*'],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Root-level health check for Kubernetes (without /api prefix) - must be registered early
 @app.get("/health")
