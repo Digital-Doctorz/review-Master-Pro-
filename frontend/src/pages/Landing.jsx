@@ -142,7 +142,7 @@ export default function Landing() {
       originalPrice: billingCycle === "monthly" ? 999 : 799,
       reviews: 100,
       color: "from-sky-500 to-cyan-500",
-      popular: false,
+      badge: null,
       features: [
         "100 reviews/month",
         "1 business location",
@@ -152,7 +152,8 @@ export default function Landing() {
         "Email notifications",
         "Basic analytics",
       ],
-      cta: "Start Free Trial",
+      cta: "Try Now",
+      planKey: "starter",
     },
     {
       name: "Growth",
@@ -161,7 +162,7 @@ export default function Landing() {
       originalPrice: billingCycle === "monthly" ? 1999 : 1599,
       reviews: 500,
       color: "from-violet-500 to-purple-600",
-      popular: true,
+      badge: "BEST SAVINGS",
       features: [
         "500 reviews/month",
         "3 business locations",
@@ -173,7 +174,8 @@ export default function Landing() {
         "Private feedback inbox",
         "Custom branding",
       ],
-      cta: "Most Popular",
+      cta: "Try Now",
+      planKey: "growth",
     },
     {
       name: "Enterprise",
@@ -182,7 +184,7 @@ export default function Landing() {
       originalPrice: billingCycle === "monthly" ? 4999 : 3999,
       reviews: "Unlimited",
       color: "from-amber-500 to-orange-500",
-      popular: false,
+      badge: null,
       features: [
         "Unlimited reviews",
         "Unlimited locations",
@@ -195,7 +197,8 @@ export default function Landing() {
         "White-label option",
         "Priority 24/7 support",
       ],
-      cta: "Contact Sales",
+      cta: "Try All Features",
+      planKey: "enterprise",
     },
   ];
 
