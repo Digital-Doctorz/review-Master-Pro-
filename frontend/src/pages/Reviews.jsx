@@ -113,8 +113,21 @@ const DEMO_PRIVATE_REVIEWS = [
     text: "The food was cold when it arrived. Disappointed with the service today.",
     sentiment: "negative",
     contact_email: "customer@example.com",
+    contact_phone: "+919876543210",
     is_private: true,
     created_at: new Date(Date.now() - 100000000).toISOString()
+  },
+  {
+    review_id: "demo_pr2",
+    author_name: "Feedback User",
+    platform: "direct",
+    rating: 3,
+    text: "Average experience. The wait time was too long and the staff seemed overwhelmed.",
+    sentiment: "neutral",
+    contact_email: "feedback@example.com",
+    contact_phone: "+919123456789",
+    is_private: true,
+    created_at: new Date(Date.now() - 200000000).toISOString()
   }
 ];
 
