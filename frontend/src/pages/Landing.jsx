@@ -766,12 +766,6 @@ export default function Landing() {
               </motion.div>
             )})}
           </div>
-                >
-                  {plan.cta}
-                </Button>
-              </motion.div>
-            ))}
-          </div>
 
           {/* Money Back Guarantee */}
           <motion.div
