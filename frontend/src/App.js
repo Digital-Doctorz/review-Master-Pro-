@@ -120,6 +120,7 @@ const DEMO_BUSINESS = {
 
 function AuthCallback() {
   const hasProcessed = useRef(false);
+  const [status, setStatus] = useState("loading"); // loading, success, error
 
   useEffect(() => {
     if (hasProcessed.current) return;
@@ -130,22 +131,33 @@ function AuthCallback() {
       const sessionId = new URLSearchParams(hash.substring(1)).get("session_id");
 
       if (!sessionId) {
-        window.location.href = "/";
+        setStatus("error");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1500);
         return;
       }
 
       try {
+        setStatus("loading");
         await axios.post(
           `${API}/auth/session`,
           { session_id: sessionId },
           { withCredentials: true }
         );
         
-        window.history.replaceState(null, "", "/dashboard");
-        window.location.reload();
+        setStatus("success");
+        // Small delay to show success state
+        setTimeout(() => {
+          window.history.replaceState(null, "", "/dashboard");
+          window.location.reload();
+        }, 500);
       } catch (error) {
         console.warn("Auth callback error - redirecting to home");
-        window.location.href = "/";
+        setStatus("error");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1500);
       }
     };
 
@@ -153,10 +165,37 @@ function AuthCallback() {
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <div className="text-center">
-        <div className="w-12 h-12 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-slate-600">Signing you in...</p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <div className="text-center p-8">
+        {status === "loading" && (
+          <>
+            <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+            <h2 className="text-xl font-semibold text-slate-800 mb-2">Signing you in...</h2>
+            <p className="text-slate-500">Please wait while we verify your account</p>
+          </>
+        )}
+        {status === "success" && (
+          <>
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-semibold text-slate-800 mb-2">Welcome back!</h2>
+            <p className="text-slate-500">Redirecting to your dashboard...</p>
+          </>
+        )}
+        {status === "error" && (
+          <>
+            <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-semibold text-slate-800 mb-2">Something went wrong</h2>
+            <p className="text-slate-500">Redirecting to home page...</p>
+          </>
+        )}
       </div>
     </div>
   );
