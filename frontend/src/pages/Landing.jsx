@@ -648,83 +648,87 @@ export default function Landing() {
               Start free, upgrade when you&apos;re ready. No hidden fees, cancel anytime.
             </p>
 
-            {/* Billing Toggle */}
-            <div className="flex items-center justify-center gap-4 mb-12">
-              <span className={`text-sm font-medium ${billingCycle === "monthly" ? "text-slate-900" : "text-slate-500"}`}>
-                Monthly
-              </span>
+            {/* Billing Toggle - Fixed Alignment */}
+            <div className="inline-flex items-center justify-center gap-3 p-1.5 rounded-full bg-slate-100 mb-12">
               <button
-                onClick={() => setBillingCycle(billingCycle === "monthly" ? "yearly" : "monthly")}
-                className={`relative w-14 h-8 rounded-full transition-colors ${
-                  billingCycle === "yearly" ? "bg-indigo-600" : "bg-slate-300"
+                onClick={() => setBillingCycle("monthly")}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
+                  billingCycle === "monthly" 
+                    ? "bg-white text-slate-900 shadow-sm" 
+                    : "text-slate-500 hover:text-slate-700"
                 }`}
               >
-                <span
-                  className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow transition-transform ${
-                    billingCycle === "yearly" ? "translate-x-7" : "translate-x-1"
-                  }`}
-                />
+                Monthly
               </button>
-              <span className={`text-sm font-medium ${billingCycle === "yearly" ? "text-slate-900" : "text-slate-500"}`}>
+              <button
+                onClick={() => setBillingCycle("yearly")}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+                  billingCycle === "yearly" 
+                    ? "bg-white text-slate-900 shadow-sm" 
+                    : "text-slate-500 hover:text-slate-700"
+                }`}
+              >
                 Yearly
-              </span>
-              {billingCycle === "yearly" && (
-                <span className="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">
+                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">
                   Save 20%
                 </span>
-              )}
+              </button>
             </div>
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {pricingPlans.map((plan, index) => (
+          <div className="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
+            {pricingPlans.map((plan, index) => {
+              const isGrowth = plan.name === "Growth";
+              return (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className={`relative rounded-3xl p-8 ${
-                  plan.popular
-                    ? "bg-gradient-to-br from-violet-600 to-purple-700 text-white shadow-2xl shadow-violet-500/30 scale-105"
-                    : "glass-card"
+                className={`relative rounded-3xl p-6 sm:p-8 ${
+                  isGrowth
+                    ? "bg-gradient-to-br from-violet-600 to-purple-700 text-white shadow-2xl shadow-violet-500/30 md:scale-105 ring-4 ring-violet-300/30"
+                    : "glass-card hover:shadow-xl transition-shadow"
                 }`}
               >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-400 text-amber-900 text-sm font-bold">
-                    MOST POPULAR
+                {plan.badge && (
+                  <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap ${
+                    isGrowth ? "bg-amber-400 text-amber-900" : "bg-indigo-600 text-white"
+                  }`}>
+                    {plan.badge}
                   </div>
                 )}
 
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${plan.color} flex items-center justify-center`}>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${plan.color} flex items-center justify-center shadow-lg`}>
                     <plan.icon className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className={`text-xl font-bold ${plan.popular ? "text-white" : "text-slate-900"}`}>
+                    <h3 className={`text-xl font-bold ${isGrowth ? "text-white" : "text-slate-900"}`}>
                       {plan.name}
                     </h3>
-                    <p className={`text-sm ${plan.popular ? "text-violet-200" : "text-slate-500"}`}>
+                    <p className={`text-sm ${isGrowth ? "text-violet-200" : "text-slate-500"}`}>
                       {plan.reviews} reviews/month
                     </p>
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <div className="flex items-baseline gap-2">
-                    <span className={`text-4xl font-bold ${plan.popular ? "text-white" : "text-slate-900"}`}>
+                  <div className="flex items-baseline gap-1">
+                    <span className={`text-3xl sm:text-4xl font-bold ${isGrowth ? "text-white" : "text-slate-900"}`}>
                       ₹{plan.price}
                     </span>
-                    <span className={plan.popular ? "text-violet-200" : "text-slate-500"}>/month</span>
+                    <span className={`text-sm ${isGrowth ? "text-violet-200" : "text-slate-500"}`}>/month</span>
                   </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className={`text-sm line-through ${plan.popular ? "text-violet-300" : "text-slate-400"}`}>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className={`text-sm line-through ${isGrowth ? "text-violet-300" : "text-slate-400"}`}>
                       ₹{plan.originalPrice}
                     </span>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      plan.popular ? "bg-amber-400 text-amber-900" : "bg-emerald-100 text-emerald-700"
-                    } font-medium`}>
+                      isGrowth ? "bg-amber-400 text-amber-900" : "bg-emerald-100 text-emerald-700"
+                    } font-semibold`}>
                       50% OFF
                     </span>
                   </div>
@@ -732,11 +736,11 @@ export default function Landing() {
 
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-center gap-3">
-                      <CheckCircle2 className={`w-5 h-5 flex-shrink-0 ${
-                        plan.popular ? "text-emerald-300" : "text-emerald-500"
+                    <li key={i} className="flex items-start gap-3">
+                      <CheckCircle2 className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                        isGrowth ? "text-emerald-300" : "text-emerald-500"
                       }`} />
-                      <span className={`text-sm ${plan.popular ? "text-violet-100" : "text-slate-600"}`}>
+                      <span className={`text-sm ${isGrowth ? "text-violet-100" : "text-slate-600"}`}>
                         {feature}
                       </span>
                     </li>
@@ -744,13 +748,24 @@ export default function Landing() {
                 </ul>
 
                 <Button
-                  onClick={handleGoogleLogin}
-                  className={`w-full rounded-xl py-6 font-semibold ${
-                    plan.popular
-                      ? "bg-white text-violet-700 hover:bg-violet-50"
-                      : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+                  onClick={() => {
+                    // Store selected plan in session storage
+                    sessionStorage.setItem('selected_plan', plan.planKey);
+                    handleGoogleLogin();
+                  }}
+                  className={`w-full rounded-xl py-5 sm:py-6 font-semibold text-base transition-all ${
+                    isGrowth
+                      ? "bg-white text-violet-700 hover:bg-violet-50 shadow-lg"
+                      : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg"
                   }`}
                   data-testid={`pricing-cta-${index}`}
+                >
+                  {plan.cta}
+                  <ArrowRight className="w-4 h-4 ml-2 inline" />
+                </Button>
+              </motion.div>
+            )})}
+          </div>
                 >
                   {plan.cta}
                 </Button>
