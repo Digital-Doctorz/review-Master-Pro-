@@ -140,11 +140,21 @@ function AuthCallback() {
 
       try {
         setStatus("loading");
+        
+        // Get selected plan from session storage
+        const selectedPlan = sessionStorage.getItem('selected_plan') || 'starter';
+        
         await axios.post(
           `${API}/auth/session`,
-          { session_id: sessionId },
+          { 
+            session_id: sessionId,
+            selected_plan: selectedPlan
+          },
           { withCredentials: true }
         );
+        
+        // Clear the selected plan from session storage
+        sessionStorage.removeItem('selected_plan');
         
         setStatus("success");
         // Small delay to show success state
