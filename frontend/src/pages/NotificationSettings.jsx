@@ -463,13 +463,13 @@ export default function NotificationSettings() {
                     <Button
                       variant="outline"
                       className="rounded-xl"
-                      onClick={() => copyToClipboard("support@reviewmaster.app")}
+                      onClick={() => copyToClipboard("reviewmasster@gmail.com")}
                     >
                       <Copy className="w-4 h-4 mr-2" />
                       {copied ? "Copied!" : "Copy Support Email"}
                     </Button>
                     <a
-                      href="mailto:support@reviewmaster.app?subject=Enable%20Email%20Notifications&body=Hi,%0A%0APlease%20enable%20email%20notifications%20for%20my%20account.%0A%0AMy%20Resend%20API%20Key:%20[PASTE_YOUR_KEY_HERE]%0A%0AThank%20you!"
+                      href="mailto:reviewmasster@gmail.com?subject=API%20key%20Setup-%20Review%20master-User&body=Hi,%0A%0APlease%20enable%20email%20notifications%20for%20my%20account.%0A%0AMy%20Resend%20API%20Key:%20[PASTE_YOUR_KEY_HERE]%0A%0AThank%20you!"
                       className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors"
                     >
                       <Mail className="w-4 h-4" />
