@@ -231,89 +231,93 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-8" data-testid="dashboard-page">
+    <div className="space-y-6 sm:space-y-8" data-testid="dashboard-page">
       {/* Demo Mode Banner */}
       {isDemo && showDemoBanner && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-3 rounded-xl flex items-center justify-between"
+          className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 sm:p-5 rounded-2xl"
         >
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-white/20 rounded-lg">
-              <Play className="w-5 h-5" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start sm:items-center gap-3">
+              <div className="p-2 bg-white/20 rounded-xl shrink-0">
+                <Play className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="font-semibold text-base sm:text-lg">You&apos;re viewing a demo</p>
+                <p className="text-sm text-white/80 mt-0.5">Explore all features with sample data. No data will be saved.</p>
+              </div>
             </div>
-            <div>
-              <p className="font-semibold">You&apos;re viewing a demo of Review Master</p>
-              <p className="text-sm text-white/80">Explore all features with sample data. No data will be saved.</p>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Button
+                onClick={exitDemo}
+                variant="secondary"
+                size="sm"
+                className="flex-1 sm:flex-none bg-white text-indigo-600 hover:bg-white/90 rounded-xl font-medium"
+              >
+                Start Free Trial
+              </Button>
+              <button 
+                onClick={() => setShowDemoBanner(false)}
+                className="p-2 hover:bg-white/20 rounded-xl transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={exitDemo}
-              variant="secondary"
-              size="sm"
-              className="bg-white text-indigo-600 hover:bg-white/90 rounded-full"
-            >
-              Start Free Trial
-            </Button>
-            <button 
-              onClick={() => setShowDemoBanner(false)}
-              className="p-1 hover:bg-white/20 rounded-full transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
           </div>
         </motion.div>
       )}
 
       {/* Welcome Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight-custom">
-            Welcome{isDemo ? " to Demo" : " back"}, {user?.name?.split(" ")[0] || "User"}!
-          </h1>
-          <p className="text-slate-600 mt-1">
-            Here&apos;s how {business?.name || "your business"} is performing today.
-          </p>
-        </div>
-        <div className="flex items-center gap-3 flex-wrap">
-          {!isDemo && connectedPlatforms.length > 0 && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleSyncReviews}
-              disabled={syncing}
-              className="rounded-full"
-              data-testid="sync-reviews-btn"
-            >
-              <Cloud className={`w-4 h-4 mr-2 ${syncing ? "animate-pulse" : ""}`} />
-              {syncing ? "Syncing..." : "Sync Reviews"}
-            </Button>
-          )}
-          {!isDemo && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleRefresh}
-              disabled={refreshing}
-              className="rounded-full"
-            >
-              <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
-              Refresh
-            </Button>
-          )}
-          {isDemo || integrationStatus?.overall_mode === "demo" ? (
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 text-amber-600 text-sm font-medium" data-testid="demo-mode-badge">
-              <CloudOff className="w-4 h-4" />
-              Demo Mode
-            </div>
-          ) : (
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 text-green-600 text-sm font-medium">
-              <span className="w-2 h-2 rounded-full bg-green-500 live-indicator" />
-              Live Data
-            </div>
-          )}
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900">
+              Welcome{isDemo ? " to Demo" : " back"}, {user?.name?.split(" ")[0] || "User"}! 👋
+            </h1>
+            <p className="text-slate-600 mt-1 text-sm sm:text-base">
+              Here&apos;s how {business?.name || "your business"} is performing
+            </p>
+          </div>
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            {!isDemo && connectedPlatforms.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSyncReviews}
+                disabled={syncing}
+                className="rounded-xl text-xs sm:text-sm"
+                data-testid="sync-reviews-btn"
+              >
+                <Cloud className={`w-4 h-4 mr-1.5 ${syncing ? "animate-pulse" : ""}`} />
+                {syncing ? "Syncing..." : "Sync"}
+              </Button>
+            )}
+            {!isDemo && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="rounded-xl text-xs sm:text-sm"
+              >
+                <RefreshCw className={`w-4 h-4 mr-1.5 ${refreshing ? "animate-spin" : ""}`} />
+                Refresh
+              </Button>
+            )}
+            {isDemo || integrationStatus?.overall_mode === "demo" ? (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 text-amber-600 text-xs sm:text-sm font-medium" data-testid="demo-mode-badge">
+                <CloudOff className="w-3.5 h-3.5" />
+                Demo
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-green-50 text-green-600 text-xs sm:text-sm font-medium">
+                <span className="w-2 h-2 rounded-full bg-green-500 live-indicator" />
+                Live
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
