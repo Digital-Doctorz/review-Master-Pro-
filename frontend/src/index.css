@@ -284,6 +284,14 @@
     padding-bottom: max(env(safe-area-inset-bottom), 20px);
   }
   
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  
   /* Larger touch targets on mobile */
   button, a, [role="button"] {
     min-height: 44px;
@@ -292,11 +300,37 @@
   /* Better text sizing on mobile */
   html {
     font-size: 16px;
+    -webkit-text-size-adjust: 100%;
   }
   
   /* Smooth momentum scrolling */
   .scroll-smooth {
     -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Fix input zoom on iOS */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea,
+  select {
+    font-size: 16px;
+  }
+  
+  /* Better tap feedback */
+  .tap-feedback {
+    -webkit-tap-highlight-color: rgba(99, 102, 241, 0.1);
+  }
+}
+
+/* Safe area support for all devices */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
   }
 }
 
