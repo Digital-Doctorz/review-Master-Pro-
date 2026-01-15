@@ -1405,23 +1405,50 @@ async def get_review(review_id: str, user: User = Depends(get_current_user)):
 
 @api_router.post("/reviews/{review_id}/respond")
 async def respond_to_review(review_id: str, data: ReviewResponse, user: User = Depends(get_current_user)):
-    """Respond to a review"""
+    """Respond to a review - posts to the original platform if connected"""
     business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
     
+    # Get the review to find its platform
+    review = await db.reviews.find_one(
+        {"review_id": review_id, "business_id": business["business_id"]},
+        {"_id": 0}
+    )
+    
+    if not review:
+        raise HTTPException(status_code=404, detail="Review not found")
+    
+    platform = review.get("platform", "direct")
+    posted_live = False
+    
+    # Try to post to the original platform if it's a public review
+    if platform == "google" and business.get("google_place_id"):
+        # In production, this would call Google Business Profile API
+        # For now, we'll mark it as saved locally
+        posted_live = False  # Set to True when real API is connected
+    elif platform == "facebook" and business.get("facebook_page_id"):
+        # In production, this would call Facebook Graph API
+        posted_live = False  # Set to True when real API is connected
+    
+    # Save the response to our database
     result = await db.reviews.update_one(
         {"review_id": review_id, "business_id": business["business_id"]},
         {"$set": {
             "response": data.response_text,
-            "responded_at": datetime.now(timezone.utc).isoformat()
+            "responded_at": datetime.now(timezone.utc).isoformat(),
+            "response_posted_live": posted_live
         }}
     )
     
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Review not found")
     
-    return {"message": "Response saved"}
+    return {
+        "message": "Response saved",
+        "posted_live": posted_live,
+        "platform": platform
+    }
 
 @api_router.post("/reviews/{review_id}/mark-read")
 async def mark_review_read(review_id: str, user: User = Depends(get_current_user)):
