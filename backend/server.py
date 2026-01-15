@@ -258,9 +258,22 @@ async def create_session(request: Request, response: Response):
     """Exchange Emergent session_id for local session"""
     body = await request.json()
     session_id = body.get("session_id")
+    selected_plan = body.get("selected_plan", "starter")
     
     if not session_id:
         raise HTTPException(status_code=400, detail="session_id required")
+    
+    # Validate plan
+    valid_plans = ["starter", "growth", "enterprise"]
+    if selected_plan not in valid_plans:
+        selected_plan = "starter"
+    
+    # Plan configuration
+    plan_configs = {
+        "starter": {"max_locations": 1, "features": ["google_integration", "qr_codes", "ai_responses", "email_notifications", "basic_analytics"]},
+        "growth": {"max_locations": 3, "features": ["google_integration", "facebook_integration", "qr_codes", "ai_responses", "email_notifications", "whatsapp_alerts", "advanced_analytics", "private_inbox", "custom_branding"]},
+        "enterprise": {"max_locations": 999, "features": ["all_platforms", "unlimited_qr", "ai_responses", "dedicated_manager", "custom_analytics", "api_access", "white_label", "priority_support"]}
+    }
     
     # Call Emergent auth API
     async with httpx.AsyncClient() as client_http:
@@ -285,13 +298,26 @@ async def create_session(request: Request, response: Response):
     
     if existing_user:
         user_id = existing_user["user_id"]
+        # Update plan if user selected a new one
+        await db.users.update_one(
+            {"user_id": user_id},
+            {"$set": {
+                "plan": selected_plan,
+                "max_locations": plan_configs[selected_plan]["max_locations"],
+                "features": plan_configs[selected_plan]["features"],
+                "plan_updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
     else:
-        # Create new user
+        # Create new user with selected plan
         user_doc = {
             "user_id": user_id,
             "email": email,
             "name": name,
             "picture": picture,
+            "plan": selected_plan,
+            "max_locations": plan_configs[selected_plan]["max_locations"],
+            "features": plan_configs[selected_plan]["features"],
             "created_at": datetime.now(timezone.utc).isoformat()
         }
         await db.users.insert_one(user_doc)
@@ -324,7 +350,8 @@ async def create_session(request: Request, response: Response):
         "user_id": user_id,
         "email": email,
         "name": name,
-        "picture": picture
+        "picture": picture,
+        "plan": selected_plan
     }
     
     return {"user": user_data, "session_token": session_token}
