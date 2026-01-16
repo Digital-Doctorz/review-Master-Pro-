@@ -567,41 +567,49 @@ export default function Reviews() {
                       {selectedReview.author_name?.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
+                  <div className="flex-1">
                     <p className="font-medium text-slate-900">
                       {selectedReview.author_name}
                     </p>
-                    <div className="flex gap-0.5">
-                      {[1, 2, 3, 4, 5].map((i) => (
-                        <Star
-                          key={i}
-                          className={`w-3 h-3 ${
-                            i <= selectedReview.rating
-                              ? "fill-amber-400 text-amber-400"
-                              : "text-slate-200"
-                          }`}
-                        />
-                      ))}
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <Star
+                            key={i}
+                            className={`w-3 h-3 ${
+                              i <= selectedReview.rating
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-slate-200"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      {selectedReview.created_at && (
+                        <span className="flex items-center gap-1 text-xs text-slate-500">
+                          <Clock className="w-3 h-3" />
+                          {formatReviewDate(selectedReview.created_at)}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
                 <p className="text-slate-700">{selectedReview.text}</p>
                 
                 {/* Contact info for private */}
-                {selectedReview.is_private && (selectedReview.author_email || selectedReview.author_phone) && (
+                {selectedReview.is_private && (selectedReview.contact_email || selectedReview.contact_phone) && (
                   <div className="mt-3 pt-3 border-t border-slate-200">
                     <p className="text-xs text-slate-500 font-medium mb-2">Customer Contact</p>
                     <div className="flex flex-wrap gap-4">
-                      {selectedReview.author_email && (
-                        <a href={`mailto:${selectedReview.author_email}`} className="flex items-center gap-2 text-sm text-sky-600 hover:underline">
+                      {selectedReview.contact_email && (
+                        <a href={`mailto:${selectedReview.contact_email}`} className="flex items-center gap-2 text-sm text-sky-600 hover:underline">
                           <Mail className="w-4 h-4" />
-                          {selectedReview.author_email}
+                          {selectedReview.contact_email}
                         </a>
                       )}
-                      {selectedReview.author_phone && (
-                        <a href={`tel:${selectedReview.author_phone}`} className="flex items-center gap-2 text-sm text-sky-600 hover:underline">
+                      {selectedReview.contact_phone && (
+                        <a href={`tel:${selectedReview.contact_phone}`} className="flex items-center gap-2 text-sm text-sky-600 hover:underline">
                           <Phone className="w-4 h-4" />
-                          {selectedReview.author_phone}
+                          {selectedReview.contact_phone}
                         </a>
                       )}
                     </div>
