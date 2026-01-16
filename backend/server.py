@@ -883,7 +883,47 @@ async def upgrade_plan(
         upsert=True
     )
     
+    # Also update user document to clear trial status and update plan
+    await db.users.update_one(
+        {"user_id": user.user_id},
+        {"$set": {
+            "plan": plan_name,
+            "max_locations": plan_config["max_locations"],
+            "features": plan_config["features"],
+            "is_trial": False,
+            "plan_updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
     return {"message": f"Plan upgraded to {plan_name}", "plan": plan_data}
+
+
+@api_router.get("/user/trial-status")
+async def get_trial_status(user: User = Depends(get_current_user)):
+    """Get user's trial status"""
+    user_doc = await db.users.find_one({"user_id": user.user_id}, {"_id": 0})
+    
+    if not user_doc:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    is_trial = user_doc.get("is_trial", False)
+    trial_ends_at = user_doc.get("trial_ends_at")
+    
+    days_remaining = 0
+    if is_trial and trial_ends_at:
+        try:
+            end_date = datetime.fromisoformat(trial_ends_at.replace("Z", "+00:00"))
+            now = datetime.now(timezone.utc)
+            days_remaining = max(0, (end_date - now).days)
+        except:
+            days_remaining = 0
+    
+    return {
+        "is_trial": is_trial,
+        "trial_ends_at": trial_ends_at,
+        "days_remaining": days_remaining,
+        "plan": user_doc.get("plan", "starter")
+    }
 
 
 # ============ LOCATIONS ENDPOINTS ============
