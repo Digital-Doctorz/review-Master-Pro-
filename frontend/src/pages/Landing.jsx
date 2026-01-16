@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import axios from "axios";
+import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import { AnimatedLogo } from "../components/AnimatedLogo";
 import {
@@ -27,7 +29,15 @@ import {
   Globe,
   X,
   Play,
+  Phone,
+  Mail,
+  MapPin,
+  FileText,
+  Lock,
 } from "lucide-react";
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 // Google Icon
 const GoogleIcon = ({ className = "w-6 h-6" }) => (
@@ -48,13 +58,55 @@ const FacebookIcon = ({ className = "w-6 h-6" }) => (
 
 export default function Landing() {
   const [billingCycle, setBillingCycle] = useState("monthly");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [upgrading, setUpgrading] = useState(false);
   const navigate = useNavigate();
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await axios.get(`${API}/auth/me`, { withCredentials: true });
+        setIsLoggedIn(true);
+        setCurrentUser(response.data);
+      } catch {
+        setIsLoggedIn(false);
+        setCurrentUser(null);
+      }
+    };
+    checkAuth();
+  }, []);
 
   const handleGoogleLogin = () => {
     const redirectUrl = window.location.origin + "/dashboard";
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(
       redirectUrl
     )}`;
+  };
+
+  const handlePlanSelection = async (planKey) => {
+    if (isLoggedIn) {
+      // User is logged in - upgrade their plan directly
+      setUpgrading(true);
+      try {
+        await axios.post(
+          `${API}/user/plan/upgrade`,
+          { plan_name: planKey, billing_cycle: billingCycle },
+          { withCredentials: true }
+        );
+        toast.success(`Successfully upgraded to ${planKey.charAt(0).toUpperCase() + planKey.slice(1)} plan!`);
+        navigate('/dashboard');
+      } catch (error) {
+        toast.error(error.response?.data?.detail || 'Failed to upgrade plan');
+      } finally {
+        setUpgrading(false);
+      }
+    } else {
+      // User not logged in - store plan and redirect to auth
+      sessionStorage.setItem('selected_plan', planKey);
+      handleGoogleLogin();
+    }
   };
 
   const handleDemoMode = () => {
