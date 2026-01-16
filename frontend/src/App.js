@@ -217,6 +217,7 @@ function ProtectedRoute({ children }) {
   const [business, setBusiness] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isDemo, setIsDemo] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     // Check for demo mode
@@ -246,19 +247,27 @@ function ProtectedRoute({ children }) {
           setBusiness(bizResponse.data);
         } catch (bizError) {
           // No business yet - that's fine, redirect to onboarding
-          console.warn("No business found for user");
+          console.log("No business found for user - will redirect to onboarding");
           setBusiness(null);
         }
+        setLoading(false);
       } catch (error) {
-        // Not authenticated - this is expected for non-logged-in users
+        // If we just came from auth callback, retry a few times before giving up
+        // This handles race condition where cookie might not be set yet
+        if (retryCount < 2) {
+          setTimeout(() => {
+            setRetryCount(prev => prev + 1);
+          }, 500);
+          return;
+        }
+        // Not authenticated after retries
         setIsAuthenticated(false);
-      } finally {
         setLoading(false);
       }
     };
 
     checkAuth();
-  }, []);
+  }, [retryCount]);
 
   if (loading) {
     return (
