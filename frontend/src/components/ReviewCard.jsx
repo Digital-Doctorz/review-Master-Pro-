@@ -110,6 +110,14 @@ export const ReviewCard = ({ review, index, isPrivate = false, onClick }) => (
                 </Badge>
               )}
             </div>
+            
+            {/* Review Date/Time */}
+            {review.created_at && (
+              <div className="flex items-center gap-1.5 mb-2 text-xs text-slate-500">
+                <Clock className="w-3 h-3" />
+                <span>{formatReviewDate(review.created_at)}</span>
+              </div>
+            )}
             <div className="flex gap-0.5 mb-3">
               {[1, 2, 3, 4, 5].map((i) => (
                 <Star
