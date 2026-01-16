@@ -303,6 +303,16 @@ export default function Layout({ children }) {
             {children}
           </ErrorBoundary>
         </div>
+        
+        {/* Footer Branding */}
+        <div className="hidden md:block border-t border-slate-100 mt-8">
+          <div className="p-4 text-center">
+            <p className="text-xs text-slate-400">
+              Powered by <span className="font-semibold text-slate-500">Review Master</span> • 
+              <span className="ml-1">© 2025 All rights reserved</span>
+            </p>
+          </div>
+        </div>
       </main>
     </div>
   );
