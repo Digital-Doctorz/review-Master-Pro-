@@ -1805,6 +1805,31 @@ async def get_analytics_trends(days: int = 30, user: User = Depends(get_current_
 @api_router.get("/public/business/{qr_code_id}")
 async def get_public_business(qr_code_id: str):
     """Get public business info for QR code landing page"""
+    
+    # Handle demo QR codes
+    if qr_code_id.startswith("demo_qr"):
+        return {
+            "business_id": "demo_business_001",
+            "name": "Demo Coffee Shop",
+            "category": "Restaurant & Cafe",
+            "logo_url": None,
+            "google_place_id": "demo_google_place",
+            "google_review_link": "https://g.page/demo-coffee-shop",
+            "facebook_page_id": "demo_facebook_page",
+            "facebook_page_url": "https://facebook.com/demo-coffee-shop",
+            "is_demo": True,
+            "platforms": {
+                "google": {
+                    "connected": True,
+                    "review_link": "https://g.page/demo-coffee-shop"
+                },
+                "facebook": {
+                    "connected": True,
+                    "review_link": "https://facebook.com/demo-coffee-shop/reviews"
+                }
+            }
+        }
+    
     business = await db.businesses.find_one(
         {"qr_code_id": qr_code_id},
         {"_id": 0, "business_id": 1, "name": 1, "category": 1, "logo_url": 1,
