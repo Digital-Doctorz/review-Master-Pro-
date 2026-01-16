@@ -5,47 +5,53 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## What's Been Implemented (January 2025)
 
-### Latest - v4.0 Pricing & Review Reply Updates (January 15, 2025):
+### Latest - v4.1 Trial & Upgrade Updates (January 16, 2025):
 
-**Pricing Page Updates:**
-- [x] **Button Text Changed**:
-  - Starter: "Try Now →"
-  - Growth: "Try Now →"  
-  - Enterprise: "Try All Features →"
-- [x] **Growth Badge**: Changed from "Most Popular" to "BEST SAVINGS"
-- [x] **Pricing**: Starting at ₹499/month
-- [x] **Toggle Fixed**: Month/Year toggle redesigned as clean pill buttons
+**7-Day Free Trial:**
+- [x] New users automatically get 7-day free trial
+- [x] `is_trial: true` and `trial_ends_at` stored in user document
+- [x] `GET /api/user/trial-status` returns trial info (is_trial, trial_ends_at, days_remaining, plan)
+- [x] `cleanup_expired_trials()` function runs on startup to delete expired trial accounts
+- [x] All user data (business, locations, reviews, settings) auto-deleted after trial expires
 
-**Review Reply Functionality:**
-- [x] **Public Reviews**: "Post to Google" or "Post to Facebook" button
-- [x] **Private Reviews**: WhatsApp and Email reply options
-  - WhatsApp button opens wa.me with pre-filled message
-  - Email button opens mailto with subject/body
-- [x] **AI Response Options**: Professional, Friendly, Apologetic
-- [x] **Platform-specific posting** (MOCKED - returns posted_live: false)
+**Plan Upgrade Functionality:**
+- [x] `POST /api/user/plan/upgrade` endpoint for upgrading plans
+- [x] Logged-in users see "Upgrade to X" buttons instead of "Try Now"
+- [x] Plan upgrade clears `is_trial` flag and updates user plan
+- [x] Upgrade flow works without re-authentication
+- [x] **MOCKED**: Payment processing not yet integrated (Stripe/Razorpay pending)
 
-**Plan-Based Feature Activation:**
-- [x] **Plan selection stored** in sessionStorage when user clicks pricing button
-- [x] **Plan sent to backend** during auth session creation
-- [x] **User plan saved** with features based on tier:
-  - Starter: 1 location, Google only, basic features
-  - Growth: 3 locations, Google + Facebook, WhatsApp alerts
-  - Enterprise: Unlimited locations, all features
+**Comprehensive Footer:**
+- [x] Contact info: +91-9555-9555-95, trademeindia.sales@gmail.com
+- [x] Product section: Features, Pricing, Testimonials, Live Demo
+- [x] Legal section: Terms of Service, Privacy Policy, Refund Policy
+- [x] Location: India - Serving businesses worldwide
+- [x] Social proof: 4.9/5 rating, 2,500+ businesses
 
-### Previous Features (v3.0-3.9)
+**Mobile UI Fixes:**
+- [x] Mobile header with fixed h-16 height for consistent alignment
+- [x] Logo properly aligned in mobile header
+- [x] Demo badge visible in mobile view
+- [x] Menu toggle button functional
 
-**v3.9 - Mobile-First UI:**
-- [x] Mobile bottom nav (4 items + More)
-- [x] Full-screen mobile menu
-- [x] Auth flow error fix
-- [x] Email setup guide
+**Auth Flow Improvements:**
+- [x] Added retry logic in ProtectedRoute for auth race conditions
+- [x] Enhanced error suppression for 401/404 during auth transitions
+- [x] Reduced error flash occurrences after login
 
-**v3.8 - Navigation Fixes:**
+### Previous Features (v3.0-4.0)
+
+**v4.0 - Pricing & Review Reply:**
+- [x] Pricing buttons: Starter/Growth "Try Now", Enterprise "Try All Features"
+- [x] Growth badge: "BEST SAVINGS"
+- [x] Private review reply: WhatsApp and Email options
+- [x] Public review reply: "Post to Google/Facebook" button (MOCKED)
+- [x] Plan selection stored during signup
+
+**v3.0-3.9 - Core Features:**
+- [x] Demo mode with sample data
+- [x] Mobile-first UI with bottom navigation
 - [x] All navigation routes working
-- [x] Demo mode on all pages
-
-**Core Features:**
-- [x] Simplified integration (paste review link)
 - [x] Email notifications (Resend)
 - [x] Webhook support
 - [x] AI-powered responses (Gemini 3 Flash)
@@ -68,69 +74,33 @@ Build Review Master - a zero-friction review management platform focused on Goog
 | Growth | ₹999 | ₹799 | 3 | Google + Facebook |
 | Enterprise | ₹2499 | ₹1999 | Unlimited | All |
 
-### Plan Features:
+## Trial & Upgrade Flow
 
-**Starter:**
-- 100 reviews/month
-- 1 business location
-- Google Reviews integration
-- QR code generator
-- AI review responses
-- Email notifications
-- Basic analytics
-
-**Growth (BEST SAVINGS):**
-- 500 reviews/month
-- 3 business locations
-- Google + Facebook integration
-- Unlimited QR codes
-- AI review responses
-- Priority email + WhatsApp alerts
-- Advanced analytics & reports
-- Private feedback inbox
-- Custom branding
-
-**Enterprise:**
-- Unlimited reviews
-- Unlimited locations
-- All platform integrations
-- Dedicated account manager
-- Custom analytics dashboard
-- API access
-- White-label option
-- Priority 24/7 support
-
-## Review Reply Flow
-
-### Public Reviews (Google/Facebook):
+### New User Signup:
 ```
-1. User clicks on review → Dialog opens
-2. User types or generates AI response
-3. Clicks "Post to Google" or "Post to Facebook"
-4. Response saved to DB
-5. If platform connected, posts live (currently MOCKED)
+1. User clicks "Start Free Trial" → Google OAuth
+2. User authenticated → is_trial: true, trial_ends_at: 7 days from now
+3. User can use all features during trial
+4. After 7 days: cleanup_expired_trials() deletes all user data
 ```
 
-### Private Reviews (Direct, <4 stars):
+### Plan Upgrade (Logged-in User):
 ```
-1. User clicks on private review → Dialog opens
-2. User types or generates AI response
-3. Options:
-   a. "Send via WhatsApp" → Opens wa.me link
-   b. "Send via Email" → Opens mailto link
-   c. "Save Response" → Saves to DB only
+1. User navigates to pricing section on Landing page
+2. Buttons show "Upgrade to [Plan]" instead of "Try Now"
+3. User clicks upgrade → POST /api/user/plan/upgrade
+4. Plan updated, is_trial: false, features unlocked
+5. User redirected to dashboard with new plan
 ```
 
 ## Testing Summary
-- **Iteration 19**: Pricing & review reply - 100% pass (21/21 backend, all frontend)
-- **All pricing buttons correct**
-- **WhatsApp/Email reply working**
-- **Plan selection flow working**
+- **Iteration 20**: Trial & Upgrade - 100% pass (16/16 backend, all frontend)
+- **Iteration 19**: Pricing & review reply - 100% pass
 
 ## MOCKED APIs
-- Review posting to Google/Facebook (returns posted_live: false)
-- WhatsApp uses native wa.me link
-- Email uses native mailto link
+- **Payment processing**: Plan upgrade is free (Stripe/Razorpay not integrated)
+- **Review posting**: POST to Google/Facebook returns `posted_live: false`
+- **WhatsApp/Email**: Uses native `wa.me` and `mailto:` links
 
 ## Deployment Status
 - **Health Check**: `/api/health` returns healthy
@@ -141,15 +111,16 @@ Build Review Master - a zero-friction review management platform focused on Goog
 ## Prioritized Backlog
 
 ### P0 - Critical (Completed ✅)
-- [x] Pricing page updates (buttons, badges, toggle)
-- [x] Review reply functionality (WhatsApp, Email)
-- [x] Plan-based feature activation
-- [x] Mobile navigation fix
-- [x] Demo mode feature
+- [x] 7-day free trial with auto-delete
+- [x] Plan upgrade for logged-in users
+- [x] Comprehensive footer
+- [x] Mobile header alignment
+- [x] Auth error flash mitigation
 
 ### P1 - High Priority
-- [ ] **Stripe Payment Integration** - Process real subscriptions
+- [ ] **Stripe/Razorpay Payment Integration** - Process real subscriptions
 - [ ] **Real Google/Facebook API** - Post responses live
+- [ ] SEO optimization (meta tags, keywords, structured data)
 - [ ] Team collaboration features
 - [ ] Weekly email summaries
 
@@ -158,22 +129,32 @@ Build Review Master - a zero-friction review management platform focused on Goog
 - [ ] Yelp, TripAdvisor integration
 - [ ] White-label QR branding
 - [ ] Analytics export
+- [ ] Screenshot OCR for review import
 
 ## Code Architecture
 ```
 /app/
 ├── backend/
-│   ├── server.py           # Auth with plan selection, respond endpoint
-│   └── services/
+│   ├── server.py           # Auth, trial-status, plan/upgrade endpoints
+│   └── services/           # Google, Facebook, Email services
 ├── frontend/
 │   └── src/
 │       ├── pages/
-│       │   ├── Landing.jsx    # Updated pricing
+│       │   ├── Landing.jsx    # Pricing with upgrade logic, footer
 │       │   └── Reviews.jsx    # WhatsApp/Email reply
-│       └── App.js            # Plan selection in auth
+│       ├── components/
+│       │   └── Layout.jsx     # Mobile header h-16
+│       └── App.js            # ProtectedRoute with retry
 └── tests/
-    └── test_iteration19_pricing_reviews.py
+    └── test_iteration20_trial_upgrade.py
 ```
+
+## Key API Endpoints
+- `POST /api/auth/session` - Create session with trial status
+- `GET /api/user/trial-status` - Get trial info
+- `POST /api/user/plan/upgrade` - Upgrade plan (mock payment)
+- `GET /api/user/plan` - Get current plan
+- `POST /api/reviews/{id}/respond` - Save reply (MOCKED live posting)
 
 ## Environment Variables
 ```
