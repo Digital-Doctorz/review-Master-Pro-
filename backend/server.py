@@ -330,7 +330,8 @@ async def create_session(request: Request, response: Response):
             }}
         )
     else:
-        # Create new user with selected plan
+        # Create new user with selected plan and 7-day free trial
+        trial_ends_at = datetime.now(timezone.utc) + timedelta(days=7)
         user_doc = {
             "user_id": user_id,
             "email": email,
@@ -339,6 +340,8 @@ async def create_session(request: Request, response: Response):
             "plan": selected_plan,
             "max_locations": plan_configs[selected_plan]["max_locations"],
             "features": plan_configs[selected_plan]["features"],
+            "is_trial": True,
+            "trial_ends_at": trial_ends_at.isoformat(),
             "created_at": datetime.now(timezone.utc).isoformat()
         }
         await db.users.insert_one(user_doc)
