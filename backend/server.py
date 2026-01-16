@@ -1861,6 +1861,18 @@ async def get_public_business(qr_code_id: str):
 @api_router.post("/public/review")
 async def submit_public_review(review_data: PublicReviewCreate):
     """Submit a review from QR code landing page"""
+    
+    # Handle demo business reviews - simulate success without saving to DB
+    if review_data.business_id == "demo_business_001" or review_data.business_id.startswith("demo_"):
+        is_private = review_data.rating < 4
+        return {
+            "message": "Thank you for your demo review! In a real scenario, this would be saved.",
+            "review_id": f"demo_review_{uuid.uuid4().hex[:8]}",
+            "is_demo": True,
+            "is_private": is_private,
+            "next_step": "success" if is_private or review_data.platform_choice == "direct" else "copy_and_go"
+        }
+    
     business = await db.businesses.find_one(
         {"business_id": review_data.business_id},
         {"_id": 0}
