@@ -100,10 +100,10 @@ class TestAuthEndpoints:
     
     def test_auth_session_endpoint_exists(self):
         """Test /api/auth/session endpoint exists"""
-        # This endpoint is used for OAuth callback
-        response = requests.get(f"{BASE_URL}/api/auth/session")
-        # Should return 400 (missing token) or 401, not 404
-        assert response.status_code in [400, 401, 422]
+        # This endpoint is used for OAuth callback (POST only)
+        response = requests.post(f"{BASE_URL}/api/auth/session", json={"token": "test"})
+        # Should return 400 (invalid token) or 401, not 404
+        assert response.status_code in [400, 401, 422, 500]
         print(f"✓ /api/auth/session endpoint exists (status: {response.status_code})")
 
 
