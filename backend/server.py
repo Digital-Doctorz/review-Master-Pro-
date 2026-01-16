@@ -2477,6 +2477,15 @@ async def health_check():
 # Include the router
 app.include_router(api_router)
 
+@app.on_event("startup")
+async def startup_event():
+    """Run cleanup tasks on startup"""
+    logger.info("Starting Review Master API...")
+    # Clean up expired trials on startup
+    deleted = await cleanup_expired_trials()
+    if deleted > 0:
+        logger.info(f"Cleaned up {deleted} expired trial accounts on startup")
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
