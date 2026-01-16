@@ -53,21 +53,30 @@ axios.interceptors.response.use(
 // Suppress React's error overlay for handled API errors in development
 if (process.env.NODE_ENV === 'development') {
   window.addEventListener('error', (event) => {
+    // Suppress common API and auth-related errors
     if (event.message?.includes('[object Object]') || 
         event.error?.displayMessage ||
-        event.message?.includes('Network Error')) {
+        event.message?.includes('Network Error') ||
+        event.message?.includes('401') ||
+        event.message?.includes('Request failed')) {
       event.preventDefault();
       return true;
     }
   });
   
   window.addEventListener('unhandledrejection', (event) => {
-    // Suppress unhandled promise rejections for axios errors
+    // Suppress unhandled promise rejections for axios errors and auth failures
     if (event.reason?.isAxiosError || 
         event.reason?.displayMessage ||
-        String(event.reason).includes('[object Object]')) {
+        event.reason?.response?.status === 401 ||
+        event.reason?.response?.status === 404 ||
+        String(event.reason).includes('[object Object]') ||
+        String(event.reason).includes('Request failed')) {
       event.preventDefault();
-      console.warn("Suppressed rejection:", event.reason?.displayMessage || "API error");
+      // Only log non-401 errors for debugging
+      if (event.reason?.response?.status !== 401) {
+        console.log("Suppressed promise rejection:", event.reason?.displayMessage || "API error");
+      }
       return true;
     }
   });
