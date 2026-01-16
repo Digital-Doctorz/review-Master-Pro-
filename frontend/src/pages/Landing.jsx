@@ -925,21 +925,109 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 px-6 border-t border-slate-100">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
-              <Star className="w-4 h-4 text-white" />
+      {/* Comprehensive Footer */}
+      <footer className="bg-slate-900 text-white py-16 px-6" data-testid="footer">
+        <div className="max-w-7xl mx-auto">
+          {/* Main Footer Content */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+            {/* Brand Column */}
+            <div className="lg:col-span-1">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+                  <Star className="w-5 h-5 text-white" />
+                </div>
+                <span className="font-bold text-xl">Review Master</span>
+              </div>
+              <p className="text-slate-400 text-sm leading-relaxed mb-6">
+                The #1 review management platform for local businesses. Turn customer feedback into growth.
+              </p>
+              <div className="flex gap-4">
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition-colors">
+                  <Globe className="w-5 h-5 text-slate-400" />
+                </a>
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition-colors">
+                  <Users className="w-5 h-5 text-slate-400" />
+                </a>
+              </div>
             </div>
-            <span className="font-semibold text-slate-900">Review Master</span>
+
+            {/* Product Column */}
+            <div>
+              <h3 className="font-semibold text-lg mb-4">Product</h3>
+              <ul className="space-y-3">
+                <li><a href="#features" className="text-slate-400 hover:text-white transition-colors text-sm">Features</a></li>
+                <li><a href="#pricing" className="text-slate-400 hover:text-white transition-colors text-sm">Pricing</a></li>
+                <li><a href="#testimonials" className="text-slate-400 hover:text-white transition-colors text-sm">Testimonials</a></li>
+                <li><button onClick={handleDemoMode} className="text-slate-400 hover:text-white transition-colors text-sm">Live Demo</button></li>
+              </ul>
+            </div>
+
+            {/* Legal Column */}
+            <div>
+              <h3 className="font-semibold text-lg mb-4">Legal</h3>
+              <ul className="space-y-3">
+                <li><a href="/terms" className="text-slate-400 hover:text-white transition-colors text-sm flex items-center gap-2"><FileText className="w-4 h-4" />Terms of Service</a></li>
+                <li><a href="/privacy" className="text-slate-400 hover:text-white transition-colors text-sm flex items-center gap-2"><Lock className="w-4 h-4" />Privacy Policy</a></li>
+                <li><a href="/refund" className="text-slate-400 hover:text-white transition-colors text-sm flex items-center gap-2"><Shield className="w-4 h-4" />Refund Policy</a></li>
+              </ul>
+            </div>
+
+            {/* Contact Column */}
+            <div>
+              <h3 className="font-semibold text-lg mb-4">Contact Us</h3>
+              <ul className="space-y-4">
+                <li>
+                  <a href="tel:+919555955595" className="flex items-center gap-3 text-slate-400 hover:text-white transition-colors">
+                    <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center">
+                      <Phone className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-white">+91-9555-9555-95</p>
+                      <p className="text-xs text-slate-500">Mon-Sat, 9am-6pm IST</p>
+                    </div>
+                  </a>
+                </li>
+                <li>
+                  <a href="mailto:trademeindia.sales@gmail.com" className="flex items-center gap-3 text-slate-400 hover:text-white transition-colors">
+                    <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center">
+                      <Mail className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-white">trademeindia.sales@gmail.com</p>
+                      <p className="text-xs text-slate-500">Sales & Support</p>
+                    </div>
+                  </a>
+                </li>
+                <li>
+                  <div className="flex items-center gap-3 text-slate-400">
+                    <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center">
+                      <MapPin className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-white">India</p>
+                      <p className="text-xs text-slate-500">Serving businesses worldwide</p>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
-          <div className="flex items-center gap-6">
-            <a href="#features" className="text-sm text-slate-600 hover:text-slate-900">Features</a>
-            <a href="#pricing" className="text-sm text-slate-600 hover:text-slate-900">Pricing</a>
-            <a href="#testimonials" className="text-sm text-slate-600 hover:text-slate-900">Reviews</a>
+
+          {/* Bottom Bar */}
+          <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-slate-500">
+              © 2025 Review Master. All rights reserved. Made with ❤️ in India.
+            </p>
+            <div className="flex items-center gap-6">
+              <span className="text-xs text-slate-600">Trusted by 2,500+ businesses</span>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                ))}
+                <span className="text-xs text-slate-500 ml-1">4.9/5</span>
+              </div>
+            </div>
           </div>
-          <p className="text-sm text-slate-500">© 2025 Review Master. All rights reserved.</p>
         </div>
       </footer>
     </div>
