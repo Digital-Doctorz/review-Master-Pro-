@@ -10,7 +10,36 @@ import {
   Lock,
   Mail,
   Phone,
+  Clock,
 } from "lucide-react";
+
+// Format date to relative time or absolute date
+const formatReviewDate = (dateString) => {
+  if (!dateString) return "";
+  
+  try {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    
+    // For older dates, show formatted date
+    return date.toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+    });
+  } catch {
+    return "";
+  }
+};
 
 const getSentimentIcon = (sentiment) => {
   switch (sentiment) {
