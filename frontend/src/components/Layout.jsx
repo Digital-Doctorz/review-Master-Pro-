@@ -169,9 +169,9 @@ export default function Layout({ children }) {
       </aside>
 
       {/* Mobile Header */}
-      <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200 px-4 py-3 safe-area-top">
-        <div className="flex items-center justify-between">
-          <Link to="/dashboard">
+      <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200 safe-area-top">
+        <div className="flex items-center justify-between px-4 py-3 h-16">
+          <Link to="/dashboard" className="flex items-center">
             <AnimatedLogo size="small" />
           </Link>
           <div className="flex items-center gap-2">
