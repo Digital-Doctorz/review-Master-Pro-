@@ -1,148 +1,141 @@
-<analysis>**original_problem_statement:** The user's goal is to create Review Master, a zero-knowledge review management platform for Google and Facebook. The application must be production-ready, with a core focus on providing a seamless, plug-and-play setup experience for non-technical business owners.
+<analysis>**original_problem_statement:** The user's goal is to create Review Master, a production-ready, zero-knowledge review management platform for Google and Facebook, designed for non-technical business owners.
 
-Recent user requests have focused on:
--   Making the application 100% workable end-to-end and ready for deployment.
--   Fixing all UI bugs, especially a recurring  error on the dashboard.
--   Enhancing the UI/UX to be premium and intuitive.
--   Implementing a multi-location feature, allowing users to connect and manage review channels for multiple business locations based on their subscription plan.
--   Ensuring all integration settings are saved permanently to the user's profile.
--   Improving the landing page to be more convincing and drive sales with clear pricing tiers.
--   Simplifying the QR code review flow to redirect customers directly to the native Google/Facebook review submission page.
+Recent user requests include:
+-   **Free Trial:** Implement a 7-day free trial, after which all user data and the account are automatically deleted from both the frontend and backend.
+-   **Plan Upgrades:** Fix the plan upgrade functionality. Currently, clicking upgrade redirects to the landing page. It should upgrade the user's plan and unlock the corresponding features immediately.
+-   **UI/UX Enhancements:**
+    -   Fix the mobile view where bottom navigation buttons cover other UI elements like logout and settings.
+    -   Properly align the header logo in mobile view.
+    -   Add a comprehensive footer with contact information (, ), terms, privacy policy, and other useful links.
+    -   Enhance the landing page content and design with screenshots, cliparts, and catchy copy to improve its appeal and conversion rate.
+-   **Bug Fix:** Fix the recurring issue where an error screen flashes or pops up after a user logs in with Google, before the dashboard appears.
+-   **Feature Functionality:**
+    -   Ensure the review reply function works end-to-end, posting replies correctly to the live channel (Google/Facebook).
+    -   For direct reviews (under 4 stars), ensure the reply can be sent directly to the reviewer's email or via WhatsApp.
+    -   Enhance and verify the AI analytics for accuracy.
+    -   Provide a flawless email integration setup for non-technical users.
+-   **SEO:** Optimize the website for SEO and AI search engines to maximize traffic and achieve a high ranking.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack application with a FastAPI backend, React frontend, and MongoDB database.
--   **Frontend:** The app is branded as Review Master and features an animated logo. It includes a redesigned landing page with pricing tiers, Google social login, and a dashboard. The dashboard has pages for reviews, analytics, QR code generation, webhook settings, and a new API settings page. The integration flow has been simplified to allow users to connect their business by pasting a review link.
--   **Backend:** Supports a hybrid review system (real reviews via connected accounts or mock data). It has endpoints for real-time review sync via webhooks, AI-powered responses (Gemini), and email notifications (Resend). The agent has started adding backend logic for multi-location support and user subscription plans.
--   **Error Handling:** An  component and a global Axios error interceptor have been implemented to prevent raw error objects from being displayed, though a critical bug persists.
+A full-stack application with a FastAPI backend, React frontend, and MongoDB.
+-   **Frontend:** The application features a landing page with dynamic pricing tiers, a See A Demo mode with pre-filled sample data, and Google social login. The dashboard is functional with pages for Reviews, Analytics, Integrations, QR Code Generation, Webhooks, and Settings. Mobile responsiveness has been improved, and navigation issues have been fixed. A comprehensive, step-by-step guide for setting up email notifications has been integrated.
+-   **Backend:** Supports JWT-based authentication, a multi-location architecture tied to user subscription plans, and API endpoints for managing reviews, analytics, and integrations. It includes logic for AI-powered replies using Gemini and can post replies back to review platforms (mocked). Production readiness has been improved by fixing CORS policies and strengthening the MongoDB connection for Atlas.
+-   **Free Trial/Upgrades:** The UI for different plans exists on the landing page, but the backend logic for a 7-day trial with data deletion and a functional plan upgrade path is not implemented.
 
 **Last working item**:
-    -   **Last item agent was working:** Implementing multi-location support and persistent integration settings. The agent modified the backend to include new data models (, , ) and added new API endpoints (, ). The work was in response to the user's request to allow business owners to connect multiple review channels based on their selected subscription plan and have these settings saved automatically.
-    -   **Status:** IN PROGRESS
-    -   **Agent Testing Done:** N
-    -   **Which testing method agent to use?** both. First, the backend testing agent to verify the new API endpoints for multi-location management, plan restrictions, and data persistence. Afterward, the frontend testing agent to validate the new UI for adding/managing locations and ensuring the connection status is displayed correctly and saved across sessions.
-    -   **User Testing Done:** N
+    -   Last item agent was working: The agent had just finished analyzing a large set of new user requirements from the last message. The requests include implementing a 7-day free trial, fixing the broken plan upgrade flow, major UI/UX enhancements on the landing page and mobile view, adding a footer, and SEO optimization.
+    -   Status: NOT STARTED
+    -   Agent Testing Done: N
+    -   Which testing method agent to use? both. The backend testing agent is needed to verify the new 7-day trial logic (user data deletion) and the plan upgrade functionality. The frontend testing agent is needed to validate the UI changes, including the mobile header, the new footer, and the enhanced landing page content.
+    -   User Testing Done: N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: (P0) Recurring  rendering error on the dashboard.**
+-   Issue 1: (P0) Error screen flashes after Google login.
+-   Issue 2: (P1) Plan upgrade functionality is broken.
 
 **Issues Detail:**
 -   **Issue 1:**
-     -   **Attempted fixes:** The agent has made several attempts to fix this.
-        1.  Improved  error handling and added an .
-        2.  Added a global Axios error interceptor to standardize error messages.
-        3.  Added null checks in the  component.
-        4.  Improved string conversion in the  itself.
-        Despite these fixes passing tests, the user has reported the issue again with screenshots, indicating the root cause is still present or there are multiple triggers.
+     -   **Attempted fixes:** The agent has made numerous attempts to fix this, including adding an , a global Axios interceptor, robust error handling in , and improved auth flow logic in . Despite these efforts, the user reports an error screen still flashes immediately after login. The latest attempt involved adding a loading spinner and more careful state management in  and  to prevent React's development error overlay from appearing.
      -   **Next debug checklist:**
-        1.  Analyze the user's latest screenshots to identify the exact component and state that triggers the error. The error appears during the authenticated dashboard load.
-        2.  Thoroughly review the data flow in , , and , specifically how  or other API calls handle and propagate error states.
-        3.  Investigate if any state variable is being accidentally set to an error object, which is then passed as a prop and rendered.
-        4.  Consider refactoring the data fetching logic in  into the  custom hook as previously planned, as this could centralize state management and make error handling more robust.
-     -   **Why fix this issue and what will be achieved with the fix?** This is a critical, user-facing bug that makes the application look unprofessional and broken. Fixing it is essential for user trust and deployment readiness.
+        1.  Examine the  function in  again. The error happens between the Google Auth redirect and the dashboard rendering.
+        2.  Specifically, check the sequence of , API calls (, ), and state updates (, ). An unhandled promise rejection here is the likely cause.
+        3.  Wrap the entire content of the  and  in  in a  block that toasts a user-friendly message instead of letting the error bubble up.
+        4.  Review the browser console logs from the screenshot tools during the login sequence to capture the exact error object being thrown.
+     -   **Why fix this issue and what will be achieved with the fix?** This is a critical, user-facing bug that makes the app appear broken and untrustworthy, preventing a smooth onboarding experience. Fixing it is essential for user retention and deployment.
      -   **Status:** IN PROGRESS
      -   **Is recurring issue?** Y
+     -   **Should Test frontend/backend/both after fix?** frontend
+     -   **Blocked on other issue:** None
+-   **Issue 2:**
+     -   **Attempted fixes:** None. This is a newly reported issue. The agent implemented the UI for plan selection but not the upgrade logic.
+     -   **Next debug checklist:**
+        1.  Modify the Try Now button's  handler in . Instead of just redirecting, it should trigger an API call to the backend to update the user's plan.
+        2.  Create a new backend endpoint (e.g., ) that takes a plan ID, authenticates the user, and updates the  field in the user's document in MongoDB.
+        3.  After a successful API response, the frontend should update the auth context with the new user plan and redirect to the dashboard, without requiring a new login.
+        4.  This flow will later be tied to a payment gateway like Stripe.
+     -   **Why fix this issue and what will be achieved with the fix?** This is a core business requirement for monetization. Users must be able to upgrade their plans to access premium features.
+     -   **Status:** NOT STARTED
+     -   **Is recurring issue?** N
      -   **Should Test frontend/backend/both after fix?** both
      -   **Blocked on other issue:** None
 
 **In progress Task List**:
--   **Task 1: (P0) Implement Multi-Location Support and Persistent Connections**
-     -   **Where to resume:**
-        1.  The backend models and API endpoints have been created. The next step is to build the frontend UI.
-        2.  Update  to allow users to add and manage multiple locations.
-        3.  The UI should check the user's plan () to determine how many locations they can add (e.g., 1 for the basic plan).
-        4.  Ensure that after connecting a platform (Google/Facebook) for a location, the connection status is fetched from the backend and displayed as Connected permanently.
-        5.  The dashboard and other relevant pages must be updated to filter and display data for the currently selected location.
-     -   **What will be achieved with this?** This will implement a core business feature requested by the user, enabling tiered pricing and making the app more valuable for businesses with multiple branches.
-     -   **Status:** IN PROGRESS
-     -   **Should Test frontend/backend/both after fix?** both
-     -   **Blocked on something:** None
+None.
 
 **Upcoming and Future Tasks**
-
 -   **Upcoming Tasks:**
-    -   **P1: Implement Payment Processing:** Integrate Stripe or Razorpay to handle subscriptions for the pricing plans displayed on the new landing page.
-    -   **P1: Enhance AI Reply Workflow:** Implement the three distinct AI reply styles (Gratitude, Acknowledgment, Resolution) for different review ratings.
-    -   **P2: Implement WhatsApp Alerts:** Integrate a service like Twilio to send WhatsApp notifications for urgent reviews.
-    -   **P2: Create In-App User-Friendly Integration Guide:** Build a guide (page or modal) to walk non-technical users through the account connection process, as requested in the initial handoff.
-
+    -   **(P0) Implement 7-Day Free Trial:** Create a backend cron job or scheduled task that identifies users on a trial plan whose trial period has expired (e.g.,  > 7 days ago) and deletes their associated data (user account, locations, reviews).
+    -   **(P1) Enhance Landing Page Content & SEO:** Rewrite the landing page copy in  to be more persuasive. Add high-quality dashboard screenshots, cliparts, and optimize keywords (, , , ) for better search engine ranking.
+    -   **(P2) Fix Mobile Header and Add Footer:** Adjust the CSS in  to fix the mobile logo alignment. Add a new  component and include it in  with the required contact details and links.
+    -   **(P2) End-to-End Review Reply Workflow Verification:** Thoroughly test the process of replying to a review from the dashboard, ensuring it correctly posts to the mocked Google/Facebook platforms and that the WhatsApp/Email options for private feedback generate the correct  or  links.
 -   **Future Tasks:**
+    -   Implement Payment Processing (Stripe or Razorpay).
     -   Manual review import via screenshot OCR.
     -   Team collaboration features.
     -   Expand platform support to Yelp, TripAdvisor.
     -   Develop native mobile applications.
 
 **Completed work in this session**
--   **Major Enhancement & Simplification:** Redesigned the entire integration flow to be simpler for non-technical users, moving from API keys to a paste your review link method.
--   **Bug Fixes:**
-    -   Resolved an unstable nested component issue by refactoring .
-    -   Fixed multiple clipboard and blocked link errors on the , , and  pages.
-    -   Fixed a bug where the Facebook channel option was missing from the public review page.
--   **Deployment Readiness:**
-    -   Fixed a deployment-blocking issue by adding a root-level  endpoint to the backend for Kubernetes health checks.
-    -   Conducted a deployment readiness check.
--   **Landing Page Overhaul:** Completely redesigned  to include dashboard snapshots, compelling copy, testimonials, and three pricing tiers with a monthly/yearly toggle.
--   **API Settings Page:** Created a new  for users to manage their connections.
--   **Comprehensive Testing:** Used the testing agent extensively after each major change, creating multiple new test suites.
+-   **Demo Mode:** Implemented a See A Demo feature, allowing users to explore a pre-filled dashboard without signing up.
+-   **Navigation & Routing Fix:** Corrected all sidebar navigation links (, , ) by aligning the paths in  with the routes in . The conflicting  route was renamed to .
+-   **Mobile UI/UX:** Fixed an issue where the mobile sidebar menu was obscured by the bottom navigation bar by adding appropriate padding/margins.
+-   **Email Integration Guide:** Created a new, user-friendly  page with a step-by-step modal guide for non-technical users to set up their Resend API key.
+-   **Pricing Page Overhaul:** Updated the pricing tiers on  with new prices (starting at ₹499), button text (Try Now, Try All Features), and badges (Best savings).
+-   **Enhanced Review Reply:** Implemented UI in  to allow replying to private feedback via Send via WhatsApp or Send via Email buttons.
+-   **Plan Selection on Signup:** Added logic to  and  to associate a selected pricing plan with a user upon registration.
+-   **Deployment Readiness:** Hardened the backend for production by adding  to , moving the CORS middleware to the correct position, and adding Atlas-recommended settings (, ) to the MongoDB client.
 
 **Earlier issues found/mentioned but not fixed**
--   The root cause of the ** error** has not been definitively identified and fixed, as it continues to recur despite multiple attempts.
+-   The core issue causing an error flash/screen on login persists, despite numerous fixes. This indicates the root cause has not been correctly identified.
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork:** The  rendering error was mentioned in the previous handoff and has resurfaced in this session, confirming it's a persistent, deep-rooted problem.
--   **Recurrence count:** At least 2.
+-   **Issue recurrence in previous fork:** The  error / error flash on login.
+-   **Recurrence count:** 3+
 -   **Status:** IN PROGRESS
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Backend:** FastAPI, MongoDB (Motor), Pydantic.
--   **Frontend:** React, React Router, Framer Motion, Tailwind CSS, Axios, Sonner (toasts).
--   **Authentication:** Emergent-managed Google social login.
--   **AI:** Gemini 3 Flash via Emergent Universal Key.
--   **Integrations:** Resend (Email).
+-   **Backend:** FastAPI, MongoDB (Motor), Pydantic
+-   **Frontend:** React, React Router, Tailwind CSS, Axios, Sonner (toasts)
+-   **Authentication:** Emergent-managed Google social login, JWT for session management
+-   **AI:** Gemini via Emergent Universal Key
+-   **Integrations:** Resend (Email), WhatsApp (URL intent)
 
 **key DB schema**
--   **User:**
-    -   Added  (e.g., starter, growth).
-    -   Added .
--   **Business:** (Now represents a single location/business entity)
-    -   : links to the User.
-    -   : business name.
-    -   , , etc.
--   The agent started defining new Pydantic models for  and  in  but has not fully integrated them yet.
+-   **User:** 
+-   **Location:** 
+-   **Review:** 
 
 **changes in tech stack**
 None.
 
 **All files of reference**
--   : Heavily modified to add the  endpoint and initial logic for multi-location and user plans.
--   : Still the likely location of the  bug trigger.
--   : Needs to be updated to support the new multi-location feature.
--   : Was completely overhauled with new pricing and content.
--   : Created for simplified connection management.
--   : Modified in an attempt to fix the  bug.
--   : Modified to add a global axios error interceptor.
+-   : Core logic for routing, authentication, and demo mode. Key area for debugging the login error.
+-   : Contains the pricing plans and upgrade buttons. Needs content and SEO enhancements.
+-   : Needs mobile UI fixes and a new footer.
+-   : Contains the review reply UI/logic.
+-   : Contains the email setup guide.
+-   : Contains all backend logic, including auth, plan management, and review handling. Needs a new endpoint for plan upgrades and a cron job for trial expiration.
 
 **Areas that need refactoring**:
--   : The data fetching logic is complex and spread out. Refactoring it into a dedicated  custom hook, as suggested in the previous handoff, would improve readability, state management, and could help finally resolve the  bug.
+-   : The authentication and demo mode logic within  has grown complex. It could be beneficial to separate the demo state and logic into its own context or custom hook to simplify .
 
 **key api endpoints**
--   : (GET) Root-level health check for deployment.
--   : (GET) API-level health check.
--   : (GET/POST) Manage user's own API credentials (now simplified).
--   : (POST) Connect a Google business by providing a review link.
--   : (POST) Connect a Facebook page.
--   : (GET/PUT) **(New)** Manage the user's subscription plan.
--   : (GET/POST) **(New)** Manage a user's multiple business locations.
+-   : (POST) Creates a user session after Google login and sets the initial plan.
+-   : (GET) Retrieves the current user's plan. A  method is needed here for upgrades.
+-   : (GET/POST) Manages user's business locations.
+-   : (POST) Saves an AI-generated reply and posts it to the source platform.
+-   : (GET) Kubernetes health check.
 
 **Critical Info for New Agent**
--   **Top Priority:** You must fix the recurring  bug. This is a critical blocker for deployment and user trust. Investigate the entire data flow on the dashboard, do not assume previous fixes were correct.
--   **Second Priority:** Complete the multi-location support feature. The backend foundation is partially laid, but the frontend UI and full integration are missing. This is a key business requirement.
--   **Goal:** The user's ultimate goal is a 100% workable end-to-end application ready for deployment. This means all features must be stable, and the user experience must be flawless for non-technical users.
--   **Persistence:** Ensure all user settings, especially connected platforms/locations, are fetched from the backend on page load and saved immediately upon change. The user explicitly stated they should not have to set things up every time they log in.
+-   **Top Priority (P0):** You must permanently fix the error screen that flashes after a user authenticates with Google. This is a recurring, critical bug that ruins the user experience. Focus your initial investigation on the  and  components in .
+-   **Core Business Logic:** The next priorities are implementing the broken plan upgrade feature and the 7-day free trial with data deletion. These are essential for the app's business model.
+-   **User Experience:** The user has placed a strong emphasis on UI/UX, content quality, and SEO for the landing page. These are not minor tweaks but a significant part of the current request.
+-   **Non-Technical User Focus:** Remember that the target audience is non-technical business owners. All features, especially setup guides and UI flows, should be extremely simple and intuitive.
 
 **documents and test reports created in this job**
 -   
@@ -151,49 +144,44 @@ None.
 -   
 -   
 -   
--   
--    (updated multiple times)
 
 **Last 10 User Messages and any pending HUMAN messages**
-10. **User:** Requested a new landing page with dashboard snapshots and pricing tiers. (Completed)
-9.  **User:** Inquired about changing the deployment URL. (Answered)
-8.  **User:** Asked the agent to call the deployer agent and run a health check. (Completed)
-7.  **User:** Reported the Facebook channel was missing on the public review page. (Completed)
-6.  **User:** Provided updated instructions for Google/Facebook connections and reported webhook/clipboard errors. (Completed)
-5.  **User:** Reported clipboard and blocked link errors when trying to add API credentials. (Completed)
-4.  **User:** Reported the  error screen again. (IN PROGRESS)
-3.  **User:** Requested major enhancements to make the app 100% workable for launch, including a self-service model for API credentials and a smooth QR code flow. (Partially Completed)
-2.  **User:** Approved the plan to fix the  bug first, then work on UI enhancements. (Acknowledged)
-1.  **User:** Requested multi-location support based on subscription plans and persistent integration settings. (IN PROGRESS)
+10. **User:** Asked to fix deployment issues. (Completed, agent found no code errors and improved production robustness).
+9. **User:** Requested to embed a specific support email and subject line for the API key setup guide. (Completed).
+8. **User:** Requested a deployment readiness check. (Completed, agent found and fixed missing  package).
+7. **User:** Re-reported deployment log issues. (Completed, agent confirmed logs showed success, not failure).
+6. **User:** Re-reported deployment log issues again. (Completed, agent confirmed logs showed success and explained the RESEND_API_KEY not set warning).
+5. **User:** **(PENDING)** Provided a large list of new requirements: 7-day free trial with data deletion, fix broken plan upgrades, fix mobile header alignment, add a full footer, enhance landing page SEO and content, and verify all workflows.
+4. **User:** **(PENDING)** Requested to fix navigation buttons. (Completed, agent fixed route mismatches).
+3. **User:** **(PENDING)** Re-reported the post-login error screen flash and requested a See A Demo button feature. (Partially Completed, Demo mode was implemented but the error flash persists).
+2. **User:** Approved the plan to fix the  bug and then work on multi-location support. (Completed).
+1. **User:** Provided initial feedback on the  bug (login and see error message) and multi-location requirements. (Completed).
 
 **Project Health Check:**
--   **Broken:** The dashboard has a critical, recurring  UI bug that appears on login/page load, severely degrading the user experience.
--   **Mocked:** The review system still has a fallback to mock data, which is acceptable for development but highlights the need for robust real-data integrations.
+-   **Broken:**
+    -   The plan upgrade flow is non-functional and redirects to the landing page.
+    -   A critical error screen still flashes for users immediately after Google login.
+-   **Mocked:**
+    -   The final step of posting a review reply to a live platform (Google/Facebook) is mocked and not connected to real APIs.
+    -   The 7-day free trial logic is not yet implemented.
+    -   Payment processing is not implemented.
 
 **3rd Party Integrations**
--   **Gemini 3 Flash:** (AI) Uses Emergent LLM Key.
+-   **Gemini 3 Flash:** (AI-powered replies) Uses Emergent LLM Key.
 -   **Emergent-managed Google Auth:** (Authentication).
--   **Resend:** (Email) Requires user API key (currently not set).
--   **Google APIs:** For fetching reviews.
--   **Facebook Graph API:** For fetching reviews.
+-   **Resend:** (Email notifications) Requires a User API Key.
+-   **WhatsApp:** (Direct replies to private reviews) Uses  URL scheme.
 
 **Testing status**
 -   **Testing agent used after significant changes:** YES
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:**
-    -   
-    -   
-    -   
-    -   
-    -   
-    -   
--   **Known regressions:** The  bug. It was seemingly fixed and passed tests in , but the user reported it again, proving the fix was insufficient.
+-   **Test files created:** The testing agent created multiple new test files in , including , , , , .
+-   **Known regressions:** The post-login error flash is a persistent regression that has reappeared despite multiple fixes.
 
 **Credentials to test flow:**
 -   User login is handled by Emergent-managed Google Auth.
--   Testing the real review fetching requires connecting a business by pasting its Google/Facebook review link.
--   The Resend API key is not configured, so email notifications are disabled.
+-   The See A Demo button on the landing page provides access to a pre-filled dashboard.
 
 **What agent forgot to execute**
--   The agent did not refactor the dashboard's data-fetching logic into a  custom hook, a change suggested in the initial handoff that could improve state management and potentially resolve the persistent  bug.
--   The agent did not fully diagnose the root cause of the  bug, leading to a recurring problem.</analysis>
+-   The agent has failed to permanently resolve the root cause of the error screen that appears after login, leading to its recurrence.
+-   The agent did not implement the actual logic for plan upgrades; clicking the button incorrectly redirects to the landing page.</analysis>
