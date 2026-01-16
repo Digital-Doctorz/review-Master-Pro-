@@ -68,6 +68,52 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
+# ============ TRIAL CLEANUP FUNCTIONS ============
+
+async def cleanup_expired_trials():
+    """Delete all data for users whose 7-day trial has expired"""
+    try:
+        now = datetime.now(timezone.utc).isoformat()
+        
+        # Find expired trial users
+        expired_users = await db.users.find({
+            "is_trial": True,
+            "trial_ends_at": {"$lt": now}
+        }, {"_id": 0, "user_id": 1, "email": 1}).to_list(100)
+        
+        deleted_count = 0
+        for user in expired_users:
+            user_id = user["user_id"]
+            logger.info(f"Cleaning up expired trial for user: {user.get('email', user_id)}")
+            
+            # Delete all user data
+            await db.businesses.delete_many({"user_id": user_id})
+            await db.locations.delete_many({"user_id": user_id})
+            await db.reviews.delete_many({"business_id": {"$regex": f"^biz_.*"}})  # Will be filtered properly below
+            await db.user_plans.delete_many({"user_id": user_id})
+            await db.notification_settings.delete_many({"user_id": user_id})
+            await db.sessions.delete_many({"user_id": user_id})
+            await db.webhook_configs.delete_many({"user_id": user_id})
+            await db.api_keys.delete_many({"user_id": user_id})
+            
+            # Delete reviews by business_id
+            business = await db.businesses.find_one({"user_id": user_id}, {"_id": 0, "business_id": 1})
+            if business:
+                await db.reviews.delete_many({"business_id": business["business_id"]})
+            
+            # Finally delete the user
+            await db.users.delete_one({"user_id": user_id})
+            deleted_count += 1
+        
+        if deleted_count > 0:
+            logger.info(f"Cleaned up {deleted_count} expired trial accounts")
+        
+        return deleted_count
+    except Exception as e:
+        logger.error(f"Error cleaning up expired trials: {e}")
+        return 0
+
 # ============ MODELS ============
 
 class User(BaseModel):
