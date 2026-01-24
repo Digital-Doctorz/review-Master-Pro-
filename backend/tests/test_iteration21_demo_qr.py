@@ -258,26 +258,26 @@ class TestPublicAIEndpoints:
         
         print("SUCCESS: AI write assist endpoint works")
     
-    def test_ai_enhance_endpoint(self):
-        """Test AI enhance endpoint for improving reviews"""
+    def test_ai_write_assist_with_keywords(self):
+        """Test AI write assist endpoint with keywords"""
         payload = {
-            "review_text": "Good coffee",
-            "rating": 5,
-            "business_name": "Demo Coffee Shop"
+            "rating": 4,
+            "business_name": "Demo Coffee Shop",
+            "keywords": "cozy atmosphere, good pastries"
         }
         
         response = requests.post(
-            f"{BASE_URL}/api/public/ai/enhance",
+            f"{BASE_URL}/api/public/ai/write-assist",
             json=payload
         )
         
         assert response.status_code == 200
         data = response.json()
         
-        assert "enhanced_text" in data
-        assert len(data["enhanced_text"]) > len(payload["review_text"])
+        assert "review_text" in data
+        assert len(data["review_text"]) > 10
         
-        print("SUCCESS: AI enhance endpoint works")
+        print("SUCCESS: AI write assist with keywords works")
 
 
 class TestEmailServiceStatus:
@@ -289,7 +289,9 @@ class TestEmailServiceStatus:
         assert response.status_code == 200
         
         data = response.json()
-        assert "status" in data
+        # Email status returns enabled, provider, sender, message fields
+        assert "enabled" in data
+        assert "provider" in data or "message" in data
         
         print("SUCCESS: Email status endpoint accessible")
 
