@@ -5,39 +5,35 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## What's Been Implemented (January 2025)
 
-### Latest - v4.1 Trial & Upgrade Updates (January 16, 2025):
+### Latest - v4.2 Demo QR & Branding (January 24, 2025):
 
-**7-Day Free Trial:**
-- [x] New users automatically get 7-day free trial
-- [x] `is_trial: true` and `trial_ends_at` stored in user document
-- [x] `GET /api/user/trial-status` returns trial info (is_trial, trial_ends_at, days_remaining, plan)
-- [x] `cleanup_expired_trials()` function runs on startup to delete expired trial accounts
-- [x] All user data (business, locations, reviews, settings) auto-deleted after trial expires
+**Demo QR Code Fixes:**
+- [x] `/review/demo_qr_001` now loads correctly (previously returned 404)
+- [x] `GET /api/public/business/demo_qr_001` returns demo business data
+- [x] Demo business: "Demo Coffee Shop" with Google & Facebook connections
+- [x] Demo review submission works with mock success response
+- [x] Any QR code starting with `demo_qr` works for demo mode
 
-**Plan Upgrade Functionality:**
-- [x] `POST /api/user/plan/upgrade` endpoint for upgrading plans
-- [x] Logged-in users see "Upgrade to X" buttons instead of "Try Now"
-- [x] Plan upgrade clears `is_trial` flag and updates user plan
-- [x] Upgrade flow works without re-authentication
-- [x] **MOCKED**: Payment processing not yet integrated (Stripe/Razorpay pending)
+**QR Code Customization:**
+- [x] 8 Color Themes: Classic, Ocean Blue, Forest Green, Sunset Orange, Royal Purple, Rose Pink, Slate Gray, Midnight
+- [x] Custom color pickers for QR Color and Background
+- [x] Hex color input support
+- [x] Branding toggle: "Include 'Powered by Review Master'"
+- [x] Size options: Small (128px), Medium (256px), Large (512px)
+- [x] Download formats: PNG and SVG
 
-**Comprehensive Footer:**
-- [x] Contact info: +91-9555-9555-95, trademeindia.sales@gmail.com
-- [x] Product section: Features, Pricing, Testimonials, Live Demo
-- [x] Legal section: Terms of Service, Privacy Policy, Refund Policy
-- [x] Location: India - Serving businesses worldwide
-- [x] Social proof: 4.9/5 rating, 2,500+ businesses
+**"Powered by Review Master" Branding:**
+- [x] PublicReview page: Footer branding on review submission page
+- [x] QR Generator: Below QR code with toggle to disable
+- [x] Layout footer: "Powered by Review Master • © 2025 All rights reserved"
+- [x] Landing page footer: Comprehensive footer with branding
 
-**Mobile UI Fixes:**
-- [x] Mobile header with fixed h-16 height for consistent alignment
-- [x] Logo properly aligned in mobile header
-- [x] Demo badge visible in mobile view
-- [x] Menu toggle button functional
-
-**Auth Flow Improvements:**
-- [x] Added retry logic in ProtectedRoute for auth race conditions
-- [x] Enhanced error suppression for 401/404 during auth transitions
-- [x] Reduced error flash occurrences after login
+**Demo Review Flow (End-to-End):**
+- [x] Step 1: Star rating selection (1-5 stars)
+- [x] Step 2: Write review text with AI Write option
+- [x] Step 3: Platform selection (Google, Facebook, Direct)
+- [x] Step 4: Success page with copy & go or direct submission
+- [x] Low ratings (<4 stars) automatically route to private feedback
 
 ### Previous Features (v3.0-4.0)
 
