@@ -904,6 +904,96 @@ export default function Integrations() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Upgrade Plan Modal */}
+      <Dialog open={upgradeModal} onOpenChange={setUpgradeModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <Crown className="w-6 h-6 text-amber-500" />
+              Upgrade Your Plan
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            {/* Warning */}
+            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium text-amber-900">Location Limit Reached</p>
+                  <p className="text-sm text-amber-700 mt-1">
+                    Your <span className="font-semibold capitalize">{userPlan?.plan_name || 'current'} Plan</span> allows {userPlan?.max_locations || 1} location(s). 
+                    You currently have {locations.length} location(s).
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Options */}
+            <div className="space-y-3">
+              <p className="text-sm text-slate-600">To add more locations, you can:</p>
+              
+              <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center">
+                    <ArrowRight className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-indigo-900">Upgrade to Growth Plan</p>
+                    <p className="text-xs text-indigo-700">Get up to 3 locations + Facebook integration</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-purple-50 border border-purple-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-purple-500 flex items-center justify-center">
+                    <Crown className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-purple-900">Upgrade to Enterprise</p>
+                    <p className="text-xs text-purple-700">Unlimited locations + all premium features</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-slate-400 flex items-center justify-center">
+                    <Trash2 className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-slate-700">Delete an Existing Location</p>
+                    <p className="text-xs text-slate-500">Free up a slot to add a new location</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setUpgradeModal(false)}
+                className="flex-1 h-11 rounded-xl"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  setUpgradeModal(false);
+                  window.location.href = "/#pricing";
+                }}
+                className="flex-1 h-11 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+              >
+                <Crown className="w-4 h-4 mr-2" />
+                View Plans
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
