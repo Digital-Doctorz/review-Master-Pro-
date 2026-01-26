@@ -12,6 +12,7 @@ import pytest
 import requests
 import os
 import time
+import subprocess
 from datetime import datetime, timezone, timedelta
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
@@ -22,90 +23,86 @@ TEST_SESSION_TOKEN = f"test_session_iter22_{int(time.time())}"
 TEST_EMAIL = f"test.iter22.{int(time.time())}@example.com"
 
 
-class TestSetup:
-    """Setup test user and session"""
+@pytest.fixture(scope="module", autouse=True)
+def setup_test_user():
+    """Create test user and session in MongoDB"""
     
-    @pytest.fixture(scope="class", autouse=True)
-    def setup_test_user(self):
-        """Create test user and session in MongoDB"""
-        import subprocess
-        
-        # Create test user with Growth plan (max 3 locations)
-        mongo_script = f'''
-        use('test_database');
-        
-        // Clean up any existing test data
-        db.users.deleteMany({{email: /test\\.iter22\\./}});
-        db.user_sessions.deleteMany({{session_token: /test_session_iter22/}});
-        db.businesses.deleteMany({{user_id: /test_user_iter22/}});
-        db.locations.deleteMany({{user_id: /test_user_iter22/}});
-        db.user_plans.deleteMany({{user_id: /test_user_iter22/}});
-        
-        // Create test user
-        db.users.insertOne({{
-          user_id: "{TEST_USER_ID}",
-          email: "{TEST_EMAIL}",
-          name: "Test User Iter22",
-          picture: "https://via.placeholder.com/150",
-          plan: "growth",
-          max_locations: 3,
-          created_at: new Date()
-        }});
-        
-        // Create session
-        db.user_sessions.insertOne({{
-          user_id: "{TEST_USER_ID}",
-          session_token: "{TEST_SESSION_TOKEN}",
-          expires_at: new Date(Date.now() + 7*24*60*60*1000),
-          created_at: new Date()
-        }});
-        
-        // Create business
-        db.businesses.insertOne({{
-          business_id: "test_business_iter22_{int(time.time())}",
-          user_id: "{TEST_USER_ID}",
-          name: "Test Business Iter22",
-          address: "123 Test Street",
-          created_at: new Date()
-        }});
-        
-        // Create Growth plan (max 3 locations)
-        db.user_plans.insertOne({{
-          user_id: "{TEST_USER_ID}",
-          plan_name: "growth",
-          max_locations: 3,
-          max_reviews_per_month: 500,
-          features: ["google_integration", "facebook_integration", "qr_codes", "ai_responses"],
-          status: "active",
-          created_at: new Date().toISOString()
-        }});
-        
-        print("Test user created: {TEST_USER_ID}");
-        print("Session token: {TEST_SESSION_TOKEN}");
-        '''
-        
-        result = subprocess.run(
-            ['mongosh', '--quiet', '--eval', mongo_script],
-            capture_output=True,
-            text=True
-        )
-        print(f"MongoDB setup output: {result.stdout}")
-        if result.returncode != 0:
-            print(f"MongoDB setup error: {result.stderr}")
-        
-        yield
-        
-        # Cleanup after tests
-        cleanup_script = f'''
-        use('test_database');
-        db.users.deleteMany({{user_id: "{TEST_USER_ID}"}});
-        db.user_sessions.deleteMany({{session_token: "{TEST_SESSION_TOKEN}"}});
-        db.businesses.deleteMany({{user_id: "{TEST_USER_ID}"}});
-        db.locations.deleteMany({{user_id: "{TEST_USER_ID}"}});
-        db.user_plans.deleteMany({{user_id: "{TEST_USER_ID}"}});
-        print("Test data cleaned up");
-        '''
-        subprocess.run(['mongosh', '--quiet', '--eval', cleanup_script], capture_output=True)
+    # Create test user with Growth plan (max 3 locations)
+    mongo_script = f'''
+    use('test_database');
+    
+    // Clean up any existing test data
+    db.users.deleteMany({{email: /test\\.iter22\\./}});
+    db.user_sessions.deleteMany({{session_token: /test_session_iter22/}});
+    db.businesses.deleteMany({{user_id: /test_user_iter22/}});
+    db.locations.deleteMany({{user_id: /test_user_iter22/}});
+    db.user_plans.deleteMany({{user_id: /test_user_iter22/}});
+    
+    // Create test user
+    db.users.insertOne({{
+      user_id: "{TEST_USER_ID}",
+      email: "{TEST_EMAIL}",
+      name: "Test User Iter22",
+      picture: "https://via.placeholder.com/150",
+      plan: "growth",
+      max_locations: 3,
+      created_at: new Date()
+    }});
+    
+    // Create session
+    db.user_sessions.insertOne({{
+      user_id: "{TEST_USER_ID}",
+      session_token: "{TEST_SESSION_TOKEN}",
+      expires_at: new Date(Date.now() + 7*24*60*60*1000),
+      created_at: new Date()
+    }});
+    
+    // Create business
+    db.businesses.insertOne({{
+      business_id: "test_business_iter22_{int(time.time())}",
+      user_id: "{TEST_USER_ID}",
+      name: "Test Business Iter22",
+      address: "123 Test Street",
+      created_at: new Date()
+    }});
+    
+    // Create Growth plan (max 3 locations)
+    db.user_plans.insertOne({{
+      user_id: "{TEST_USER_ID}",
+      plan_name: "growth",
+      max_locations: 3,
+      max_reviews_per_month: 500,
+      features: ["google_integration", "facebook_integration", "qr_codes", "ai_responses"],
+      status: "active",
+      created_at: new Date().toISOString()
+    }});
+    
+    print("Test user created: {TEST_USER_ID}");
+    print("Session token: {TEST_SESSION_TOKEN}");
+    '''
+    
+    result = subprocess.run(
+        ['mongosh', '--quiet', '--eval', mongo_script],
+        capture_output=True,
+        text=True
+    )
+    print(f"MongoDB setup output: {result.stdout}")
+    if result.returncode != 0:
+        print(f"MongoDB setup error: {result.stderr}")
+    
+    yield
+    
+    # Cleanup after tests
+    cleanup_script = f'''
+    use('test_database');
+    db.users.deleteMany({{user_id: "{TEST_USER_ID}"}});
+    db.user_sessions.deleteMany({{session_token: "{TEST_SESSION_TOKEN}"}});
+    db.businesses.deleteMany({{user_id: "{TEST_USER_ID}"}});
+    db.locations.deleteMany({{user_id: "{TEST_USER_ID}"}});
+    db.user_plans.deleteMany({{user_id: "{TEST_USER_ID}"}});
+    print("Test data cleaned up");
+    '''
+    subprocess.run(['mongosh', '--quiet', '--eval', cleanup_script], capture_output=True)
 
 
 class TestHealthAndBasics:
@@ -131,7 +128,7 @@ class TestHealthAndBasics:
 class TestUserPlan:
     """Test user plan endpoints"""
     
-    def test_get_user_plan(self, setup_test_user):
+    def test_get_user_plan(self):
         """Test getting user plan"""
         response = requests.get(
             f"{BASE_URL}/api/user/plan",
@@ -149,12 +146,14 @@ class TestUserPlan:
         print(f"  Current locations: {data.get('current_locations')}, can_add: {data.get('can_add_location')}")
 
 
+# Store created location IDs for later tests
+created_location_ids = []
+
+
 class TestLocationCRUD:
     """Test location CRUD operations"""
     
-    created_location_ids = []
-    
-    def test_create_first_location(self, setup_test_user):
+    def test_create_first_location(self):
         """Create first location"""
         response = requests.post(
             f"{BASE_URL}/api/locations",
@@ -172,11 +171,11 @@ class TestLocationCRUD:
         assert location.get("qr_code_id").startswith("qr_")
         assert location.get("is_primary") == True  # First location should be primary
         
-        self.__class__.created_location_ids.append(location["location_id"])
+        created_location_ids.append(location["location_id"])
         print(f"✓ Created location 1: {location['location_id']}")
         print(f"  QR Code ID: {location['qr_code_id']}")
     
-    def test_create_second_location(self, setup_test_user):
+    def test_create_second_location(self):
         """Create second location"""
         response = requests.post(
             f"{BASE_URL}/api/locations",
@@ -190,10 +189,10 @@ class TestLocationCRUD:
         assert location.get("name") == "Test Location 2"
         assert location.get("is_primary") == False  # Second location should not be primary
         
-        self.__class__.created_location_ids.append(location["location_id"])
+        created_location_ids.append(location["location_id"])
         print(f"✓ Created location 2: {location['location_id']}")
     
-    def test_create_third_location(self, setup_test_user):
+    def test_create_third_location(self):
         """Create third location (should succeed - at limit)"""
         response = requests.post(
             f"{BASE_URL}/api/locations",
@@ -204,10 +203,10 @@ class TestLocationCRUD:
         data = response.json()
         
         location = data["location"]
-        self.__class__.created_location_ids.append(location["location_id"])
+        created_location_ids.append(location["location_id"])
         print(f"✓ Created location 3: {location['location_id']} (at plan limit)")
     
-    def test_create_fourth_location_fails(self, setup_test_user):
+    def test_create_fourth_location_fails(self):
         """Create fourth location should fail with 403 (exceeds plan limit)"""
         response = requests.post(
             f"{BASE_URL}/api/locations",
@@ -224,7 +223,7 @@ class TestLocationCRUD:
         assert "limit" in detail or "upgrade" in detail, f"Error should mention limit: {detail}"
         print(f"✓ Fourth location correctly rejected with 403: {data.get('detail')}")
     
-    def test_get_locations(self, setup_test_user):
+    def test_get_locations(self):
         """Get all locations"""
         response = requests.get(
             f"{BASE_URL}/api/locations",
@@ -243,7 +242,7 @@ class TestLocationCRUD:
 class TestQRCodePersistence:
     """Test QR Code ID persistence on location update"""
     
-    def test_update_location_preserves_qr_code_id(self, setup_test_user):
+    def test_update_location_preserves_qr_code_id(self):
         """Update location details should NOT change QR code ID"""
         # First get locations to find one to update
         response = requests.get(
@@ -293,7 +292,7 @@ class TestQRCodePersistence:
 class TestDeleteLocation:
     """Test location deletion - should always be allowed"""
     
-    def test_delete_location_always_allowed(self, setup_test_user):
+    def test_delete_location_always_allowed(self):
         """Delete location should work even if only 1 location exists"""
         # Get current locations
         response = requests.get(
@@ -326,7 +325,7 @@ class TestDeleteLocation:
         assert len(remaining) == initial_count - 1
         print(f"  Remaining locations: {len(remaining)}")
     
-    def test_delete_until_one_location(self, setup_test_user):
+    def test_delete_until_one_location(self):
         """Delete locations until only 1 remains, then delete that one too"""
         # Get current locations
         response = requests.get(
@@ -368,7 +367,7 @@ class TestDeleteLocation:
             assert len(remaining) == 0
             print("✓ All locations deleted - delete always allowed")
     
-    def test_can_add_location_after_delete(self, setup_test_user):
+    def test_can_add_location_after_delete(self):
         """After deleting, should be able to add new location"""
         response = requests.post(
             f"{BASE_URL}/api/locations",
