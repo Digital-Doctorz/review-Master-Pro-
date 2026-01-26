@@ -91,6 +91,7 @@ export default function Integrations() {
   // Modal states
   const [setupModal, setSetupModal] = useState({ open: false, platform: null, locationId: null });
   const [locationModal, setLocationModal] = useState({ open: false, editing: null });
+  const [upgradeModal, setUpgradeModal] = useState(false);
   const [reviewLink, setReviewLink] = useState("");
   const [platformName, setPlatformName] = useState("");
   const [connecting, setConnecting] = useState(false);
