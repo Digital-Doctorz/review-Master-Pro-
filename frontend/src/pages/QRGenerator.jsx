@@ -207,6 +207,54 @@ export default function QRGenerator() {
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col items-center">
+              {/* Location Selector */}
+              {locations.length > 1 && (
+                <div className="w-full mb-4">
+                  <Label className="text-sm text-slate-600 mb-2 block">Select Location</Label>
+                  <Select 
+                    value={selectedLocation?.location_id || ""} 
+                    onValueChange={(id) => {
+                      const loc = locations.find(l => l.location_id === id);
+                      if (loc) setSelectedLocation(loc);
+                    }}
+                  >
+                    <SelectTrigger className="w-full h-10 rounded-xl" data-testid="location-select">
+                      <SelectValue placeholder="Select a location" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {locations.map((loc) => (
+                        <SelectItem key={loc.location_id} value={loc.location_id}>
+                          <div className="flex items-center gap-2">
+                            <Building2 className="w-4 h-4 text-slate-400" />
+                            {loc.name}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* Current Location Info */}
+              {selectedLocation && (
+                <div className="w-full mb-4 p-3 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Building2 className="w-4 h-4 text-indigo-600" />
+                    <span className="font-medium text-slate-900">{selectedLocation.name}</span>
+                  </div>
+                  {selectedLocation.address && (
+                    <p className="text-xs text-slate-500 flex items-center gap-1 ml-6">
+                      <MapPin className="w-3 h-3" />
+                      {selectedLocation.address}
+                    </p>
+                  )}
+                  <div className="mt-2 flex items-center gap-1 ml-6">
+                    <span className="text-xs text-slate-500">QR ID:</span>
+                    <code className="text-xs bg-white px-2 py-0.5 rounded font-mono text-indigo-700">{selectedLocation.qr_code_id}</code>
+                  </div>
+                </div>
+              )}
+
               <div
                 ref={qrRef}
                 className="p-6 rounded-2xl shadow-lg mb-4 transition-colors duration-300"
