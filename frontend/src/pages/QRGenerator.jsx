@@ -1,5 +1,6 @@
-import { useState, useContext, useRef } from "react";
+import { useState, useContext, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import axios from "axios";
 import { AuthContext } from "../App";
 import { QRCodeSVG } from "qrcode.react";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
@@ -24,9 +25,14 @@ import {
   Star,
   Palette,
   RefreshCw,
+  MapPin,
+  Building2,
+  Info,
 } from "lucide-react";
 
 const FRONTEND_URL = window.location.origin;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 // Preset color themes
 const COLOR_THEMES = [
@@ -40,11 +46,21 @@ const COLOR_THEMES = [
   { name: "Midnight", fg: "#FFFFFF", bg: "#1E293B" },
 ];
 
+// Demo locations
+const DEMO_LOCATIONS = [
+  { location_id: "demo_loc_1", name: "Demo Coffee Shop - Main", qr_code_id: "demo_qr_001", address: "123 Demo Street" },
+];
+
 export default function QRGenerator() {
   const { business, isDemo } = useContext(AuthContext);
   const qrRef = useRef(null);
   const [qrSize, setQrSize] = useState("256");
   const [downloadFormat, setDownloadFormat] = useState("png");
+  
+  // Location selection
+  const [locations, setLocations] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [loading, setLoading] = useState(true);
   
   // Customization options
   const [selectedTheme, setSelectedTheme] = useState(0);
@@ -53,7 +69,40 @@ export default function QRGenerator() {
   const [useCustomColors, setUseCustomColors] = useState(false);
   const [includeBranding, setIncludeBranding] = useState(true);
 
-  const reviewUrl = `${FRONTEND_URL}/review/${business?.qr_code_id || "demo_qr_001"}`;
+  useEffect(() => {
+    loadLocations();
+  }, [isDemo]);
+
+  const loadLocations = async () => {
+    if (isDemo) {
+      setLocations(DEMO_LOCATIONS);
+      setSelectedLocation(DEMO_LOCATIONS[0]);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${API}/locations`, { withCredentials: true });
+      const locs = response.data.locations || [];
+      setLocations(locs);
+      if (locs.length > 0) {
+        setSelectedLocation(locs[0]);
+      }
+    } catch (error) {
+      console.error("Error loading locations:", error);
+      // Fall back to business QR code
+      if (business?.qr_code_id) {
+        setLocations([{ location_id: business.business_id, name: business.name, qr_code_id: business.qr_code_id }]);
+        setSelectedLocation({ location_id: business.business_id, name: business.name, qr_code_id: business.qr_code_id });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const reviewUrl = selectedLocation 
+    ? `${FRONTEND_URL}/review/${selectedLocation.qr_code_id}` 
+    : `${FRONTEND_URL}/review/${business?.qr_code_id || "demo_qr_001"}`;
   
   const currentFgColor = useCustomColors ? customFgColor : COLOR_THEMES[selectedTheme].fg;
   const currentBgColor = useCustomColors ? customBgColor : COLOR_THEMES[selectedTheme].bg;
