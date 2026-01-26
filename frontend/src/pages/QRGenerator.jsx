@@ -122,7 +122,7 @@ export default function QRGenerator() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${business?.name || "review-master"}-qr.svg`;
+      a.download = `${selectedLocation?.name || business?.name || "review-master"}-qr.svg`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -155,7 +155,7 @@ export default function QRGenerator() {
 
         const a = document.createElement("a");
         a.href = canvas.toDataURL("image/png");
-        a.download = `${business?.name || "review-master"}-qr.png`;
+        a.download = `${selectedLocation?.name || business?.name || "review-master"}-qr.png`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -167,6 +167,14 @@ export default function QRGenerator() {
 
     toast.success(`QR code downloaded as ${downloadFormat.toUpperCase()}`);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <RefreshCw className="w-8 h-8 text-indigo-500 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8" data-testid="qr-generator-page">
