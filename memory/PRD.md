@@ -5,35 +5,47 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## What's Been Implemented (January 2025)
 
-### Latest - v4.2 Demo QR & Branding (January 24, 2025):
+### Latest - v4.3 Location Management & Plan Limits (January 26, 2025):
 
-**Demo QR Code Fixes:**
-- [x] `/review/demo_qr_001` now loads correctly (previously returned 404)
-- [x] `GET /api/public/business/demo_qr_001` returns demo business data
-- [x] Demo business: "Demo Coffee Shop" with Google & Facebook connections
-- [x] Demo review submission works with mock success response
-- [x] Any QR code starting with `demo_qr` works for demo mode
+**Plan-Based Location Management:**
+- [x] Plan limits enforced: Starter (1 loc), Growth (3 locs), Enterprise (unlimited)
+- [x] Backend returns 403 with clear error when exceeding plan limit
+- [x] Upgrade modal shows when trying to add location beyond limit
+- [x] Modal displays: current plan, locations used, upgrade options
+- [x] Delete button always visible (even for last location)
+- [x] Deleting location frees up slot for new location
 
-**QR Code Customization:**
-- [x] 8 Color Themes: Classic, Ocean Blue, Forest Green, Sunset Orange, Royal Purple, Rose Pink, Slate Gray, Midnight
-- [x] Custom color pickers for QR Color and Background
-- [x] Hex color input support
-- [x] Branding toggle: "Include 'Powered by Review Master'"
-- [x] Size options: Small (128px), Medium (256px), Large (512px)
-- [x] Download formats: PNG and SVG
+**QR Code ID Persistence:**
+- [x] QR Code ID (`qr_{alphanumeric}`) generated once at location creation
+- [x] ID never changes when location details (name, address) are updated
+- [x] "This ID is permanent" message displayed in Integrations page
+- [x] QR codes remain scannable even after location updates
 
-**"Powered by Review Master" Branding:**
-- [x] PublicReview page: Footer branding on review submission page
-- [x] QR Generator: Below QR code with toggle to disable
-- [x] Layout footer: "Powered by Review Master • © 2025 All rights reserved"
-- [x] Landing page footer: Comprehensive footer with branding
+**QR Generator Enhancements:**
+- [x] Location selector dropdown (when multiple locations exist)
+- [x] Location info card showing: name, address, QR ID
+- [x] 8 color themes + custom color pickers
+- [x] Include Branding toggle
+- [x] Size options (128px, 256px, 512px)
+- [x] PNG/SVG download formats
 
-**Demo Review Flow (End-to-End):**
-- [x] Step 1: Star rating selection (1-5 stars)
-- [x] Step 2: Write review text with AI Write option
-- [x] Step 3: Platform selection (Google, Facebook, Direct)
-- [x] Step 4: Success page with copy & go or direct submission
-- [x] Low ratings (<4 stars) automatically route to private feedback
+### Previous Updates (v4.0-4.2)
+
+**v4.2 - Demo QR & Branding:**
+- [x] Demo QR code `/review/demo_qr_001` fully functional
+- [x] "Powered by Review Master" branding throughout app
+- [x] Demo review submission with mock success
+
+**v4.1 - Trial & Upgrade:**
+- [x] 7-day free trial with auto-delete
+- [x] Plan upgrade for logged-in users
+- [x] Comprehensive footer with contact info
+
+**v4.0 - Core Features:**
+- [x] Multi-location support
+- [x] AI-powered responses (Gemini)
+- [x] Review date/time display
+- [x] Demo mode with sample data
 
 ### Previous Features (v3.0-4.0)
 
