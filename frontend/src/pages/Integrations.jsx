@@ -483,16 +483,15 @@ export default function Integrations() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    {locations.length > 1 && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteLocation(location.location_id)}
-                        className="text-slate-400 hover:text-rose-600"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteLocation(location.location_id)}
+                      className="text-slate-400 hover:text-rose-600"
+                      title="Delete location"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
               </CardHeader>
