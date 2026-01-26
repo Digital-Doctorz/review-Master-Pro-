@@ -437,7 +437,7 @@ export default function QRGenerator() {
                 <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                   <div>
                     <Label className="text-sm text-slate-700 font-medium">Include Branding</Label>
-                    <p className="text-xs text-slate-500">Show "Powered by Review Master"</p>
+                    <p className="text-xs text-slate-500">Show &quot;Powered by Review Master&quot;</p>
                   </div>
                   <button
                     onClick={() => setIncludeBranding(!includeBranding)}
