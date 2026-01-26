@@ -425,21 +425,32 @@ export default function Integrations() {
       {/* Locations Grid */}
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Add Location Button */}
-        {canAddLocation && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <Button
+            onClick={handleAddLocationClick}
+            variant="outline"
+            className={`w-full h-16 rounded-2xl border-2 border-dashed ${
+              canAddLocation 
+                ? "border-indigo-200 hover:border-indigo-400 hover:bg-indigo-50/50 text-indigo-600" 
+                : "border-amber-200 hover:border-amber-400 hover:bg-amber-50/50 text-amber-600"
+            }`}
           >
-            <Button
-              onClick={() => setLocationModal({ open: true, editing: null })}
-              variant="outline"
-              className="w-full h-16 rounded-2xl border-2 border-dashed border-indigo-200 hover:border-indigo-400 hover:bg-indigo-50/50 text-indigo-600"
-            >
-              <Plus className="w-5 h-5 mr-2" />
-              Add New Location
-            </Button>
-          </motion.div>
-        )}
+            {canAddLocation ? (
+              <>
+                <Plus className="w-5 h-5 mr-2" />
+                Add New Location
+              </>
+            ) : (
+              <>
+                <Crown className="w-5 h-5 mr-2" />
+                Upgrade to Add More Locations
+              </>
+            )}
+          </Button>
+        </motion.div>
 
         {/* Location Cards */}
         {locations.map((location, index) => (
