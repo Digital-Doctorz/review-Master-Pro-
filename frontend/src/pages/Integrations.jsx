@@ -283,6 +283,14 @@ export default function Integrations() {
       return;
     }
     
+    // Check plan limits before creating
+    const maxLocations = userPlan?.max_locations || 1;
+    if (locations.length >= maxLocations) {
+      setLocationModal({ open: false, editing: null });
+      setUpgradeModal(true);
+      return;
+    }
+    
     try {
       await axios.post(`${API}/locations`, {
         name: newLocationName,
@@ -296,21 +304,37 @@ export default function Integrations() {
       loadData();
     } catch (error) {
       const errorMsg = error.response?.data?.detail || "Failed to create location";
-      toast.error(typeof errorMsg === 'string' ? errorMsg : "Failed to create location");
+      // Check if it's a plan limit error
+      if (errorMsg.toLowerCase().includes("limit") || errorMsg.toLowerCase().includes("upgrade")) {
+        setLocationModal({ open: false, editing: null });
+        setUpgradeModal(true);
+      } else {
+        toast.error(typeof errorMsg === 'string' ? errorMsg : "Failed to create location");
+      }
     }
   };
 
   const handleDeleteLocation = async (locationId) => {
-    if (!window.confirm("Are you sure you want to delete this location?")) {
+    if (!window.confirm("Are you sure you want to delete this location? The QR code will stop working.")) {
       return;
     }
     
     try {
       await axios.delete(`${API}/locations/${locationId}`, { withCredentials: true });
-      toast.success("Location deleted");
+      toast.success("Location deleted. You can now add a new location.");
       loadData();
     } catch (error) {
       toast.error("Failed to delete location");
+    }
+  };
+
+  const handleAddLocationClick = () => {
+    // Check plan limits before opening modal
+    const maxLocations = userPlan?.max_locations || 1;
+    if (locations.length >= maxLocations) {
+      setUpgradeModal(true);
+    } else {
+      setLocationModal({ open: true, editing: null });
     }
   };
 
