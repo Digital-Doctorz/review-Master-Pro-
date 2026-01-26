@@ -634,23 +634,29 @@ export default function Integrations() {
                   </div>
                 </div>
 
-                {/* QR Code Info */}
-                <div className="mt-4 p-3 rounded-lg bg-slate-50 border border-slate-100">
-                  <div className="flex items-center justify-between">
+                {/* QR Code Info - Persistent ID */}
+                <div className="mt-4 p-3 rounded-lg bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
                     <div className="flex items-center gap-2">
                       <Star className="w-4 h-4 text-amber-500" />
-                      <span className="text-sm text-slate-600">QR Code ID: <code className="text-xs bg-white px-2 py-0.5 rounded">{location.qr_code_id}</code></span>
+                      <span className="text-sm text-slate-700">
+                        QR Code ID: <code className="text-xs bg-white px-2 py-1 rounded font-mono font-bold text-amber-700">{location.qr_code_id}</code>
+                      </span>
                     </div>
                     <Button
                       size="sm"
                       variant="ghost"
-                      className="text-xs text-indigo-600"
+                      className="text-xs text-indigo-600 hover:bg-indigo-50"
                       onClick={() => window.location.href = "/qr-generator"}
                     >
                       Generate QR
                       <ArrowRight className="w-3 h-3 ml-1" />
                     </Button>
                   </div>
+                  <p className="text-xs text-amber-600 mt-2 flex items-center gap-1">
+                    <Info className="w-3 h-3" />
+                    This ID is permanent. Update location details without changing QR code.
+                  </p>
                 </div>
               </CardContent>
             </Card>
