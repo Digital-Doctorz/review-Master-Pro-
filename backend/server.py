@@ -992,9 +992,20 @@ async def create_location(
     user: User = Depends(get_current_user)
 ):
     """Create a new location"""
-    # Check plan limits
+    # Check plan limits - check both user_plans and users collections
     plan = await db.user_plans.find_one({"user_id": user.user_id}, {"_id": 0})
-    max_locations = plan.get("max_locations", 1) if plan else 1
+    
+    if not plan:
+        # Check users collection for plan from signup
+        user_doc = await db.users.find_one({"user_id": user.user_id}, {"_id": 0, "plan": 1, "max_locations": 1})
+        if user_doc and user_doc.get("plan"):
+            plan_name = user_doc.get("plan", "starter")
+            plan_config = PLAN_CONFIGS.get(plan_name, PLAN_CONFIGS["starter"])
+            max_locations = plan_config["max_locations"]
+        else:
+            max_locations = 1
+    else:
+        max_locations = plan.get("max_locations", 1)
     
     current_count = await db.locations.count_documents({"user_id": user.user_id, "is_active": True})
     
