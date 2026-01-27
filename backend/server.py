@@ -1878,6 +1878,50 @@ async def get_public_business(qr_code_id: str):
             }
         }
     
+    # First check locations collection (most QR codes are for locations)
+    location = await db.locations.find_one(
+        {"qr_code_id": qr_code_id, "is_active": True},
+        {"_id": 0}
+    )
+    
+    if location:
+        # Found in locations - build response from location data
+        platforms = {}
+        
+        # Check for Google connection
+        if location.get("google_place_id") or location.get("google_review_link"):
+            platforms["google"] = {
+                "connected": True,
+                "review_link": location.get("google_review_link", f"https://search.google.com/local/writereview?placeid={location.get('google_place_id', '')}")
+            }
+        
+        # Check for Facebook connection
+        if location.get("facebook_page_id") or location.get("facebook_page_url"):
+            fb_url = location.get("facebook_page_url", "")
+            platforms["facebook"] = {
+                "connected": True,
+                "review_link": f"{fb_url}/reviews" if fb_url and not fb_url.endswith("/reviews") else fb_url
+            }
+        
+        # If no platforms connected, allow direct submission
+        if not platforms:
+            platforms["direct"] = {"connected": True, "review_link": None}
+        
+        return {
+            "business_id": location.get("location_id"),
+            "location_id": location.get("location_id"),
+            "name": location.get("name", "Business"),
+            "category": location.get("category", "Business"),
+            "address": location.get("address"),
+            "logo_url": location.get("logo_url"),
+            "google_place_id": location.get("google_place_id"),
+            "google_review_link": location.get("google_review_link"),
+            "facebook_page_id": location.get("facebook_page_id"),
+            "facebook_page_url": location.get("facebook_page_url"),
+            "platforms": platforms
+        }
+    
+    # Fall back to businesses collection (legacy)
     business = await db.businesses.find_one(
         {"qr_code_id": qr_code_id},
         {"_id": 0, "business_id": 1, "name": 1, "category": 1, "logo_url": 1,
