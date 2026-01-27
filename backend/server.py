@@ -1965,13 +1965,25 @@ async def submit_public_review(review_data: PublicReviewCreate):
             "next_step": "success" if is_private or review_data.platform_choice == "direct" else "copy_and_go"
         }
     
-    business = await db.businesses.find_one(
-        {"business_id": review_data.business_id},
+    # Check both locations and businesses collections
+    location = await db.locations.find_one(
+        {"location_id": review_data.business_id, "is_active": True},
         {"_id": 0}
     )
     
-    if not business:
+    business = None
+    if not location:
+        business = await db.businesses.find_one(
+            {"business_id": review_data.business_id},
+            {"_id": 0}
+        )
+    
+    if not location and not business:
         raise HTTPException(status_code=404, detail="Business not found")
+    
+    # Use location data if available, otherwise use business
+    entity = location or business
+    entity_id = entity.get("location_id") or entity.get("business_id")
     
     # Determine sentiment and privacy based on rating
     is_private = review_data.rating < 4
