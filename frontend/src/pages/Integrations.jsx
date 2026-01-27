@@ -100,13 +100,13 @@ export default function Integrations() {
   const [newLocationName, setNewLocationName] = useState("");
   const [newLocationAddress, setNewLocationAddress] = useState("");
 
-  // Demo data
+  // Demo data - simulate Growth plan for demo
   const DEMO_PLAN = {
-    plan: "growth",
+    plan_name: "growth",
     max_locations: 3,
     current_locations: 1,
     can_add_location: true,
-    features: ["google_integration", "facebook_integration", "qr_codes", "ai_responses", "email_notifications"]
+    features: ["google_integration", "facebook_integration", "qr_codes", "ai_responses", "email_notifications", "whatsapp_alerts", "advanced_analytics", "private_feedback", "custom_branding"]
   };
   
   const DEMO_LOCATIONS = [
