@@ -829,17 +829,43 @@ PLAN_CONFIGS = {
 @api_router.get("/user/plan")
 async def get_user_plan(user: User = Depends(get_current_user)):
     """Get user's subscription plan"""
+    # First check user_plans collection
     plan = await db.user_plans.find_one({"user_id": user.user_id}, {"_id": 0})
     
     if not plan:
-        # Create default starter plan for new users
-        default_plan = UserPlan(user_id=user.user_id, plan_name="starter")
-        plan_doc = default_plan.model_dump()
-        plan_doc["created_at"] = plan_doc["created_at"].isoformat()
-        await db.user_plans.insert_one(plan_doc)
-        plan = plan_doc
-        if "_id" in plan:
-            del plan["_id"]
+        # Check if plan exists in users collection (from signup)
+        user_doc = await db.users.find_one({"user_id": user.user_id}, {"_id": 0, "plan": 1, "max_locations": 1, "features": 1})
+        
+        if user_doc and user_doc.get("plan"):
+            # User has plan from signup - create user_plans entry from it
+            plan_name = user_doc.get("plan", "starter")
+            plan_config = PLAN_CONFIGS.get(plan_name, PLAN_CONFIGS["starter"])
+            
+            plan_data = {
+                "user_id": user.user_id,
+                "plan_name": plan_name,
+                "max_locations": plan_config["max_locations"],
+                "max_reviews_per_month": plan_config.get("max_reviews_per_month", 500),
+                "features": plan_config["features"],
+                "price_monthly": plan_config.get("price_monthly", 499),
+                "price_yearly": plan_config.get("price_yearly", 399),
+                "billing_cycle": "monthly",
+                "status": "active",
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.user_plans.insert_one(plan_data)
+            plan = plan_data
+            if "_id" in plan:
+                del plan["_id"]
+        else:
+            # No plan anywhere - create default starter plan
+            default_plan = UserPlan(user_id=user.user_id, plan_name="starter")
+            plan_doc = default_plan.model_dump()
+            plan_doc["created_at"] = plan_doc["created_at"].isoformat()
+            await db.user_plans.insert_one(plan_doc)
+            plan = plan_doc
+            if "_id" in plan:
+                del plan["_id"]
     
     # Get location count
     location_count = await db.locations.count_documents({"user_id": user.user_id, "is_active": True})
