@@ -353,7 +353,29 @@ export default function Integrations() {
   }
 
   const canAddLocation = userPlan?.can_add_location || locations.length < (userPlan?.max_locations || 1);
-  const hasFacebookFeature = userPlan?.features?.includes("facebook_integration") || userPlan?.plan_name !== "starter";
+  const hasFacebookFeature = userPlan?.features?.includes("facebook_integration") || 
+                             userPlan?.features?.includes("all_platforms") ||
+                             userPlan?.plan_name === "growth" || 
+                             userPlan?.plan_name === "enterprise";
+  const isEnterprise = userPlan?.plan_name === "enterprise";
+  const isGrowth = userPlan?.plan_name === "growth";
+
+  // Plan display helper
+  const getPlanDisplayName = () => {
+    switch(userPlan?.plan_name) {
+      case "enterprise": return "Enterprise";
+      case "growth": return "Growth";
+      default: return "Starter";
+    }
+  };
+
+  const getPlanBadgeColor = () => {
+    switch(userPlan?.plan_name) {
+      case "enterprise": return "bg-gradient-to-r from-amber-500 to-orange-500";
+      case "growth": return "bg-gradient-to-r from-indigo-500 to-purple-600";
+      default: return "bg-gradient-to-r from-slate-500 to-slate-600";
+    }
+  };
 
   return (
     <div className="space-y-8" data-testid="integrations-page">
@@ -380,24 +402,55 @@ export default function Integrations() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-4xl mx-auto p-4 rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100"
+          className={`max-w-4xl mx-auto p-4 rounded-2xl border ${
+            isEnterprise 
+              ? "bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200" 
+              : isGrowth 
+                ? "bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-100"
+                : "bg-gradient-to-r from-slate-50 to-slate-100 border-slate-200"
+          }`}
         >
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+              <div className={`w-10 h-10 rounded-xl ${getPlanBadgeColor()} flex items-center justify-center`}>
                 <Crown className="w-5 h-5 text-white" />
               </div>
               <div>
-                <p className="font-semibold text-slate-900 capitalize">{userPlan.plan_name} Plan</p>
+                <div className="flex items-center gap-2">
+                  <p className="font-semibold text-slate-900">{getPlanDisplayName()} Plan</p>
+                  {isEnterprise && (
+                    <Badge className="bg-amber-100 text-amber-700 text-xs">Unlimited</Badge>
+                  )}
+                </div>
                 <p className="text-sm text-slate-600">
-                  {locations.length} of {userPlan.max_locations} locations used
+                  {isEnterprise 
+                    ? `${locations.length} locations (unlimited)` 
+                    : `${locations.length} of ${userPlan.max_locations} locations used`
+                  }
                 </p>
               </div>
             </div>
-            {!canAddLocation && (
-              <Button
-                size="sm"
-                className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+            <div className="flex items-center gap-2">
+              {!isEnterprise && !canAddLocation && (
+                <Button
+                  size="sm"
+                  className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+                  onClick={() => window.location.href = "/#pricing"}
+                >
+                  <ArrowRight className="w-4 h-4 mr-1" />
+                  Upgrade Plan
+                </Button>
+              )}
+              {isEnterprise && (
+                <Badge className="bg-emerald-100 text-emerald-700">
+                  <CheckCircle2 className="w-3 h-3 mr-1" />
+                  All Features Unlocked
+                </Badge>
+              )}
+            </div>
+          </div>
+        </motion.div>
+      )}
                 onClick={() => window.location.href = "/#pricing"}
               >
                 <ArrowRight className="w-4 h-4 mr-1" />
