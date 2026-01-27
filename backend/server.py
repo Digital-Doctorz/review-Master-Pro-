@@ -2002,7 +2002,7 @@ async def submit_public_review(review_data: PublicReviewCreate):
     platform = "direct" if is_private else review_data.platform_choice
     
     review = Review(
-        business_id=review_data.business_id,
+        business_id=entity_id,  # Use location_id or business_id
         platform=platform,
         author_name=review_data.author_name,
         author_email=review_data.author_email,
@@ -2014,8 +2014,12 @@ async def submit_public_review(review_data: PublicReviewCreate):
         is_private=is_private
     )
     
+    # Also store location_id if it's a location-based review
     doc = review.model_dump()
     doc["created_at"] = doc["created_at"].isoformat()
+    if location:
+        doc["location_id"] = entity_id
+        doc["user_id"] = location.get("user_id")
     
     await db.reviews.insert_one(doc)
     
