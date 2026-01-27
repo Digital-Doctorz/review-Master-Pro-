@@ -451,15 +451,6 @@ export default function Integrations() {
           </div>
         </motion.div>
       )}
-                onClick={() => window.location.href = "/#pricing"}
-              >
-                <ArrowRight className="w-4 h-4 mr-1" />
-                Upgrade Plan
-              </Button>
-            )}
-          </div>
-        </motion.div>
-      )}
 
       {/* Benefits Bar */}
       <div className="flex flex-wrap justify-center gap-4 text-sm">
