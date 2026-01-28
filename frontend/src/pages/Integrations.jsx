@@ -752,6 +752,121 @@ export default function Integrations() {
                   </div>
                 </div>
 
+                {/* Swiggy & Zomato Row */}
+                <div className="grid md:grid-cols-2 gap-4 mt-4">
+                  {/* Swiggy Integration */}
+                  <div className={`p-4 rounded-xl border-2 transition-all ${
+                    location.swiggy_link 
+                      ? "bg-orange-50 border-orange-200" 
+                      : "bg-slate-50 border-slate-200"
+                  }`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <SwiggyIcon className="w-5 h-5" />
+                        <span className="font-medium text-slate-900">Swiggy</span>
+                      </div>
+                      <Badge className={location.swiggy_link 
+                        ? "bg-orange-100 text-orange-700" 
+                        : "bg-slate-100 text-slate-600"
+                      }>
+                        {location.swiggy_link ? "Connected" : "Not Connected"}
+                      </Badge>
+                    </div>
+                    
+                    {location.swiggy_link ? (
+                      <div className="space-y-3">
+                        <p className="text-sm text-orange-700 font-medium truncate">
+                          {location.swiggy_restaurant_name || location.name}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => copyToClipboard(location.swiggy_link, "Swiggy link copied!")}
+                            className="flex-1 rounded-lg text-xs"
+                          >
+                            <Copy className="w-3 h-3 mr-1" />
+                            Copy Link
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => window.open(location.swiggy_link, "_blank")}
+                            className="rounded-lg text-xs text-orange-600 hover:bg-orange-50"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={() => setSwiggyModal({ open: true, locationId: location.location_id })}
+                        className="w-full rounded-lg bg-orange-500 hover:bg-orange-600 text-white"
+                        size="sm"
+                      >
+                        <Plus className="w-4 h-4 mr-1" />
+                        Connect Swiggy
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Zomato Integration */}
+                  <div className={`p-4 rounded-xl border-2 transition-all ${
+                    location.zomato_link 
+                      ? "bg-red-50 border-red-200" 
+                      : "bg-slate-50 border-slate-200"
+                  }`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <ZomatoIcon className="w-5 h-5" />
+                        <span className="font-medium text-slate-900">Zomato</span>
+                      </div>
+                      <Badge className={location.zomato_link 
+                        ? "bg-red-100 text-red-700" 
+                        : "bg-slate-100 text-slate-600"
+                      }>
+                        {location.zomato_link ? "Connected" : "Not Connected"}
+                      </Badge>
+                    </div>
+                    
+                    {location.zomato_link ? (
+                      <div className="space-y-3">
+                        <p className="text-sm text-red-700 font-medium truncate">
+                          {location.zomato_restaurant_name || location.name}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => copyToClipboard(location.zomato_link, "Zomato link copied!")}
+                            className="flex-1 rounded-lg text-xs"
+                          >
+                            <Copy className="w-3 h-3 mr-1" />
+                            Copy Link
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => window.open(location.zomato_link, "_blank")}
+                            className="rounded-lg text-xs text-red-600 hover:bg-red-50"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={() => setZomatoModal({ open: true, locationId: location.location_id })}
+                        className="w-full rounded-lg bg-red-500 hover:bg-red-600 text-white"
+                        size="sm"
+                      >
+                        <Plus className="w-4 h-4 mr-1" />
+                        Connect Zomato
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
                 {/* QR Code Info - Persistent ID */}
                 <div className="mt-4 p-3 rounded-lg bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100">
                   <div className="flex items-center justify-between flex-wrap gap-2">
