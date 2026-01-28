@@ -534,66 +534,79 @@ export default function Landing() {
       </section>
 
       {/* Critical Role of Online Reviews Section */}
-      <section className="py-20 px-6 bg-gradient-to-br from-amber-50/80 via-white to-amber-50/60" data-testid="reviews-stats-section">
+      <section className="py-24 px-6 bg-gradient-to-b from-slate-50 via-white to-indigo-50/30" data-testid="reviews-stats-section">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-16 items-start">
             {/* Left Content */}
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
+              className="lg:sticky lg:top-32"
             >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center shadow-lg">
-                  <Star className="w-5 h-5 text-white" />
-                </div>
-                <div className="w-3 h-3 rounded-full bg-slate-300" />
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 text-sm font-medium mb-6">
+                <BarChart3 className="w-4 h-4" />
+                Industry Statistics
               </div>
               
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight leading-tight mb-6">
-                The Critical Role of Online Reviews in
-                <span className="block text-gradient">Building Trust & Boosting Sales</span>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight leading-tight mb-6">
+                The Critical Role of
+                <span className="block text-gradient">Online Reviews</span>
               </h2>
               
-              <div className="space-y-4 text-slate-600 leading-relaxed">
+              <div className="space-y-5 text-slate-600 leading-relaxed text-lg">
                 <p>
-                  Given these statistics, it&apos;s evident that online reviews are a <span className="font-semibold text-slate-800">powerful tool</span> for any business. They not only affect sales and trust but also serve as a critical factor in the online reputation management of a company.
+                  Online reviews are a <span className="font-semibold text-indigo-600">powerful tool</span> for any business. They directly impact sales, trust, and serve as a critical factor in reputation management.
                 </p>
                 <p>
-                  Encouraging customers to leave reviews and engaging with their feedback can <span className="font-semibold text-slate-800">significantly enhance</span> a business&apos;s credibility and attract more customers.
+                  Encouraging customers to leave reviews and engaging with their feedback can <span className="font-semibold text-indigo-600">significantly enhance</span> your credibility and attract more customers.
                 </p>
               </div>
+              
+              {/* CTA Button */}
+              <Button
+                onClick={handleDemoMode}
+                size="lg"
+                className="mt-8 rounded-full px-8 py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all"
+              >
+                See How It Works
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
             </motion.div>
 
             {/* Right Content - Stats Cards */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative"
             >
-              {/* Yellow background accent */}
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-200/40 to-yellow-200/40 rounded-3xl transform rotate-3" />
-              
-              <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 {[
                   {
                     percentage: "78%",
-                    text: "of consumers trust online reviews as much as recommendations from friends and family."
+                    text: "of consumers trust online reviews as much as recommendations from friends and family.",
+                    gradient: "from-indigo-500 to-purple-500",
+                    bg: "bg-indigo-50"
                   },
                   {
                     percentage: "93%",
-                    text: "of users have made buying decisions based upon an online review."
+                    text: "of users have made buying decisions based upon an online review.",
+                    gradient: "from-violet-500 to-purple-600",
+                    bg: "bg-violet-50"
                   },
                   {
                     percentage: "81%",
-                    text: "of consumers use Google to evaluate local businesses, making it the most influential review site."
+                    text: "of consumers use Google to evaluate local businesses, making it the most influential review site.",
+                    gradient: "from-sky-500 to-indigo-500",
+                    bg: "bg-sky-50"
                   },
                   {
                     percentage: "31%",
-                    text: "of consumers read more than 10 reviews before their trust is formed."
+                    text: "of consumers read more than 10 reviews before their trust is formed.",
+                    gradient: "from-emerald-500 to-teal-500",
+                    bg: "bg-emerald-50"
                   }
                 ].map((stat, index) => (
                   <motion.div
@@ -602,10 +615,12 @@ export default function Landing() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.3 + index * 0.1 }}
-                    className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all"
+                    className={`${stat.bg} rounded-2xl p-6 border border-white/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300`}
                     data-testid={`review-stat-card-${index}`}
                   >
-                    <p className="text-4xl font-bold text-amber-500 mb-3">{stat.percentage}</p>
+                    <p className={`text-5xl font-bold bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent mb-4`}>
+                      {stat.percentage}
+                    </p>
                     <p className="text-sm text-slate-600 leading-relaxed">{stat.text}</p>
                   </motion.div>
                 ))}
@@ -615,127 +630,119 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Grow Faster Section - How ReviewBooster Works */}
-      <section className="py-20 px-6 bg-gradient-to-br from-amber-300 via-yellow-300 to-amber-200" data-testid="grow-faster-section">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content - App Illustration */}
+      {/* How It Works Section */}
+      <section className="py-24 px-6 bg-gradient-to-br from-indigo-600 via-purple-600 to-violet-700 relative overflow-hidden" data-testid="grow-faster-section">
+        {/* Background decorations */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+        
+        <div className="max-w-7xl mx-auto relative">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left Content - App Flow Illustration */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="relative order-2 lg:order-1"
+              className="order-2 lg:order-1"
             >
-              {/* Phone mockup with review flow */}
-              <div className="relative">
-                {/* SMS Message */}
+              <div className="flex flex-col items-center gap-6">
+                {/* Step 1 - SMS */}
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.3 }}
-                  className="absolute -top-4 left-4 bg-white rounded-2xl p-4 shadow-xl max-w-[200px] z-10"
+                  transition={{ delay: 0.2 }}
+                  className="w-full max-w-sm bg-white rounded-2xl p-5 shadow-2xl"
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
-                      <MessageSquare className="w-4 h-4 text-white" />
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+                      <MessageSquare className="w-5 h-5 text-white" />
                     </div>
-                    <span className="text-xs font-medium text-slate-700">SMS</span>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800">Automated SMS</p>
+                      <p className="text-xs text-slate-500">Sent after visit</p>
+                    </div>
+                    <span className="ml-auto text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 font-medium">Step 1</span>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    Hi! Thank you for choosing us. We kindly ask if you would like to leave us a review. Thank you!
+                  <p className="text-sm text-slate-600 leading-relaxed bg-slate-50 rounded-xl p-3">
+                    &quot;Hi! Thank you for visiting us today. We&apos;d love to hear about your experience. Tap here to leave a quick review!&quot;
                   </p>
                 </motion.div>
 
-                {/* Main Phone */}
-                <div className="bg-slate-800 rounded-[2.5rem] p-3 shadow-2xl mx-auto max-w-[280px]">
-                  <div className="bg-white rounded-[2rem] overflow-hidden">
-                    {/* Phone header */}
-                    <div className="bg-slate-100 px-4 py-3 flex items-center justify-center">
-                      <div className="w-16 h-1 rounded-full bg-slate-300" />
-                    </div>
-                    
-                    {/* App content */}
-                    <div className="p-6 space-y-4">
-                      <div className="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
-                        <Star className="w-6 h-6 text-white" />
-                      </div>
-                      
-                      <h4 className="text-center font-semibold text-slate-800 text-sm">
-                        How was your experience with our business?
-                      </h4>
-                      
-                      <div className="flex gap-3 justify-center">
-                        <button className="px-4 py-2 rounded-lg bg-emerald-500 text-white text-xs font-medium flex items-center gap-1">
-                          <ThumbsUp className="w-3 h-3" />
-                          Positive
-                        </button>
-                        <button className="px-4 py-2 rounded-lg bg-rose-500 text-white text-xs font-medium flex items-center gap-1">
-                          <X className="w-3 h-3" />
-                          Negative
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                {/* Arrow */}
+                <div className="flex items-center justify-center">
+                  <div className="w-0.5 h-8 bg-white/30" />
                 </div>
 
-                {/* Platform Selection Card */}
+                {/* Step 2 - Rating Selection */}
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.5 }}
-                  className="absolute -right-4 top-1/3 bg-white rounded-2xl p-4 shadow-xl max-w-[180px] z-10"
+                  transition={{ delay: 0.4 }}
+                  className="w-full max-w-sm bg-white rounded-2xl p-5 shadow-2xl"
                 >
-                  <p className="text-xs font-medium text-slate-700 mb-3">Where do you want to leave a review?</p>
-                  <div className="flex flex-wrap gap-2">
-                    <div className="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 hover:border-indigo-300 cursor-pointer transition-colors">
-                      <GoogleIcon className="w-5 h-5" />
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+                        <Star className="w-5 h-5 text-white" />
+                      </div>
+                      <p className="text-sm font-semibold text-slate-800">Rate Experience</p>
                     </div>
-                    <div className="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 hover:border-indigo-300 cursor-pointer transition-colors">
-                      <FacebookIcon className="w-5 h-5" />
-                    </div>
-                    <div className="w-10 h-10 rounded-lg bg-emerald-500 flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">TA</span>
-                    </div>
+                    <span className="text-xs px-2 py-1 rounded-full bg-violet-100 text-violet-700 font-medium">Step 2</span>
                   </div>
-                </motion.div>
-
-                {/* Negative Feedback Form */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.7 }}
-                  className="absolute -bottom-8 -left-4 bg-white rounded-2xl p-4 shadow-xl max-w-[200px] z-10"
-                >
-                  <p className="text-xs font-medium text-slate-700 mb-2">Private Feedback</p>
-                  <p className="text-[10px] text-slate-500 mb-3">Let us know how we can improve</p>
-                  <div className="space-y-2">
-                    <div className="h-6 bg-slate-100 rounded-lg px-2 flex items-center">
-                      <span className="text-[10px] text-slate-400">Your name</span>
-                    </div>
-                    <div className="h-6 bg-slate-100 rounded-lg px-2 flex items-center">
-                      <span className="text-[10px] text-slate-400">Your email</span>
-                    </div>
-                    <div className="h-12 bg-slate-100 rounded-lg px-2 pt-1">
-                      <span className="text-[10px] text-slate-400">Review</span>
-                    </div>
-                    <button className="w-full py-1.5 rounded-lg bg-slate-800 text-white text-[10px] font-medium">
-                      Send
+                  <p className="text-center text-sm text-slate-600 mb-4">How was your experience?</p>
+                  <div className="flex gap-3 justify-center">
+                    <button className="flex-1 py-3 rounded-xl bg-emerald-500 text-white text-sm font-medium flex items-center justify-center gap-2 hover:bg-emerald-600 transition-colors">
+                      <ThumbsUp className="w-4 h-4" />
+                      Positive
+                    </button>
+                    <button className="flex-1 py-3 rounded-xl bg-slate-200 text-slate-700 text-sm font-medium flex items-center justify-center gap-2 hover:bg-slate-300 transition-colors">
+                      <Shield className="w-4 h-4" />
+                      Private
                     </button>
                   </div>
                 </motion.div>
 
-                {/* Connecting arrows (decorative) */}
-                <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
-                  <defs>
-                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                      <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" />
-                    </marker>
-                  </defs>
-                </svg>
+                {/* Arrow */}
+                <div className="flex items-center justify-center">
+                  <div className="w-0.5 h-8 bg-white/30" />
+                </div>
+
+                {/* Step 3 - Platform Selection */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.6 }}
+                  className="w-full max-w-sm bg-white rounded-2xl p-5 shadow-2xl"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-500 flex items-center justify-center">
+                        <Globe className="w-5 h-5 text-white" />
+                      </div>
+                      <p className="text-sm font-semibold text-slate-800">Choose Platform</p>
+                    </div>
+                    <span className="text-xs px-2 py-1 rounded-full bg-sky-100 text-sky-700 font-medium">Step 3</span>
+                  </div>
+                  <p className="text-center text-xs text-slate-500 mb-4">Where would you like to leave your review?</p>
+                  <div className="grid grid-cols-4 gap-3">
+                    <div className="aspect-square rounded-xl bg-slate-50 flex items-center justify-center border-2 border-indigo-200 hover:border-indigo-400 cursor-pointer transition-colors">
+                      <GoogleIcon className="w-6 h-6" />
+                    </div>
+                    <div className="aspect-square rounded-xl bg-slate-50 flex items-center justify-center border-2 border-slate-200 hover:border-indigo-400 cursor-pointer transition-colors">
+                      <FacebookIcon className="w-6 h-6" />
+                    </div>
+                    <div className="aspect-square rounded-xl bg-orange-500 flex items-center justify-center border-2 border-orange-400">
+                      <span className="text-white text-sm font-bold">S</span>
+                    </div>
+                    <div className="aspect-square rounded-xl bg-red-500 flex items-center justify-center border-2 border-red-400">
+                      <span className="text-white text-sm font-bold">Z</span>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
             </motion.div>
 
@@ -745,28 +752,33 @@ export default function Landing() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="order-1 lg:order-2"
+              className="order-1 lg:order-2 text-white"
             >
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight leading-tight mb-6">
-                We help you to grow
-                <span className="block">faster and better</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white/90 text-sm font-medium mb-6 border border-white/20">
+                <Rocket className="w-4 h-4" />
+                How It Works
+              </div>
+              
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight mb-6">
+                We help you grow
+                <span className="block text-white/90">faster and better</span>
               </h2>
               
-              <p className="text-slate-700 leading-relaxed mb-4">
-                If you&apos;re struggling with negative feedback and harmful online content affecting your business&apos;s growth, consider using <span className="font-bold">Review Master</span>.
+              <p className="text-lg text-white/80 leading-relaxed mb-4">
+                If you&apos;re struggling with negative feedback affecting your business growth, <span className="font-bold text-white">Review Master</span> is here to help.
               </p>
               
-              <p className="text-slate-600 leading-relaxed mb-8">
-                It can assist you in managing your online presence and enhancing your credibility in the digital space.
+              <p className="text-white/70 leading-relaxed mb-10">
+                Manage your online presence, route negative feedback privately, and boost your credibility with positive reviews on the platforms that matter most.
               </p>
               
               {/* Benefits List */}
-              <div className="space-y-4 mb-8">
+              <div className="space-y-4 mb-10">
                 {[
                   { icon: Eye, text: "Monitor your reputation in real-time" },
-                  { icon: Shield, text: "Control damage from negative feedback" },
-                  { icon: TrendingUp, text: "Enhance your reputation with positive reviews" },
-                  { icon: BadgeCheck, text: "Establish trust and credibility" }
+                  { icon: Shield, text: "Route negative feedback privately" },
+                  { icon: TrendingUp, text: "Boost ratings with positive reviews" },
+                  { icon: BadgeCheck, text: "Build trust and credibility" }
                 ].map((benefit, index) => (
                   <motion.div
                     key={index}
@@ -774,12 +786,12 @@ export default function Landing() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.4 + index * 0.1 }}
-                    className="flex items-center gap-3"
+                    className="flex items-center gap-4"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center">
-                      <benefit.icon className="w-4 h-4 text-white" />
+                    <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20">
+                      <benefit.icon className="w-5 h-5 text-white" />
                     </div>
-                    <span className="text-slate-800 font-medium">{benefit.text}</span>
+                    <span className="text-white/90 font-medium">{benefit.text}</span>
                   </motion.div>
                 ))}
               </div>
@@ -789,19 +801,20 @@ export default function Landing() {
                 <Button
                   onClick={handleGoogleLogin}
                   size="lg"
-                  className="rounded-xl px-8 py-6 bg-slate-900 hover:bg-slate-800 text-white font-semibold"
+                  className="rounded-full px-8 py-6 bg-white text-indigo-700 hover:bg-white/90 font-semibold shadow-lg hover:shadow-xl transition-all"
                   data-testid="grow-section-cta"
                 >
-                  Get Started
+                  Get Started Free
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
                 <Button
-                  onClick={() => window.location.href = 'mailto:trademeindia.sales@gmail.com'}
+                  onClick={handleDemoMode}
                   size="lg"
                   variant="outline"
-                  className="rounded-xl px-8 py-6 bg-slate-100 hover:bg-slate-200 text-slate-800 border-0 font-semibold"
+                  className="rounded-full px-8 py-6 bg-transparent border-2 border-white/30 text-white hover:bg-white/10 font-semibold transition-all"
                 >
-                  Contact Us
+                  <Play className="w-5 h-5 mr-2" />
+                  Watch Demo
                 </Button>
               </div>
             </motion.div>
