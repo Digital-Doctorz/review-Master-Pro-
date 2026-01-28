@@ -1,0 +1,130 @@
+{
+  "summary": "Iteration 25 - Swiggy and Zomato Integration Tests PASSED. All 19 backend tests passed. Frontend UI verified: Swiggy/Zomato cards on Integrations page with step-by-step setup guides, PublicReview page shows Swiggy (orange) and Zomato (red) platform options when connected, Copy & Go flow works for both platforms.",
+
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+
+  "passed_tests": [
+    "POST /api/swiggy/connect-location/{location_id} saves swiggy_link to location",
+    "POST /api/swiggy/connect-location with listing URL format works",
+    "POST /api/swiggy/connect-location returns 400 when swiggy_link missing",
+    "POST /api/swiggy/connect-location returns 404 for non-existent location",
+    "POST /api/swiggy/connect-location returns 401 without auth",
+    "POST /api/zomato/connect-location/{location_id} saves zomato_link to location",
+    "POST /api/zomato/connect-location returns 400 when zomato_link missing",
+    "POST /api/zomato/connect-location returns 404 for non-existent location",
+    "POST /api/zomato/connect-location returns 401 without auth",
+    "GET /api/public/business/{qr_code_id} returns swiggy in platforms object",
+    "GET /api/public/business/{qr_code_id} returns zomato in platforms object",
+    "GET /api/public/business returns both swiggy and zomato when both connected",
+    "Demo QR code returns Google and Facebook only (no Swiggy/Zomato)",
+    "POST /api/swiggy/connect saves swiggy_link to business",
+    "POST /api/zomato/connect saves zomato_link to business",
+    "POST /api/swiggy/connect rejects non-Swiggy URLs",
+    "POST /api/zomato/connect rejects non-Zomato URLs",
+    "POST /api/platforms/swiggy/disconnect works",
+    "POST /api/platforms/zomato/disconnect works",
+    "UI: Integrations page shows Swiggy card with orange icon",
+    "UI: Integrations page shows Zomato card with red icon",
+    "UI: Swiggy card shows 'Connected' badge when connected",
+    "UI: Zomato card shows 'Connected' badge when connected",
+    "UI: PublicReview shows Swiggy option when swiggy_link connected",
+    "UI: PublicReview shows Zomato option when zomato_link connected",
+    "UI: Swiggy platform selection shows orange border when selected",
+    "UI: Zomato platform selection shows red border when selected",
+    "UI: Copy & Go step shows 'Open Swiggy & paste' for Swiggy",
+    "UI: Copy & Go step shows 'Open Zomato & paste' for Zomato",
+    "UI: Copy review button works in Copy & Go step"
+  ],
+
+  "test_report_links": [
+    "/app/backend/tests/test_iteration25_swiggy_zomato.py",
+    "/app/test_reports/pytest/iteration25_pytest_results.xml"
+  ],
+
+  "action_items": [],
+
+  "critical_code_review_comments": [
+    "Swiggy/Zomato connect endpoints correctly validate URL contains 'swiggy' or 'zomato'",
+    "GET /api/public/business correctly builds platforms object with swiggy/zomato when connected (lines 2124-2136)",
+    "Swiggy modal has 2 options: Smart Link (recommended) and listing URL with step-by-step guide",
+    "Zomato modal has 5-step guide for getting Zomato page URL",
+    "PublicReview correctly shows Swiggy/Zomato buttons only when respective links are connected"
+  ],
+
+  "updated_files": [
+    "/app/backend/tests/test_iteration25_swiggy_zomato.py - New test file for Swiggy/Zomato integration"
+  ],
+
+  "success_rate": {
+    "backend": "100% (19/19 pytest tests passed)",
+    "frontend": "100% (all UI flows verified)"
+  },
+
+  "test_credentials": {
+    "demo_qr": "demo_qr_001 for Demo Coffee Shop (no Swiggy/Zomato)",
+    "test_qr": "qr_ui_test_* for testing with Swiggy/Zomato connected"
+  },
+
+  "seed_data_creation": "Test location and business created during testing, cleaned up after",
+
+  "mocked_apis": {
+    "has_mocked_apis": true,
+    "mocked_apis_list": [
+      "Swiggy/Zomato review posting is MANUAL - user copies review and pastes in platform app",
+      "No actual Swiggy/Zomato API integration - links are stored and opened in new tab"
+    ]
+  },
+
+  "features_verified": {
+    "swiggy_connect_location": {
+      "status": "WORKING",
+      "details": "POST /api/swiggy/connect-location/{location_id} saves swiggy_link to location"
+    },
+    "zomato_connect_location": {
+      "status": "WORKING",
+      "details": "POST /api/zomato/connect-location/{location_id} saves zomato_link to location"
+    },
+    "public_business_swiggy_zomato": {
+      "status": "WORKING",
+      "details": "GET /api/public/business/{qr_code_id} returns swiggy and zomato in platforms object"
+    },
+    "swiggy_setup_modal": {
+      "status": "WORKING",
+      "details": "Swiggy modal shows 2 options: Smart Link and listing URL with step-by-step guide"
+    },
+    "zomato_setup_modal": {
+      "status": "WORKING",
+      "details": "Zomato modal shows step-by-step guide for getting Zomato page URL"
+    },
+    "public_review_swiggy_option": {
+      "status": "WORKING",
+      "details": "PublicReview page shows orange Swiggy button when swiggy_link is connected"
+    },
+    "public_review_zomato_option": {
+      "status": "WORKING",
+      "details": "PublicReview page shows red Zomato button when zomato_link is connected"
+    },
+    "copy_go_flow_swiggy": {
+      "status": "WORKING",
+      "details": "Copy & Go flow works for Swiggy - shows 'Open Swiggy & paste' instructions"
+    },
+    "copy_go_flow_zomato": {
+      "status": "WORKING",
+      "details": "Copy & Go flow works for Zomato - shows 'Open Zomato & paste' instructions"
+    }
+  },
+
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+
+  "context_for_next_testing_agent": "Iteration 25 verified Swiggy and Zomato integrations. Backend endpoints POST /api/swiggy/connect-location/{id} and POST /api/zomato/connect-location/{id} save links to locations collection. GET /api/public/business/{qr_code_id} returns swiggy and zomato in platforms object when connected. Frontend Integrations page shows Swiggy (orange) and Zomato (red) cards with step-by-step setup guides. PublicReview page shows Swiggy/Zomato as platform options when connected. Copy & Go flow works for both platforms. All 19 backend tests pass. MOCKED: Actual review posting is manual - user copies review and pastes in Swiggy/Zomato app."
+}
