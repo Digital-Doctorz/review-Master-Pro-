@@ -404,15 +404,29 @@ export default function Landing() {
                 </div>
 
                 {/* Platform Status */}
-                <div className="flex items-center gap-4 mb-6 p-3 rounded-xl bg-slate-50">
+                <div className="flex items-center gap-3 mb-6 p-3 rounded-xl bg-slate-50 flex-wrap">
                   <div className="flex items-center gap-2">
                     <GoogleIcon className="w-5 h-5" />
-                    <span className="text-sm font-medium text-slate-700">Connected</span>
+                    <span className="text-sm font-medium text-slate-700">Google</span>
                     <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                   </div>
                   <div className="flex items-center gap-2">
                     <FacebookIcon className="w-5 h-5" />
-                    <span className="text-sm font-medium text-slate-700">Connected</span>
+                    <span className="text-sm font-medium text-slate-700">Facebook</span>
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded bg-orange-500 flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">S</span>
+                    </div>
+                    <span className="text-sm font-medium text-slate-700">Swiggy</span>
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded bg-red-500 flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">Z</span>
+                    </div>
+                    <span className="text-sm font-medium text-slate-700">Zomato</span>
                     <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                   </div>
                 </div>
