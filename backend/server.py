@@ -953,7 +953,7 @@ async def get_platforms(user: User = Depends(get_current_user)):
 @api_router.post("/platforms/{platform}/disconnect")
 async def disconnect_platform(platform: str, user: User = Depends(get_current_user)):
     """Disconnect a platform"""
-    if platform not in ["google", "facebook"]:
+    if platform not in ["google", "facebook", "swiggy", "zomato"]:
         raise HTTPException(status_code=400, detail="Invalid platform")
     
     business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
@@ -969,6 +969,7 @@ async def disconnect_platform(platform: str, user: User = Depends(get_current_us
             "place_id": None,
             "page_id": None,
             "page_url": None,
+            "restaurant_id": None,
             "review_link": None
         }}
     )
@@ -983,13 +984,31 @@ async def disconnect_platform(platform: str, user: User = Depends(get_current_us
                 "google_review_link": None
             }}
         )
-    else:
+    elif platform == "facebook":
         await db.businesses.update_one(
             {"user_id": user.user_id},
             {"$set": {
                 "facebook_page_id": None,
                 "facebook_page_name": None,
                 "facebook_page_url": None
+            }}
+        )
+    elif platform == "swiggy":
+        await db.businesses.update_one(
+            {"user_id": user.user_id},
+            {"$set": {
+                "swiggy_restaurant_id": None,
+                "swiggy_restaurant_name": None,
+                "swiggy_link": None
+            }}
+        )
+    elif platform == "zomato":
+        await db.businesses.update_one(
+            {"user_id": user.user_id},
+            {"$set": {
+                "zomato_restaurant_id": None,
+                "zomato_restaurant_name": None,
+                "zomato_link": None
             }}
         )
     
