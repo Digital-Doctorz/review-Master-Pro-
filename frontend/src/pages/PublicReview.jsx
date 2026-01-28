@@ -861,11 +861,20 @@ export default function PublicReview() {
               <ProgressSteps currentStep={4} totalSteps={totalSteps} isPrivate={false} />
               
               <div className="text-center mb-6">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg ${
+                  selectedPlatform === "swiggy" ? "bg-gradient-to-br from-orange-400 to-orange-600" :
+                  selectedPlatform === "zomato" ? "bg-gradient-to-br from-red-400 to-red-600" :
+                  "bg-gradient-to-br from-emerald-400 to-teal-500"
+                }`}>
                   <Zap className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-xl font-bold text-slate-900">Post Your Review!</h2>
-                <p className="text-slate-500 text-sm mt-1">2 simple steps to share on {selectedPlatform === "google" ? "Google" : "Facebook"}</p>
+                <p className="text-slate-500 text-sm mt-1">
+                  {selectedPlatform === "swiggy" ? "2 simple steps to share on Swiggy" :
+                   selectedPlatform === "zomato" ? "2 simple steps to share on Zomato" :
+                   selectedPlatform === "google" ? "2 simple steps to share on Google" : 
+                   "2 simple steps to share on Facebook"}
+                </p>
               </div>
               
               {/* Review Preview */}
@@ -881,10 +890,22 @@ export default function PublicReview() {
               {/* Step by Step Instructions */}
               <div className="space-y-4 mb-6">
                 {/* Step 1: Copy */}
-                <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                <div className={`rounded-xl p-4 border ${
+                  selectedPlatform === "swiggy" ? "bg-orange-50 border-orange-100" :
+                  selectedPlatform === "zomato" ? "bg-red-50 border-red-100" :
+                  "bg-blue-50 border-blue-100"
+                }`}>
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
-                    <h3 className="font-semibold text-blue-900">Copy your review</h3>
+                    <span className={`w-8 h-8 rounded-full text-white text-sm font-bold flex items-center justify-center flex-shrink-0 ${
+                      selectedPlatform === "swiggy" ? "bg-orange-600" :
+                      selectedPlatform === "zomato" ? "bg-red-600" :
+                      "bg-blue-600"
+                    }`}>1</span>
+                    <h3 className={`font-semibold ${
+                      selectedPlatform === "swiggy" ? "text-orange-900" :
+                      selectedPlatform === "zomato" ? "text-red-900" :
+                      "text-blue-900"
+                    }`}>Copy your review</h3>
                   </div>
                   <Button
                     onClick={copyReviewToClipboard}
