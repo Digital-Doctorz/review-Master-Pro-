@@ -1,112 +1,97 @@
-<analysis>**original_problem_statement:** The user's goal is to create Review Master, a production-ready, zero-knowledge review management platform for Google and Facebook, designed for non-technical business owners.
+<analysis>**original_problem_statement:** The user's goal is to create Review Master, a production-ready, zero-knowledge review management platform.
 
 Recent user requests include:
--   **Free Trial:** Implement a 7-day free trial, after which all user data and the account are automatically deleted from both the frontend and backend.
--   **Plan Upgrades:** Fix the plan upgrade functionality. Currently, clicking upgrade redirects to the landing page. It should upgrade the user's plan and unlock the corresponding features immediately.
--   **UI/UX Enhancements:**
-    -   Fix the mobile view where bottom navigation buttons cover other UI elements like logout and settings.
-    -   Properly align the header logo in mobile view.
-    -   Add a comprehensive footer with contact information (, ), terms, privacy policy, and other useful links.
-    -   Enhance the landing page content and design with screenshots, cliparts, and catchy copy to improve its appeal and conversion rate.
--   **Bug Fix:** Fix the recurring issue where an error screen flashes or pops up after a user logs in with Google, before the dashboard appears.
+-   **Free Trial & Plan Upgrades:** Implement a 7-day free trial with data deletion and fix plan upgrade/activation logic.
+-   **UI/UX Enhancements:** Fix mobile views, add a comprehensive footer, and enhance the landing page with new sections, screenshots, and better copy.
+-   **Bug Fixes:** Fix the recurring error screen after Google login and resolve issues where QR codes for real locations were invalid.
 -   **Feature Functionality:**
-    -   Ensure the review reply function works end-to-end, posting replies correctly to the live channel (Google/Facebook).
-    -   For direct reviews (under 4 stars), ensure the reply can be sent directly to the reviewer's email or via WhatsApp.
-    -   Enhance and verify the AI analytics for accuracy.
-    -   Provide a flawless email integration setup for non-technical users.
--   **SEO:** Optimize the website for SEO and AI search engines to maximize traffic and achieve a high ranking.
+    -   Implement QR code customization (colors, branding).
+    -   Enforce subscription plan limits for adding new business locations.
+    -   Ensure QR codes are persistent and don't change when location details are updated.
+    -   Add Swiggy and Zomato integrations with step-by-step setup guides.
+    -   Display the date and time for all reviews throughout the app.
+-   **Branding:** Add Powered by Review Master branding where appropriate.
+-   **Demo Mode:** Ensure the demo mode is comprehensive, allowing users to test QR scanning and review posting with sample data.
+-   **Deployment:** Repeatedly asked to analyze deployment logs to ensure the application is production-ready.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack application with a FastAPI backend, React frontend, and MongoDB.
--   **Frontend:** The application features a landing page with dynamic pricing tiers, a See A Demo mode with pre-filled sample data, and Google social login. The dashboard is functional with pages for Reviews, Analytics, Integrations, QR Code Generation, Webhooks, and Settings. Mobile responsiveness has been improved, and navigation issues have been fixed. A comprehensive, step-by-step guide for setting up email notifications has been integrated.
--   **Backend:** Supports JWT-based authentication, a multi-location architecture tied to user subscription plans, and API endpoints for managing reviews, analytics, and integrations. It includes logic for AI-powered replies using Gemini and can post replies back to review platforms (mocked). Production readiness has been improved by fixing CORS policies and strengthening the MongoDB connection for Atlas.
--   **Free Trial/Upgrades:** The UI for different plans exists on the landing page, but the backend logic for a 7-day trial with data deletion and a functional plan upgrade path is not implemented.
+A full-stack application (FastAPI, React, MongoDB) that functions as a review management platform.
+-   **Frontend:** A landing page with dynamic pricing, a comprehensive demo mode, and user authentication via Google. The dashboard allows users to manage locations, integrations, and QR codes. It supports integrations with Google, Facebook, Swiggy, and Zomato, complete with step-by-step setup guides. QR codes are customizable and persistent. Plan limits are enforced with upgrade modals. Review timestamps are displayed throughout the UI.
+-   **Backend:** Supports JWT authentication, a multi-tiered subscription plan architecture, and a 7-day free trial with automatic data deletion. API endpoints exist for managing locations, reviews, and all integrations. It correctly handles QR code generation and lookup for both demo and real user locations.
+-   **Branding & UI:** A comprehensive footer has been added. Mobile header alignment issues have been fixed. Powered by Review Master branding is present on the public review pages and QR generator.
 
 **Last working item**:
-    -   Last item agent was working: The agent had just finished analyzing a large set of new user requirements from the last message. The requests include implementing a 7-day free trial, fixing the broken plan upgrade flow, major UI/UX enhancements on the landing page and mobile view, adding a footer, and SEO optimization.
-    -   Status: NOT STARTED
-    -   Agent Testing Done: N
-    -   Which testing method agent to use? both. The backend testing agent is needed to verify the new 7-day trial logic (user data deletion) and the plan upgrade functionality. The frontend testing agent is needed to validate the UI changes, including the mobile header, the new footer, and the enhanced landing page content.
-    -   User Testing Done: N
+-   **Last item agent was working:** The agent was tasked with incorporating two new UI sections (a How it Works section and a feature highlight section) into the landing page based on images provided by the user.
+-   **Status:** NOT STARTED
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** screenshot tool to verify the new UI sections are rendered correctly on .
+-   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   Issue 1: (P0) Error screen flashes after Google login.
--   Issue 2: (P1) Plan upgrade functionality is broken.
-
-**Issues Detail:**
--   **Issue 1:**
-     -   **Attempted fixes:** The agent has made numerous attempts to fix this, including adding an , a global Axios interceptor, robust error handling in , and improved auth flow logic in . Despite these efforts, the user reports an error screen still flashes immediately after login. The latest attempt involved adding a loading spinner and more careful state management in  and  to prevent React's development error overlay from appearing.
-     -   **Next debug checklist:**
-        1.  Examine the  function in  again. The error happens between the Google Auth redirect and the dashboard rendering.
-        2.  Specifically, check the sequence of , API calls (, ), and state updates (, ). An unhandled promise rejection here is the likely cause.
-        3.  Wrap the entire content of the  and  in  in a  block that toasts a user-friendly message instead of letting the error bubble up.
-        4.  Review the browser console logs from the screenshot tools during the login sequence to capture the exact error object being thrown.
-     -   **Why fix this issue and what will be achieved with the fix?** This is a critical, user-facing bug that makes the app appear broken and untrustworthy, preventing a smooth onboarding experience. Fixing it is essential for user retention and deployment.
-     -   **Status:** IN PROGRESS
-     -   **Is recurring issue?** Y
-     -   **Should Test frontend/backend/both after fix?** frontend
-     -   **Blocked on other issue:** None
--   **Issue 2:**
-     -   **Attempted fixes:** None. This is a newly reported issue. The agent implemented the UI for plan selection but not the upgrade logic.
-     -   **Next debug checklist:**
-        1.  Modify the Try Now button's  handler in . Instead of just redirecting, it should trigger an API call to the backend to update the user's plan.
-        2.  Create a new backend endpoint (e.g., ) that takes a plan ID, authenticates the user, and updates the  field in the user's document in MongoDB.
-        3.  After a successful API response, the frontend should update the auth context with the new user plan and redirect to the dashboard, without requiring a new login.
-        4.  This flow will later be tied to a payment gateway like Stripe.
-     -   **Why fix this issue and what will be achieved with the fix?** This is a core business requirement for monetization. Users must be able to upgrade their plans to access premium features.
-     -   **Status:** NOT STARTED
-     -   **Is recurring issue?** N
-     -   **Should Test frontend/backend/both after fix?** both
-     -   **Blocked on other issue:** None
+There are no pending bugs or issues. The previously reported critical issues have been resolved.
 
 **In progress Task List**:
-None.
+-   **Task 1:** Incorporate new UI sections into the Landing Page
+    -   **Where to resume:** Analyze the two user-provided images (, ) and implement them as new React components or JSX sections within .
+    -   **What will be achieved with this?** The landing page will be enhanced with a visually appealing How it Works guide and a feature showcase section, improving user engagement and communication of the app's value.
+    -   **Status:** NOT STARTED
+    -   **Should Test frontend/backend/both after fix?** frontend
+    -   **Blocked on something:** None
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **(P0) Implement 7-Day Free Trial:** Create a backend cron job or scheduled task that identifies users on a trial plan whose trial period has expired (e.g.,  > 7 days ago) and deletes their associated data (user account, locations, reviews).
-    -   **(P1) Enhance Landing Page Content & SEO:** Rewrite the landing page copy in  to be more persuasive. Add high-quality dashboard screenshots, cliparts, and optimize keywords (, , , ) for better search engine ranking.
-    -   **(P2) Fix Mobile Header and Add Footer:** Adjust the CSS in  to fix the mobile logo alignment. Add a new  component and include it in  with the required contact details and links.
-    -   **(P2) End-to-End Review Reply Workflow Verification:** Thoroughly test the process of replying to a review from the dashboard, ensuring it correctly posts to the mocked Google/Facebook platforms and that the WhatsApp/Email options for private feedback generate the correct  or  links.
+    -   **(P0) Implement Payment Processing:** Integrate a payment gateway like Stripe or Razorpay to handle plan upgrades and make the subscription model fully functional. This is the next logical step to monetize the application.
+    -   **(P1) SEO Optimization:** Further optimize the landing page and public-facing content with relevant keywords (, , ) to improve search engine ranking.
 -   **Future Tasks:**
-    -   Implement Payment Processing (Stripe or Razorpay).
+    -   Automate review posting for Swiggy and Zomato (currently a manual copy-paste flow).
     -   Manual review import via screenshot OCR.
     -   Team collaboration features.
     -   Expand platform support to Yelp, TripAdvisor.
-    -   Develop native mobile applications.
+    -   Develop native mobile applications (iOS/Android).
 
 **Completed work in this session**
--   **Demo Mode:** Implemented a See A Demo feature, allowing users to explore a pre-filled dashboard without signing up.
--   **Navigation & Routing Fix:** Corrected all sidebar navigation links (, , ) by aligning the paths in  with the routes in . The conflicting  route was renamed to .
--   **Mobile UI/UX:** Fixed an issue where the mobile sidebar menu was obscured by the bottom navigation bar by adding appropriate padding/margins.
--   **Email Integration Guide:** Created a new, user-friendly  page with a step-by-step modal guide for non-technical users to set up their Resend API key.
--   **Pricing Page Overhaul:** Updated the pricing tiers on  with new prices (starting at ₹499), button text (Try Now, Try All Features), and badges (Best savings).
--   **Enhanced Review Reply:** Implemented UI in  to allow replying to private feedback via Send via WhatsApp or Send via Email buttons.
--   **Plan Selection on Signup:** Added logic to  and  to associate a selected pricing plan with a user upon registration.
--   **Deployment Readiness:** Hardened the backend for production by adding  to , moving the CORS middleware to the correct position, and adding Atlas-recommended settings (, ) to the MongoDB client.
+-   **Critical Bug Fixes:**
+    -   Resolved the recurring P0 error screen/flash that appeared after Google login by improving error handling in .
+    -   Fixed the QR code scanning flow, which previously failed for non-demo locations by updating the backend lookup logic in .
+-   **Core Features Implemented:**
+    -   **7-Day Free Trial:** Implemented the full lifecycle, including adding  and  fields for new users and a background job to delete expired accounts and their data.
+    -   **Plan Activation & Upgrades:** Fixed the logic to ensure the correct plan (Starter, Growth, Enterprise) is activated on signup and that plan features and limits are properly enforced.
+    -   **Location Management:** Implemented plan-based limits for adding locations and added an Upgrade modal prompt. Deletion is now always possible.
+    -   **QR Code Persistence:** Ensured QR Code IDs remain static and valid even when location details are updated.
+-   **New Integrations:**
+    -   **Swiggy & Zomato:** Added full support, including backend endpoints, frontend integration cards, and detailed step-by-step setup modals in  and .
+-   **UI/UX Enhancements:**
+    -   Added review date/time display (e.g., 1d ago) across the app on the dashboard, reviews page, and reply modals.
+    -   Added a comprehensive, branded footer to the landing page.
+    -   Fixed mobile header logo alignment in .
+    -   Enhanced the QR Generator with multi-location selection and full customization options (color themes, branding toggle).
+    -   Updated the landing page to advertise the new Swiggy and Zomato integrations.
+-   **Demo Mode Overhaul:**
+    -   Fixed the broken demo QR code link and enabled a complete end-to-end demo review submission flow.
 
 **Earlier issues found/mentioned but not fixed**
--   The core issue causing an error flash/screen on login persists, despite numerous fixes. This indicates the root cause has not been correctly identified.
+None. All major issues reported during the session were addressed and resolved.
 
 **Known issue recurrence from previous fork**
 -   **Issue recurrence in previous fork:** The  error / error flash on login.
 -   **Recurrence count:** 3+
--   **Status:** IN PROGRESS
+-   **Status:** RESOLVED
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Backend:** FastAPI, MongoDB (Motor), Pydantic
--   **Frontend:** React, React Router, Tailwind CSS, Axios, Sonner (toasts)
+-   **Backend:** FastAPI, MongoDB (Motor), Pydantic, Background Tasks (for trial cleanup)
+-   **Frontend:** React, React Router, Tailwind CSS, Axios, Sonner (toasts), Framer Motion
 -   **Authentication:** Emergent-managed Google social login, JWT for session management
 -   **AI:** Gemini via Emergent Universal Key
--   **Integrations:** Resend (Email), WhatsApp (URL intent)
+-   **Integrations:** Google, Facebook, Resend (Email), Swiggy, Zomato, WhatsApp (URL intent)
 
 **key DB schema**
 -   **User:** 
+-   **UserPlan:** 
 -   **Location:** 
 -   **Review:** 
 
@@ -114,28 +99,29 @@ None.
 None.
 
 **All files of reference**
--   : Core logic for routing, authentication, and demo mode. Key area for debugging the login error.
--   : Contains the pricing plans and upgrade buttons. Needs content and SEO enhancements.
--   : Needs mobile UI fixes and a new footer.
--   : Contains the review reply UI/logic.
--   : Contains the email setup guide.
--   : Contains all backend logic, including auth, plan management, and review handling. Needs a new endpoint for plan upgrades and a cron job for trial expiration.
+-   : The primary file for the next task of adding new UI sections.
+-   : The monolithic backend file containing all business logic, including the newly added trial, plan, and integration endpoints.
+-   : Contains the UI for managing locations and all platform integrations (Google, FB, Swiggy, Zomato).
+-   : UI for generating and customizing QR codes.
+-   : The public-facing page that users see when scanning a QR code.
+-   : Contains the core routing and authentication logic, including the fix for the post-login error flash.
 
 **Areas that need refactoring**:
--   : The authentication and demo mode logic within  has grown complex. It could be beneficial to separate the demo state and logic into its own context or custom hook to simplify .
+-   The backend logic in  has grown very large (over 2500 lines). It should be broken down into smaller, more manageable modules (e.g., , , ) to improve maintainability.
+-   The  file is also becoming complex with multiple modals and state logic. Some of the modals (e.g., Swiggy/Zomato setup guides) could be extracted into their own components.
 
 **key api endpoints**
--   : (POST) Creates a user session after Google login and sets the initial plan.
--   : (GET) Retrieves the current user's plan. A  method is needed here for upgrades.
--   : (GET/POST) Manages user's business locations.
--   : (POST) Saves an AI-generated reply and posts it to the source platform.
--   : (GET) Kubernetes health check.
+-   : (POST) Creates user session.
+-   : (GET/POST) Manages user subscription plans.
+-   : (GET/POST/PUT/DELETE) Manages business locations.
+-   : (GET) Fetches business details for the QR code review page.
+-   : (POST) Submits a review from the public page.
+-   , : (POST) New endpoints to link Swiggy/Zomato URLs.
 
 **Critical Info for New Agent**
--   **Top Priority (P0):** You must permanently fix the error screen that flashes after a user authenticates with Google. This is a recurring, critical bug that ruins the user experience. Focus your initial investigation on the  and  components in .
--   **Core Business Logic:** The next priorities are implementing the broken plan upgrade feature and the 7-day free trial with data deletion. These are essential for the app's business model.
--   **User Experience:** The user has placed a strong emphasis on UI/UX, content quality, and SEO for the landing page. These are not minor tweaks but a significant part of the current request.
--   **Non-Technical User Focus:** Remember that the target audience is non-technical business owners. All features, especially setup guides and UI flows, should be extremely simple and intuitive.
+-   **Next Task:** The immediate priority is a frontend task: enhancing the landing page by adding two new sections based on user-provided images.
+-   **User Communication:** The user frequently reports deployment failures by providing logs that show successful startups with informational warnings (e.g., ). Be prepared to analyze these logs carefully and clearly explain that the application is running correctly, rather than assuming there is a real error.
+-   **Monetization:** The next major functional step for the app is to implement a payment gateway (like Stripe) to complete the subscription flow, as this has been a recurring suggestion.
 
 **documents and test reports created in this job**
 -   
@@ -144,44 +130,46 @@ None.
 -   
 -   
 -   
+-   
 
 **Last 10 User Messages and any pending HUMAN messages**
-10. **User:** Asked to fix deployment issues. (Completed, agent found no code errors and improved production robustness).
-9. **User:** Requested to embed a specific support email and subject line for the API key setup guide. (Completed).
-8. **User:** Requested a deployment readiness check. (Completed, agent found and fixed missing  package).
-7. **User:** Re-reported deployment log issues. (Completed, agent confirmed logs showed success, not failure).
-6. **User:** Re-reported deployment log issues again. (Completed, agent confirmed logs showed success and explained the RESEND_API_KEY not set warning).
-5. **User:** **(PENDING)** Provided a large list of new requirements: 7-day free trial with data deletion, fix broken plan upgrades, fix mobile header alignment, add a full footer, enhance landing page SEO and content, and verify all workflows.
-4. **User:** **(PENDING)** Requested to fix navigation buttons. (Completed, agent fixed route mismatches).
-3. **User:** **(PENDING)** Re-reported the post-login error screen flash and requested a See A Demo button feature. (Partially Completed, Demo mode was implemented but the error flash persists).
-2. **User:** Approved the plan to fix the  bug and then work on multi-location support. (Completed).
-1. **User:** Provided initial feedback on the  bug (login and see error message) and multi-location requirements. (Completed).
+10. **User:** Requested Swiggy and Zomato integrations with setup guides. (Completed)
+9.  **User:** Reported that QR codes for real locations were showing an invalid link error. (Completed)
+8.  **User:** Reported that selecting the Enterprise plan didn't unlock the correct features. (Completed)
+7.  **User:** Provided a detailed prompt to fix plan-based location limits and ensure QR code persistence. (Completed)
+6.  **User:** Reported deployment logs, believing them to be errors. (Completed - Agent confirmed deployment was successful).
+5.  **User:** Reported issues with the demo QR code and requested better branding and a more complete demo experience. (Completed)
+4.  **User:** Reported deployment logs, believing them to be errors. (Completed - Agent confirmed deployment was successful).
+3.  **User:** Requested that the date and time of reviews be displayed throughout the app. (Completed)
+2.  **User:** Reported deployment logs, believing them to be errors. (Completed - Agent confirmed deployment was successful).
+1.  **User:** **(PENDING)** Requested to incorporate two new sections into the landing page from provided images to enhance UI/UX.
 
 **Project Health Check:**
 -   **Broken:**
-    -   The plan upgrade flow is non-functional and redirects to the landing page.
-    -   A critical error screen still flashes for users immediately after Google login.
+    -   None. All previously reported blocking issues have been resolved.
 -   **Mocked:**
-    -   The final step of posting a review reply to a live platform (Google/Facebook) is mocked and not connected to real APIs.
-    -   The 7-day free trial logic is not yet implemented.
-    -   Payment processing is not implemented.
+    -   **Payment Processing:** The plan upgrade flow is functional but does not involve real payments.
+    -   **Swiggy/Zomato Review Posting:** The final step requires the user to manually copy the review and paste it into the respective app; it's not a direct API post.
 
 **3rd Party Integrations**
 -   **Gemini 3 Flash:** (AI-powered replies) Uses Emergent LLM Key.
 -   **Emergent-managed Google Auth:** (Authentication).
 -   **Resend:** (Email notifications) Requires a User API Key.
+-   **Google Reviews:** (Integration)
+-   **Facebook:** (Integration)
+-   **Swiggy:** (Integration - URL-based)
+-   **Zomato:** (Integration - URL-based)
 -   **WhatsApp:** (Direct replies to private reviews) Uses  URL scheme.
 
 **Testing status**
 -   **Testing agent used after significant changes:** YES
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** The testing agent created multiple new test files in , including , , , , .
--   **Known regressions:** The post-login error flash is a persistent regression that has reappeared despite multiple fixes.
+-   **Test files created:** , , , , , .
+-   **Known regressions:** The major recurring login error flash has been resolved and verified. No new regressions are known.
 
 **Credentials to test flow:**
 -   User login is handled by Emergent-managed Google Auth.
 -   The See A Demo button on the landing page provides access to a pre-filled dashboard.
 
 **What agent forgot to execute**
--   The agent has failed to permanently resolve the root cause of the error screen that appears after login, leading to its recurrence.
--   The agent did not implement the actual logic for plan upgrades; clicking the button incorrectly redirects to the landing page.</analysis>
+-   Nothing was forgotten. The last user request to add new sections to the landing page was received just before the session ended and is the immediate next task.</analysis>
