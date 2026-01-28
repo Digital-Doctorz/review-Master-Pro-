@@ -2121,6 +2121,20 @@ async def get_public_business(qr_code_id: str):
                 "review_link": f"{fb_url}/reviews" if fb_url and not fb_url.endswith("/reviews") else fb_url
             }
         
+        # Check for Swiggy connection
+        if location.get("swiggy_link") or location.get("swiggy_restaurant_id"):
+            platforms["swiggy"] = {
+                "connected": True,
+                "review_link": location.get("swiggy_link")
+            }
+        
+        # Check for Zomato connection
+        if location.get("zomato_link") or location.get("zomato_restaurant_id"):
+            platforms["zomato"] = {
+                "connected": True,
+                "review_link": location.get("zomato_link")
+            }
+        
         # If no platforms connected, allow direct submission
         if not platforms:
             platforms["direct"] = {"connected": True, "review_link": None}
@@ -2136,6 +2150,8 @@ async def get_public_business(qr_code_id: str):
             "google_review_link": location.get("google_review_link"),
             "facebook_page_id": location.get("facebook_page_id"),
             "facebook_page_url": location.get("facebook_page_url"),
+            "swiggy_link": location.get("swiggy_link"),
+            "zomato_link": location.get("zomato_link"),
             "platforms": platforms
         }
     
