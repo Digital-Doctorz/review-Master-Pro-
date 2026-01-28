@@ -96,6 +96,22 @@ const FacebookIcon = ({ className = "w-6 h-6" }) => (
   </svg>
 );
 
+// Swiggy icon component
+const SwiggyIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <rect fill="#FC8019" width="24" height="24" rx="4"/>
+    <text x="12" y="16" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="Arial">S</text>
+  </svg>
+);
+
+// Zomato icon component
+const ZomatoIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <rect fill="#E23744" width="24" height="24" rx="4"/>
+    <text x="12" y="16" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="Arial">Z</text>
+  </svg>
+);
+
 // Progress indicator
 const ProgressSteps = ({ currentStep, totalSteps, isPrivate }) => {
   const steps = isPrivate 
