@@ -737,6 +737,58 @@ export default function PublicReview() {
                         )}
                       </motion.button>
                     )}
+
+                    {/* Swiggy Option */}
+                    {(business?.swiggy_link || business?.platforms?.swiggy?.review_link) && (
+                      <motion.button
+                        type="button"
+                        onClick={() => setSelectedPlatform("swiggy")}
+                        className={`w-full p-4 rounded-xl border-2 transition-all text-left flex items-center gap-4 ${
+                          selectedPlatform === "swiggy"
+                            ? "border-orange-500 bg-orange-50"
+                            : "border-slate-200 hover:border-orange-200 hover:bg-orange-50/50"
+                        }`}
+                        whileTap={{ scale: 0.98 }}
+                        data-testid="platform-swiggy"
+                      >
+                        <div className="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center shadow-sm">
+                          <SwiggyIcon className="w-7 h-7" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-slate-900">Swiggy</p>
+                          <p className="text-sm text-slate-500">Order &amp; rate on Swiggy</p>
+                        </div>
+                        {selectedPlatform === "swiggy" && (
+                          <CheckCircle2 className="w-6 h-6 text-orange-500" />
+                        )}
+                      </motion.button>
+                    )}
+
+                    {/* Zomato Option */}
+                    {(business?.zomato_link || business?.platforms?.zomato?.review_link) && (
+                      <motion.button
+                        type="button"
+                        onClick={() => setSelectedPlatform("zomato")}
+                        className={`w-full p-4 rounded-xl border-2 transition-all text-left flex items-center gap-4 ${
+                          selectedPlatform === "zomato"
+                            ? "border-red-500 bg-red-50"
+                            : "border-slate-200 hover:border-red-200 hover:bg-red-50/50"
+                        }`}
+                        whileTap={{ scale: 0.98 }}
+                        data-testid="platform-zomato"
+                      >
+                        <div className="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center shadow-sm">
+                          <ZomatoIcon className="w-7 h-7" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-slate-900">Zomato</p>
+                          <p className="text-sm text-slate-500">Rate on Zomato</p>
+                        </div>
+                        {selectedPlatform === "zomato" && (
+                          <CheckCircle2 className="w-6 h-6 text-red-500" />
+                        )}
+                      </motion.button>
+                    )}
                     
                     {/* Direct/Skip Option */}
                     <motion.button
