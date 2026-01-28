@@ -533,6 +533,282 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Critical Role of Online Reviews Section */}
+      <section className="py-20 px-6 bg-gradient-to-br from-amber-50/80 via-white to-amber-50/60" data-testid="reviews-stats-section">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center shadow-lg">
+                  <Star className="w-5 h-5 text-white" />
+                </div>
+                <div className="w-3 h-3 rounded-full bg-slate-300" />
+              </div>
+              
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight leading-tight mb-6">
+                The Critical Role of Online Reviews in
+                <span className="block text-gradient">Building Trust & Boosting Sales</span>
+              </h2>
+              
+              <div className="space-y-4 text-slate-600 leading-relaxed">
+                <p>
+                  Given these statistics, it&apos;s evident that online reviews are a <span className="font-semibold text-slate-800">powerful tool</span> for any business. They not only affect sales and trust but also serve as a critical factor in the online reputation management of a company.
+                </p>
+                <p>
+                  Encouraging customers to leave reviews and engaging with their feedback can <span className="font-semibold text-slate-800">significantly enhance</span> a business&apos;s credibility and attract more customers.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Right Content - Stats Cards */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative"
+            >
+              {/* Yellow background accent */}
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-200/40 to-yellow-200/40 rounded-3xl transform rotate-3" />
+              
+              <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  {
+                    percentage: "78%",
+                    text: "of consumers trust online reviews as much as recommendations from friends and family."
+                  },
+                  {
+                    percentage: "93%",
+                    text: "of users have made buying decisions based upon an online review."
+                  },
+                  {
+                    percentage: "81%",
+                    text: "of consumers use Google to evaluate local businesses, making it the most influential review site."
+                  },
+                  {
+                    percentage: "31%",
+                    text: "of consumers read more than 10 reviews before their trust is formed."
+                  }
+                ].map((stat, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + index * 0.1 }}
+                    className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all"
+                    data-testid={`review-stat-card-${index}`}
+                  >
+                    <p className="text-4xl font-bold text-amber-500 mb-3">{stat.percentage}</p>
+                    <p className="text-sm text-slate-600 leading-relaxed">{stat.text}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Grow Faster Section - How ReviewBooster Works */}
+      <section className="py-20 px-6 bg-gradient-to-br from-amber-300 via-yellow-300 to-amber-200" data-testid="grow-faster-section">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content - App Illustration */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="relative order-2 lg:order-1"
+            >
+              {/* Phone mockup with review flow */}
+              <div className="relative">
+                {/* SMS Message */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
+                  className="absolute -top-4 left-4 bg-white rounded-2xl p-4 shadow-xl max-w-[200px] z-10"
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+                      <MessageSquare className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-xs font-medium text-slate-700">SMS</span>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Hi! Thank you for choosing us. We kindly ask if you would like to leave us a review. Thank you!
+                  </p>
+                </motion.div>
+
+                {/* Main Phone */}
+                <div className="bg-slate-800 rounded-[2.5rem] p-3 shadow-2xl mx-auto max-w-[280px]">
+                  <div className="bg-white rounded-[2rem] overflow-hidden">
+                    {/* Phone header */}
+                    <div className="bg-slate-100 px-4 py-3 flex items-center justify-center">
+                      <div className="w-16 h-1 rounded-full bg-slate-300" />
+                    </div>
+                    
+                    {/* App content */}
+                    <div className="p-6 space-y-4">
+                      <div className="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+                        <Star className="w-6 h-6 text-white" />
+                      </div>
+                      
+                      <h4 className="text-center font-semibold text-slate-800 text-sm">
+                        How was your experience with our business?
+                      </h4>
+                      
+                      <div className="flex gap-3 justify-center">
+                        <button className="px-4 py-2 rounded-lg bg-emerald-500 text-white text-xs font-medium flex items-center gap-1">
+                          <ThumbsUp className="w-3 h-3" />
+                          Positive
+                        </button>
+                        <button className="px-4 py-2 rounded-lg bg-rose-500 text-white text-xs font-medium flex items-center gap-1">
+                          <X className="w-3 h-3" />
+                          Negative
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Platform Selection Card */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.5 }}
+                  className="absolute -right-4 top-1/3 bg-white rounded-2xl p-4 shadow-xl max-w-[180px] z-10"
+                >
+                  <p className="text-xs font-medium text-slate-700 mb-3">Where do you want to leave a review?</p>
+                  <div className="flex flex-wrap gap-2">
+                    <div className="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 hover:border-indigo-300 cursor-pointer transition-colors">
+                      <GoogleIcon className="w-5 h-5" />
+                    </div>
+                    <div className="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 hover:border-indigo-300 cursor-pointer transition-colors">
+                      <FacebookIcon className="w-5 h-5" />
+                    </div>
+                    <div className="w-10 h-10 rounded-lg bg-emerald-500 flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">TA</span>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Negative Feedback Form */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.7 }}
+                  className="absolute -bottom-8 -left-4 bg-white rounded-2xl p-4 shadow-xl max-w-[200px] z-10"
+                >
+                  <p className="text-xs font-medium text-slate-700 mb-2">Private Feedback</p>
+                  <p className="text-[10px] text-slate-500 mb-3">Let us know how we can improve</p>
+                  <div className="space-y-2">
+                    <div className="h-6 bg-slate-100 rounded-lg px-2 flex items-center">
+                      <span className="text-[10px] text-slate-400">Your name</span>
+                    </div>
+                    <div className="h-6 bg-slate-100 rounded-lg px-2 flex items-center">
+                      <span className="text-[10px] text-slate-400">Your email</span>
+                    </div>
+                    <div className="h-12 bg-slate-100 rounded-lg px-2 pt-1">
+                      <span className="text-[10px] text-slate-400">Review</span>
+                    </div>
+                    <button className="w-full py-1.5 rounded-lg bg-slate-800 text-white text-[10px] font-medium">
+                      Send
+                    </button>
+                  </div>
+                </motion.div>
+
+                {/* Connecting arrows (decorative) */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
+                  <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                      <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" />
+                    </marker>
+                  </defs>
+                </svg>
+              </div>
+            </motion.div>
+
+            {/* Right Content - Text */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="order-1 lg:order-2"
+            >
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight leading-tight mb-6">
+                We help you to grow
+                <span className="block">faster and better</span>
+              </h2>
+              
+              <p className="text-slate-700 leading-relaxed mb-4">
+                If you&apos;re struggling with negative feedback and harmful online content affecting your business&apos;s growth, consider using <span className="font-bold">Review Master</span>.
+              </p>
+              
+              <p className="text-slate-600 leading-relaxed mb-8">
+                It can assist you in managing your online presence and enhancing your credibility in the digital space.
+              </p>
+              
+              {/* Benefits List */}
+              <div className="space-y-4 mb-8">
+                {[
+                  { icon: Eye, text: "Monitor your reputation in real-time" },
+                  { icon: Shield, text: "Control damage from negative feedback" },
+                  { icon: TrendingUp, text: "Enhance your reputation with positive reviews" },
+                  { icon: BadgeCheck, text: "Establish trust and credibility" }
+                ].map((benefit, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.4 + index * 0.1 }}
+                    className="flex items-center gap-3"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center">
+                      <benefit.icon className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-slate-800 font-medium">{benefit.text}</span>
+                  </motion.div>
+                ))}
+              </div>
+              
+              {/* CTAs */}
+              <div className="flex flex-wrap gap-4">
+                <Button
+                  onClick={handleGoogleLogin}
+                  size="lg"
+                  className="rounded-xl px-8 py-6 bg-slate-900 hover:bg-slate-800 text-white font-semibold"
+                  data-testid="grow-section-cta"
+                >
+                  Get Started
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+                <Button
+                  onClick={() => window.location.href = 'mailto:trademeindia.sales@gmail.com'}
+                  size="lg"
+                  variant="outline"
+                  className="rounded-xl px-8 py-6 bg-slate-100 hover:bg-slate-200 text-slate-800 border-0 font-semibold"
+                >
+                  Contact Us
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Dashboard Screenshots Section */}
       <section className="py-20 px-6 bg-gradient-to-b from-white/50 to-indigo-50/50">
         <div className="max-w-7xl mx-auto">
