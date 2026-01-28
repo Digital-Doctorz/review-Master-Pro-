@@ -750,6 +750,190 @@ async def connect_facebook_page(
         "is_real_data": integration_status["real_api_enabled"]
     }
 
+# ============ SWIGGY INTEGRATION ============
+
+@api_router.post("/swiggy/connect")
+async def connect_swiggy(
+    data: dict,
+    user: User = Depends(get_current_user)
+):
+    """Connect Swiggy restaurant"""
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    swiggy_link = data.get("swiggy_link", "").strip()
+    restaurant_name = data.get("restaurant_name") or business.get("name", "Restaurant")
+    
+    if not swiggy_link:
+        raise HTTPException(status_code=400, detail="Swiggy link is required")
+    
+    # Validate Swiggy URL format
+    if "swiggy" not in swiggy_link.lower():
+        raise HTTPException(status_code=400, detail="Please provide a valid Swiggy link")
+    
+    restaurant_id = f"swiggy_{uuid.uuid4().hex[:8]}"
+    
+    # Update business with Swiggy info
+    await db.businesses.update_one(
+        {"user_id": user.user_id},
+        {"$set": {
+            "swiggy_restaurant_id": restaurant_id,
+            "swiggy_restaurant_name": restaurant_name,
+            "swiggy_link": swiggy_link
+        }}
+    )
+    
+    # Create or update platform connection
+    await db.platform_connections.update_one(
+        {"business_id": business["business_id"], "platform": "swiggy"},
+        {"$set": {
+            "status": "connected",
+            "restaurant_id": restaurant_id,
+            "review_link": swiggy_link,
+            "connected_at": datetime.now(timezone.utc).isoformat(),
+            "last_sync": datetime.now(timezone.utc).isoformat()
+        }},
+        upsert=True
+    )
+    
+    return {
+        "message": "Swiggy connected successfully",
+        "swiggy_link": swiggy_link,
+        "restaurant_name": restaurant_name
+    }
+
+@api_router.post("/swiggy/connect-location/{location_id}")
+async def connect_swiggy_location(
+    location_id: str,
+    data: dict,
+    user: User = Depends(get_current_user)
+):
+    """Connect Swiggy to a specific location"""
+    location = await db.locations.find_one(
+        {"location_id": location_id, "user_id": user.user_id, "is_active": True},
+        {"_id": 0}
+    )
+    
+    if not location:
+        raise HTTPException(status_code=404, detail="Location not found")
+    
+    swiggy_link = data.get("swiggy_link", "").strip()
+    restaurant_name = data.get("restaurant_name") or location.get("name", "Restaurant")
+    
+    if not swiggy_link:
+        raise HTTPException(status_code=400, detail="Swiggy link is required")
+    
+    restaurant_id = f"swiggy_{uuid.uuid4().hex[:8]}"
+    
+    # Update location with Swiggy info
+    await db.locations.update_one(
+        {"location_id": location_id, "user_id": user.user_id},
+        {"$set": {
+            "swiggy_restaurant_id": restaurant_id,
+            "swiggy_restaurant_name": restaurant_name,
+            "swiggy_link": swiggy_link
+        }}
+    )
+    
+    return {
+        "message": "Swiggy connected to location",
+        "swiggy_link": swiggy_link,
+        "restaurant_name": restaurant_name
+    }
+
+# ============ ZOMATO INTEGRATION ============
+
+@api_router.post("/zomato/connect")
+async def connect_zomato(
+    data: dict,
+    user: User = Depends(get_current_user)
+):
+    """Connect Zomato restaurant"""
+    business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    zomato_link = data.get("zomato_link", "").strip()
+    restaurant_name = data.get("restaurant_name") or business.get("name", "Restaurant")
+    
+    if not zomato_link:
+        raise HTTPException(status_code=400, detail="Zomato link is required")
+    
+    # Validate Zomato URL format
+    if "zomato" not in zomato_link.lower():
+        raise HTTPException(status_code=400, detail="Please provide a valid Zomato link")
+    
+    restaurant_id = f"zomato_{uuid.uuid4().hex[:8]}"
+    
+    # Update business with Zomato info
+    await db.businesses.update_one(
+        {"user_id": user.user_id},
+        {"$set": {
+            "zomato_restaurant_id": restaurant_id,
+            "zomato_restaurant_name": restaurant_name,
+            "zomato_link": zomato_link
+        }}
+    )
+    
+    # Create or update platform connection
+    await db.platform_connections.update_one(
+        {"business_id": business["business_id"], "platform": "zomato"},
+        {"$set": {
+            "status": "connected",
+            "restaurant_id": restaurant_id,
+            "review_link": zomato_link,
+            "connected_at": datetime.now(timezone.utc).isoformat(),
+            "last_sync": datetime.now(timezone.utc).isoformat()
+        }},
+        upsert=True
+    )
+    
+    return {
+        "message": "Zomato connected successfully",
+        "zomato_link": zomato_link,
+        "restaurant_name": restaurant_name
+    }
+
+@api_router.post("/zomato/connect-location/{location_id}")
+async def connect_zomato_location(
+    location_id: str,
+    data: dict,
+    user: User = Depends(get_current_user)
+):
+    """Connect Zomato to a specific location"""
+    location = await db.locations.find_one(
+        {"location_id": location_id, "user_id": user.user_id, "is_active": True},
+        {"_id": 0}
+    )
+    
+    if not location:
+        raise HTTPException(status_code=404, detail="Location not found")
+    
+    zomato_link = data.get("zomato_link", "").strip()
+    restaurant_name = data.get("restaurant_name") or location.get("name", "Restaurant")
+    
+    if not zomato_link:
+        raise HTTPException(status_code=400, detail="Zomato link is required")
+    
+    restaurant_id = f"zomato_{uuid.uuid4().hex[:8]}"
+    
+    # Update location with Zomato info
+    await db.locations.update_one(
+        {"location_id": location_id, "user_id": user.user_id},
+        {"$set": {
+            "zomato_restaurant_id": restaurant_id,
+            "zomato_restaurant_name": restaurant_name,
+            "zomato_link": zomato_link
+        }}
+    )
+    
+    return {
+        "message": "Zomato connected to location",
+        "zomato_link": zomato_link,
+        "restaurant_name": restaurant_name
+    }
+
 # ============ PLATFORM CONNECTION ENDPOINTS ============
 
 @api_router.get("/platforms")
