@@ -319,6 +319,12 @@ export default function PublicReview() {
         || business?.platforms?.facebook?.review_link 
         || business?.platforms?.facebook?.page_url;
     }
+    if (platform === "swiggy") {
+      return business?.swiggy_link || business?.platforms?.swiggy?.review_link;
+    }
+    if (platform === "zomato") {
+      return business?.zomato_link || business?.platforms?.zomato?.review_link;
+    }
     return null;
   };
 
@@ -326,9 +332,10 @@ export default function PublicReview() {
     const link = getPlatformReviewLink(platform);
     if (link) {
       // For Facebook, append /reviews if not already there
-      const finalLink = platform === "facebook" && !link.includes("/reviews") 
-        ? `${link.replace(/\/$/, "")}/reviews` 
-        : link;
+      let finalLink = link;
+      if (platform === "facebook" && !link.includes("/reviews")) {
+        finalLink = `${link.replace(/\/$/, "")}/reviews`;
+      }
       window.open(finalLink, "_blank");
     }
   };
