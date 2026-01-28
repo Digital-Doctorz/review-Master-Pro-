@@ -220,16 +220,23 @@ class BusinessUpdate(BaseModel):
     facebook_page_id: Optional[str] = None
     facebook_page_name: Optional[str] = None
     facebook_page_url: Optional[str] = None
+    swiggy_restaurant_id: Optional[str] = None
+    swiggy_restaurant_name: Optional[str] = None
+    swiggy_link: Optional[str] = None
+    zomato_restaurant_id: Optional[str] = None
+    zomato_restaurant_name: Optional[str] = None
+    zomato_link: Optional[str] = None
 
 class PlatformConnection(BaseModel):
     model_config = ConfigDict(extra="ignore")
     connection_id: str = Field(default_factory=lambda: f"conn_{uuid.uuid4().hex[:12]}")
     business_id: str
-    platform: str  # "google" or "facebook"
+    platform: str  # "google", "facebook", "swiggy", "zomato"
     status: str = "disconnected"  # connected, disconnected, error
     place_id: Optional[str] = None  # For Google
     page_id: Optional[str] = None  # For Facebook
     page_url: Optional[str] = None  # For Facebook
+    restaurant_id: Optional[str] = None  # For Swiggy/Zomato
     review_link: Optional[str] = None
     connected_at: Optional[datetime] = None
     last_sync: Optional[datetime] = None
