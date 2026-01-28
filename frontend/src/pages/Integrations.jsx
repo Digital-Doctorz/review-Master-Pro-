@@ -56,6 +56,22 @@ const FacebookIcon = ({ className = "w-6 h-6" }) => (
   </svg>
 );
 
+// Swiggy Icon
+const SwiggyIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <rect fill="#FC8019" width="24" height="24" rx="4"/>
+    <text x="12" y="16" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="Arial">S</text>
+  </svg>
+);
+
+// Zomato Icon
+const ZomatoIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <rect fill="#E23744" width="24" height="24" rx="4"/>
+    <text x="12" y="16" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="Arial">Z</text>
+  </svg>
+);
+
 // Safe copy to clipboard with fallback
 const copyToClipboard = async (text, successMessage = "Copied!") => {
   try {
@@ -87,6 +103,12 @@ export default function Integrations() {
   // User plan & locations
   const [userPlan, setUserPlan] = useState(null);
   const [locations, setLocations] = useState([]);
+  
+  // Swiggy & Zomato setup modals
+  const [swiggyModal, setSwiggyModal] = useState({ open: false, locationId: null });
+  const [zomatoModal, setZomatoModal] = useState({ open: false, locationId: null });
+  const [swiggyLink, setSwiggyLink] = useState("");
+  const [zomatoLink, setZomatoLink] = useState("");
   
   // Modal states
   const [setupModal, setSetupModal] = useState({ open: false, platform: null, locationId: null });
