@@ -1,51 +1,53 @@
 # Review Master - Product Requirements Document
 
 ## Original Problem Statement
-Build Review Master - a zero-friction review management platform focused on Google and Facebook reviews, with seamless setup, real-time monitoring, and AI-powered responses. Designed for non-technical business owners who can connect accounts in 60 seconds.
+Build Review Master - a zero-friction review management platform focused on Google, Facebook, Swiggy, and Zomato reviews, with seamless setup, real-time monitoring, and AI-powered responses. Designed for non-technical business owners who can connect accounts in 60 seconds.
 
 ## What's Been Implemented (January 2025)
 
-### Latest - v4.3 Location Management & Plan Limits (January 26, 2025):
+### Latest - v4.4 Swiggy & Zomato Integration (January 28, 2025):
 
-**Plan-Based Location Management:**
-- [x] Plan limits enforced: Starter (1 loc), Growth (3 locs), Enterprise (unlimited)
-- [x] Backend returns 403 with clear error when exceeding plan limit
-- [x] Upgrade modal shows when trying to add location beyond limit
-- [x] Modal displays: current plan, locations used, upgrade options
-- [x] Delete button always visible (even for last location)
-- [x] Deleting location frees up slot for new location
+**Swiggy Integration:**
+- [x] `POST /api/swiggy/connect-location/{location_id}` saves swiggy_link
+- [x] Swiggy card on Integrations page (orange theme)
+- [x] Step-by-step setup guide with 2 options:
+  - Option 1: Swiggy Smart Link (recommended)
+  - Option 2: Copy from Swiggy customer app
+- [x] PublicReview shows orange Swiggy button when connected
+- [x] Copy & Go flow: "Open Swiggy & paste" instructions
 
-**QR Code ID Persistence:**
-- [x] QR Code ID (`qr_{alphanumeric}`) generated once at location creation
-- [x] ID never changes when location details (name, address) are updated
-- [x] "This ID is permanent" message displayed in Integrations page
-- [x] QR codes remain scannable even after location updates
+**Zomato Integration:**
+- [x] `POST /api/zomato/connect-location/{location_id}` saves zomato_link
+- [x] Zomato card on Integrations page (red theme)
+- [x] 5-step setup guide for getting Zomato page URL
+- [x] PublicReview shows red Zomato button when connected
+- [x] Copy & Go flow: "Open Zomato & paste" instructions
 
-**QR Generator Enhancements:**
-- [x] Location selector dropdown (when multiple locations exist)
-- [x] Location info card showing: name, address, QR ID
-- [x] 8 color themes + custom color pickers
-- [x] Include Branding toggle
-- [x] Size options (128px, 256px, 512px)
-- [x] PNG/SVG download formats
+**Platform Support in QR Code Flow:**
+- [x] `GET /api/public/business/{qr_code_id}` returns all 4 platforms
+- [x] Customers see: Google, Facebook, Swiggy, Zomato options
+- [x] Each platform opens in respective app/website
 
-### Previous Updates (v4.0-4.2)
+**Landing Page Updates:**
+- [x] Hero: "Google, Facebook, Swiggy & Zomato" mentioned
+- [x] Dashboard preview shows all 4 platforms connected
+- [x] Growth plan: "Swiggy & Zomato integration" added
+- [x] Enterprise plan: "All platforms (Google, Facebook, Swiggy, Zomato)"
+
+### Previous Updates (v4.0-4.3)
+
+**v4.3 - Location Management:**
+- [x] Plan limits enforced: Starter (1), Growth (3), Enterprise (unlimited)
+- [x] QR Code ID persistence (never changes when location updated)
+- [x] Upgrade modal when exceeding plan limit
 
 **v4.2 - Demo QR & Branding:**
 - [x] Demo QR code `/review/demo_qr_001` fully functional
-- [x] "Powered by Review Master" branding throughout app
-- [x] Demo review submission with mock success
+- [x] "Powered by Review Master" branding throughout
 
 **v4.1 - Trial & Upgrade:**
 - [x] 7-day free trial with auto-delete
 - [x] Plan upgrade for logged-in users
-- [x] Comprehensive footer with contact info
-
-**v4.0 - Core Features:**
-- [x] Multi-location support
-- [x] AI-powered responses (Gemini)
-- [x] Review date/time display
-- [x] Demo mode with sample data
 
 ### Previous Features (v3.0-4.0)
 
