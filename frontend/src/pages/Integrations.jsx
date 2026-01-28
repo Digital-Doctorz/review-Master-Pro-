@@ -350,6 +350,58 @@ export default function Integrations() {
     }
   };
 
+  // Swiggy Connect
+  const handleSwiggyConnect = async (locationId) => {
+    if (!swiggyLink.trim()) {
+      toast.error("Please enter your Swiggy link");
+      return;
+    }
+    
+    if (!swiggyLink.toLowerCase().includes("swiggy")) {
+      toast.error("Please enter a valid Swiggy link");
+      return;
+    }
+    
+    try {
+      await axios.post(`${API}/swiggy/connect-location/${locationId}`, {
+        swiggy_link: swiggyLink
+      }, { withCredentials: true });
+      
+      toast.success("Swiggy connected successfully! 🎉");
+      setSwiggyModal({ open: false, locationId: null });
+      setSwiggyLink("");
+      loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Failed to connect Swiggy");
+    }
+  };
+
+  // Zomato Connect
+  const handleZomatoConnect = async (locationId) => {
+    if (!zomatoLink.trim()) {
+      toast.error("Please enter your Zomato link");
+      return;
+    }
+    
+    if (!zomatoLink.toLowerCase().includes("zomato")) {
+      toast.error("Please enter a valid Zomato link");
+      return;
+    }
+    
+    try {
+      await axios.post(`${API}/zomato/connect-location/${locationId}`, {
+        zomato_link: zomatoLink
+      }, { withCredentials: true });
+      
+      toast.success("Zomato connected successfully! 🎉");
+      setZomatoModal({ open: false, locationId: null });
+      setZomatoLink("");
+      loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Failed to connect Zomato");
+    }
+  };
+
   const handleAddLocationClick = () => {
     // Check plan limits before opening modal
     const maxLocations = userPlan?.max_locations || 1;
