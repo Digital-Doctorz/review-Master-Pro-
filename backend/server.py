@@ -190,6 +190,14 @@ class Business(BaseModel):
     facebook_page_name: Optional[str] = None
     facebook_page_url: Optional[str] = None
     facebook_review_link: Optional[str] = None
+    # Swiggy Integration
+    swiggy_restaurant_id: Optional[str] = None
+    swiggy_restaurant_name: Optional[str] = None
+    swiggy_link: Optional[str] = None
+    # Zomato Integration
+    zomato_restaurant_id: Optional[str] = None
+    zomato_restaurant_name: Optional[str] = None
+    zomato_link: Optional[str] = None
     setup_completed: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
