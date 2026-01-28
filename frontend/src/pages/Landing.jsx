@@ -219,6 +219,7 @@ export default function Landing() {
         "500 reviews/month",
         "3 business locations",
         "Google + Facebook integration",
+        "Swiggy & Zomato integration",
         "Unlimited QR codes",
         "AI review responses",
         "Priority email + WhatsApp alerts",
@@ -240,7 +241,7 @@ export default function Landing() {
       features: [
         "Unlimited reviews",
         "Unlimited locations",
-        "All platform integrations",
+        "All platforms (Google, Facebook, Swiggy, Zomato)",
         "Unlimited QR codes",
         "AI review responses",
         "Dedicated account manager",
