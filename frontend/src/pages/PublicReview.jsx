@@ -932,29 +932,44 @@ export default function PublicReview() {
                   <div className="flex items-center gap-3 mb-3">
                     <span className={`w-8 h-8 rounded-full ${copied ? "bg-indigo-600" : "bg-slate-400"} text-white text-sm font-bold flex items-center justify-center flex-shrink-0`}>2</span>
                     <h3 className={`font-semibold ${copied ? "text-indigo-900" : "text-slate-500"}`}>
-                      Open {selectedPlatform === "google" ? "Google" : "Facebook"} & paste
+                      Open {selectedPlatform === "google" ? "Google" : selectedPlatform === "facebook" ? "Facebook" : selectedPlatform === "swiggy" ? "Swiggy" : "Zomato"} & paste
                     </h3>
                   </div>
                   <Button
                     onClick={() => openPlatformReview(selectedPlatform)}
                     disabled={!copied}
                     className={`w-full rounded-xl h-12 ${copied 
-                      ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg" 
+                      ? selectedPlatform === "swiggy" 
+                        ? "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg"
+                        : selectedPlatform === "zomato"
+                          ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg"
+                          : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg" 
                       : "bg-slate-200 text-slate-400 cursor-not-allowed"}`}
                     data-testid="open-platform-btn"
                   >
-                    {selectedPlatform === "google" ? <GoogleIcon className="w-5 h-5 mr-2" /> : <FacebookIcon className="w-5 h-5 mr-2" />}
+                    {selectedPlatform === "google" ? <GoogleIcon className="w-5 h-5 mr-2" /> : 
+                     selectedPlatform === "facebook" ? <FacebookIcon className="w-5 h-5 mr-2" /> :
+                     selectedPlatform === "swiggy" ? <SwiggyIcon className="w-5 h-5 mr-2" /> :
+                     <ZomatoIcon className="w-5 h-5 mr-2" />}
                     {copied ? (
                       <>
-                        Open {selectedPlatform === "google" ? "Google Reviews" : "Facebook"} →
+                        Open {selectedPlatform === "google" ? "Google Reviews" : 
+                              selectedPlatform === "facebook" ? "Facebook" : 
+                              selectedPlatform === "swiggy" ? "Swiggy" : "Zomato"} →
                       </>
                     ) : (
                       "Copy review first"
                     )}
                   </Button>
                   {copied && (
-                    <p className="text-xs text-indigo-600 text-center mt-2">
-                      Paste your review in the text box and submit!
+                    <p className={`text-xs text-center mt-2 ${
+                      selectedPlatform === "swiggy" ? "text-orange-600" :
+                      selectedPlatform === "zomato" ? "text-red-600" :
+                      "text-indigo-600"
+                    }`}>
+                      {selectedPlatform === "swiggy" || selectedPlatform === "zomato" 
+                        ? "Open the app and rate your experience!"
+                        : "Paste your review in the text box and submit!"}
                     </p>
                   )}
                 </div>
