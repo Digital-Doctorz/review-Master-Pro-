@@ -1227,6 +1227,154 @@ export default function Integrations() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Swiggy Setup Modal */}
+      <Dialog open={swiggyModal.open} onOpenChange={(open) => {
+        if (!open) {
+          setSwiggyModal({ open: false, locationId: null });
+          setSwiggyLink("");
+        }
+      }}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <SwiggyIcon className="w-6 h-6" />
+              Connect Swiggy
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            {/* Step by Step Guide */}
+            <div className="p-4 rounded-xl bg-orange-50 border border-orange-100">
+              <h4 className="font-semibold text-orange-900 mb-3 flex items-center gap-2">
+                <Info className="w-4 h-4" />
+                How to get your Swiggy link
+              </h4>
+              
+              <div className="space-y-4 text-sm">
+                {/* Option 1 */}
+                <div>
+                  <p className="font-medium text-orange-800 mb-2">Option 1: Use Swiggy Smart Link (Recommended)</p>
+                  <ol className="list-decimal list-inside space-y-1.5 text-orange-700">
+                    <li>Open the <strong>Swiggy Owner/Partner app</strong> and log in</li>
+                    <li>Go to <strong>Growth/Marketing</strong> section</li>
+                    <li>Look for <strong>&quot;Smart Link&quot;</strong> or <strong>&quot;Swiggy Smart Link&quot;</strong></li>
+                    <li>Select your brand/outlet and tap <strong>Continue</strong></li>
+                    <li>Copy the generated Smart Link</li>
+                    <li>Paste it below</li>
+                  </ol>
+                </div>
+
+                <div className="border-t border-orange-200 pt-3">
+                  <p className="font-medium text-orange-800 mb-2">Option 2: Copy your Swiggy listing URL</p>
+                  <ol className="list-decimal list-inside space-y-1.5 text-orange-700">
+                    <li>Open the <strong>Swiggy customer app</strong></li>
+                    <li>Search and open your restaurant page</li>
+                    <li>Tap <strong>Share</strong> &gt; <strong>Copy link</strong></li>
+                    <li>Paste the URL below</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+
+            {/* Input */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">
+                Paste your Swiggy link:
+              </label>
+              <Input
+                value={swiggyLink}
+                onChange={(e) => setSwiggyLink(e.target.value)}
+                placeholder="https://www.swiggy.com/restaurants/..."
+                className="h-12 rounded-xl"
+              />
+            </div>
+
+            {/* Connect Button */}
+            <Button
+              onClick={() => handleSwiggyConnect(swiggyModal.locationId)}
+              disabled={!swiggyLink.trim()}
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
+            >
+              <CheckCircle2 className="w-5 h-5 mr-2" />
+              Connect Swiggy
+            </Button>
+
+            <p className="text-xs text-center text-slate-500">
+              Customers scanning your QR will be able to order on Swiggy and rate you.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Zomato Setup Modal */}
+      <Dialog open={zomatoModal.open} onOpenChange={(open) => {
+        if (!open) {
+          setZomatoModal({ open: false, locationId: null });
+          setZomatoLink("");
+        }
+      }}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <ZomatoIcon className="w-6 h-6" />
+              Connect Zomato
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            {/* Step by Step Guide */}
+            <div className="p-4 rounded-xl bg-red-50 border border-red-100">
+              <h4 className="font-semibold text-red-900 mb-3 flex items-center gap-2">
+                <Info className="w-4 h-4" />
+                How to get your Zomato link
+              </h4>
+              
+              <ol className="list-decimal list-inside space-y-2 text-sm text-red-700">
+                <li>Open the <strong>Zomato app</strong> or visit <strong>zomato.com</strong></li>
+                <li>Search for your restaurant and open its page</li>
+                <li>Tap the <strong>Share</strong> button (or copy URL from browser)</li>
+                <li>Choose <strong>Copy link</strong></li>
+                <li>Paste the URL below</li>
+              </ol>
+
+              <div className="mt-3 p-3 bg-white rounded-lg border border-red-100">
+                <p className="text-xs text-red-600">
+                  <strong>Tip:</strong> When customers open your Zomato link in the Zomato app, 
+                  they can add ratings and reviews directly from their account.
+                </p>
+              </div>
+            </div>
+
+            {/* Input */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">
+                Paste your Zomato link:
+              </label>
+              <Input
+                value={zomatoLink}
+                onChange={(e) => setZomatoLink(e.target.value)}
+                placeholder="https://www.zomato.com/..."
+                className="h-12 rounded-xl"
+              />
+            </div>
+
+            {/* Connect Button */}
+            <Button
+              onClick={() => handleZomatoConnect(zomatoModal.locationId)}
+              disabled={!zomatoLink.trim()}
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white"
+            >
+              <CheckCircle2 className="w-5 h-5 mr-2" />
+              Connect Zomato
+            </Button>
+
+            <p className="text-xs text-center text-slate-500">
+              Customers scanning your QR will be able to discover and rate you on Zomato.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
