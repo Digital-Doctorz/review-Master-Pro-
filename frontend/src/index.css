@@ -249,6 +249,18 @@
 }
 
 /* Floating animation for icons */
+
+
+/* Hide Emergent badge */
+#emergent-badge,
+[id*="emergent"],
+a[href*="emergent.sh"][style*="position: fixed"],
+a[href*="emergent.sh"][style*="bottom"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
 @keyframes float-icon {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-5px); }
