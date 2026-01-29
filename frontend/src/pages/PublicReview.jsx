@@ -958,121 +958,137 @@ export default function PublicReview() {
                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg ${
                   selectedPlatform === "swiggy" ? "bg-gradient-to-br from-orange-400 to-orange-600" :
                   selectedPlatform === "zomato" ? "bg-gradient-to-br from-red-400 to-red-600" :
-                  "bg-gradient-to-br from-emerald-400 to-teal-500"
+                  selectedPlatform === "google" ? "bg-gradient-to-br from-blue-400 to-blue-600" :
+                  "bg-gradient-to-br from-indigo-400 to-purple-600"
                 }`}>
                   <Zap className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-xl font-bold text-slate-900">Post Your Review!</h2>
                 <p className="text-slate-500 text-sm mt-1">
-                  {selectedPlatform === "swiggy" ? "2 simple steps to share on Swiggy" :
-                   selectedPlatform === "zomato" ? "2 simple steps to share on Zomato" :
-                   selectedPlatform === "google" ? "2 simple steps to share on Google" : 
-                   "2 simple steps to share on Facebook"}
+                  One tap to copy &amp; open {selectedPlatform === "swiggy" ? "Swiggy" : 
+                   selectedPlatform === "zomato" ? "Zomato" :
+                   selectedPlatform === "google" ? "Google" : "Facebook"}
                 </p>
               </div>
               
               {/* Review Preview */}
-              <div className="bg-slate-50 rounded-xl p-4 mb-4 border border-slate-100">
+              <div className="bg-slate-50 rounded-xl p-4 mb-6 border border-slate-100">
                 <div className="flex items-center gap-1 mb-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star key={star} className={`w-4 h-4 ${star <= rating ? "fill-amber-400 text-amber-400" : "text-slate-200"}`} />
                   ))}
+                  <span className="ml-2 text-xs text-slate-500">Your review:</span>
                 </div>
-                <p className="text-slate-700 text-sm">{reviewText}</p>
+                <p className="text-slate-700 text-sm line-clamp-3">{reviewText}</p>
               </div>
               
-              {/* Step by Step Instructions */}
-              <div className="space-y-4 mb-6">
-                {/* Step 1: Copy */}
-                <div className={`rounded-xl p-4 border ${
-                  selectedPlatform === "swiggy" ? "bg-orange-50 border-orange-100" :
-                  selectedPlatform === "zomato" ? "bg-red-50 border-red-100" :
-                  "bg-blue-50 border-blue-100"
-                }`}>
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className={`w-8 h-8 rounded-full text-white text-sm font-bold flex items-center justify-center flex-shrink-0 ${
-                      selectedPlatform === "swiggy" ? "bg-orange-600" :
-                      selectedPlatform === "zomato" ? "bg-red-600" :
-                      "bg-blue-600"
-                    }`}>1</span>
-                    <h3 className={`font-semibold ${
-                      selectedPlatform === "swiggy" ? "text-orange-900" :
-                      selectedPlatform === "zomato" ? "text-red-900" :
-                      "text-blue-900"
-                    }`}>Copy your review</h3>
-                  </div>
-                  <Button
-                    onClick={copyReviewToClipboard}
-                    variant={copied ? "default" : "outline"}
-                    className={`w-full rounded-xl h-12 ${copied ? "bg-emerald-500 hover:bg-emerald-600 text-white" : ""}`}
-                    data-testid="copy-review-btn"
-                  >
-                    {copied ? (
-                      <>
-                        <CheckCircle2 className="w-5 h-5 mr-2" />
-                        Review Copied! Ready to paste
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-5 h-5 mr-2" />
-                        Tap to Copy Review
-                      </>
-                    )}
-                  </Button>
-                </div>
-                
-                {/* Step 2: Open & Paste */}
-                <div className={`rounded-xl p-4 border ${copied ? "bg-indigo-50 border-indigo-200" : "bg-slate-50 border-slate-200"}`}>
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className={`w-8 h-8 rounded-full ${copied ? "bg-indigo-600" : "bg-slate-400"} text-white text-sm font-bold flex items-center justify-center flex-shrink-0`}>2</span>
-                    <h3 className={`font-semibold ${copied ? "text-indigo-900" : "text-slate-500"}`}>
-                      Open {selectedPlatform === "google" ? "Google" : selectedPlatform === "facebook" ? "Facebook" : selectedPlatform === "swiggy" ? "Swiggy" : "Zomato"} & paste
-                    </h3>
-                  </div>
-                  <Button
-                    onClick={() => openPlatformReview(selectedPlatform)}
-                    disabled={!copied}
-                    className={`w-full rounded-xl h-12 ${copied 
-                      ? selectedPlatform === "swiggy" 
-                        ? "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg"
-                        : selectedPlatform === "zomato"
-                          ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg"
-                          : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg" 
-                      : "bg-slate-200 text-slate-400 cursor-not-allowed"}`}
-                    data-testid="open-platform-btn"
-                  >
-                    {selectedPlatform === "google" ? <GoogleIcon className="w-5 h-5 mr-2" /> : 
-                     selectedPlatform === "facebook" ? <FacebookIcon className="w-5 h-5 mr-2" /> :
-                     selectedPlatform === "swiggy" ? <SwiggyIcon className="w-5 h-5 mr-2" /> :
-                     <ZomatoIcon className="w-5 h-5 mr-2" />}
-                    {copied ? (
-                      <>
-                        Open {selectedPlatform === "google" ? "Google Reviews" : 
-                              selectedPlatform === "facebook" ? "Facebook" : 
-                              selectedPlatform === "swiggy" ? "Swiggy" : "Zomato"} →
-                      </>
-                    ) : (
-                      "Copy review first"
-                    )}
-                  </Button>
-                  {copied && (
-                    <p className={`text-xs text-center mt-2 ${
-                      selectedPlatform === "swiggy" ? "text-orange-600" :
-                      selectedPlatform === "zomato" ? "text-red-600" :
-                      "text-indigo-600"
-                    }`}>
-                      {selectedPlatform === "swiggy" || selectedPlatform === "zomato" 
-                        ? "Open the app and rate your experience!"
-                        : "Paste your review in the text box and submit!"}
-                    </p>
+              {/* One-Tap Deep Link Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Button
+                  onClick={() => handleDeepLinkAutomation(selectedPlatform)}
+                  className={`w-full rounded-xl h-14 text-base font-semibold shadow-lg transition-all ${
+                    selectedPlatform === "swiggy" 
+                      ? "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-orange-500/30"
+                      : selectedPlatform === "zomato"
+                        ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-red-500/30"
+                        : selectedPlatform === "google"
+                          ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-blue-500/30"
+                          : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-indigo-500/30"
+                  }`}
+                  data-testid="one-tap-review-btn"
+                >
+                  {selectedPlatform === "google" ? <GoogleIcon className="w-5 h-5 mr-2" /> : 
+                   selectedPlatform === "facebook" ? <FacebookIcon className="w-5 h-5 mr-2" /> :
+                   selectedPlatform === "swiggy" ? <SwiggyIcon className="w-5 h-5 mr-2" /> :
+                   <ZomatoIcon className="w-5 h-5 mr-2" />}
+                  {copied ? (
+                    <>
+                      <CheckCircle2 className="w-5 h-5 mr-2" />
+                      Review Copied! Opening App...
+                    </>
+                  ) : (
+                    <>
+                      Copy &amp; Open {selectedPlatform === "swiggy" ? "Swiggy" : 
+                                      selectedPlatform === "zomato" ? "Zomato" : 
+                                      selectedPlatform === "google" ? "Google" : "Facebook"}
+                      <ExternalLink className="w-4 h-4 ml-2" />
+                    </>
                   )}
+                </Button>
+              </motion.div>
+
+              {/* Manual copy fallback */}
+              {!copied && (
+                <div className="mt-4 text-center">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={copyReviewToClipboard}
+                    className="text-slate-500 hover:text-slate-700"
+                  >
+                    <Copy className="w-4 h-4 mr-1" />
+                    Just copy review
+                  </Button>
                 </div>
+              )}
+
+              {/* Instructions based on platform */}
+              <div className={`mt-6 rounded-xl p-4 ${
+                selectedPlatform === "swiggy" ? "bg-orange-50 border border-orange-100" :
+                selectedPlatform === "zomato" ? "bg-red-50 border border-red-100" :
+                selectedPlatform === "google" ? "bg-blue-50 border border-blue-100" :
+                "bg-indigo-50 border border-indigo-100"
+              }`}>
+                <h4 className={`text-sm font-semibold mb-2 ${
+                  selectedPlatform === "swiggy" ? "text-orange-800" :
+                  selectedPlatform === "zomato" ? "text-red-800" :
+                  selectedPlatform === "google" ? "text-blue-800" :
+                  "text-indigo-800"
+                }`}>
+                  {selectedPlatform === "swiggy" || selectedPlatform === "zomato" ? "📱 Mobile App Steps:" : "💻 Quick Steps:"}
+                </h4>
+                <ol className={`text-xs space-y-1 ${
+                  selectedPlatform === "swiggy" ? "text-orange-700" :
+                  selectedPlatform === "zomato" ? "text-red-700" :
+                  selectedPlatform === "google" ? "text-blue-700" :
+                  "text-indigo-700"
+                }`}>
+                  {selectedPlatform === "swiggy" ? (
+                    <>
+                      <li>1. Tap the button above - review is auto-copied!</li>
+                      <li>2. Swiggy app will open to the restaurant</li>
+                      <li>3. Go to &quot;Rate your order&quot; or past orders</li>
+                      <li>4. <strong>Long-press</strong> in the review box and paste</li>
+                      <li>5. Submit your review! 🎉</li>
+                    </>
+                  ) : selectedPlatform === "zomato" ? (
+                    <>
+                      <li>1. Tap the button above - review is auto-copied!</li>
+                      <li>2. Zomato app will open to the restaurant</li>
+                      <li>3. Tap on &quot;Write a Review&quot;</li>
+                      <li>4. <strong>Long-press</strong> in the review box and paste</li>
+                      <li>5. Add photos if you like &amp; submit! 🎉</li>
+                    </>
+                  ) : (
+                    <>
+                      <li>1. Tap the button above - review is auto-copied!</li>
+                      <li>2. The review page will open</li>
+                      <li>3. Click in the review text box</li>
+                      <li>4. Press <strong>Ctrl+V</strong> (or ⌘+V on Mac) to paste</li>
+                      <li>5. Submit your review! 🎉</li>
+                    </>
+                  )}
+                </ol>
               </div>
               
               <Button
                 variant="ghost"
                 onClick={() => setStep(5)}
-                className="w-full text-slate-500"
+                className="w-full text-slate-500 mt-4"
               >
                 I&apos;ve posted my review →
               </Button>
