@@ -5,7 +5,28 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## What's Been Implemented (January 2025)
 
-### Latest - v4.5 Landing Page UI Sections (January 28, 2025):
+### Latest - v4.6 Deep Link Automation for Swiggy/Zomato (January 28, 2025):
+
+**One-Tap Review Posting:**
+- [x] Automatic clipboard copy when tapping platform button
+- [x] Platform-specific deep links:
+  - Android: Intent URLs with package names for app detection
+  - iOS: Custom URL schemes (swiggy://, zomato://) with web fallback
+  - Desktop: Direct web links
+- [x] Platform-themed UI (orange for Swiggy, red for Zomato)
+- [x] Step-by-step instructions for mobile app users
+- [x] "Just copy review" fallback option
+
+**Demo Mode Updates:**
+- [x] Demo business now includes Swiggy and Zomato links
+- [x] All 4 platforms testable in demo mode
+
+**Technical Implementation:**
+- Mobile detection: `/iPhone|iPad|iPod|Android/i`
+- Android intent format: `intent://domain/path#Intent;scheme=https;package=com.app.name;end`
+- iOS fallback: 2.5s timeout before web redirect
+
+### v4.5 Landing Page UI Sections (January 28, 2025):
 
 **Enhanced "Critical Role of Online Reviews" Section:**
 - [x] Two-column layout: text left, stats right (sticky on desktop)
