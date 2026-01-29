@@ -257,13 +257,100 @@ export default function PublicReview() {
         document.body.removeChild(textArea);
       }
       setCopied(true);
-      toast.success("Review copied! Now paste it on Google/Facebook");
-      setTimeout(() => setCopied(false), 5000);
+      toast.success("Review copied! Now paste it on the app");
+      setTimeout(() => setCopied(false), 10000);
+      return true;
     } catch (err) {
       // Show the review text for manual copy
       toast.error("Please select and copy the review text manually");
+      return false;
     }
   }, [reviewText]);
+
+  // Deep link automation - copy review and open app in one tap
+  const handleDeepLinkAutomation = useCallback(async (platform) => {
+    // First, copy the review to clipboard
+    const copied = await copyReviewToClipboard();
+    if (!copied) return;
+
+    // Get the platform link
+    const link = getPlatformReviewLink(platform);
+    if (!link) {
+      toast.error(`No ${platform} link configured for this business`);
+      return;
+    }
+
+    // Detect if mobile
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    // Platform-specific handling
+    if (platform === "swiggy") {
+      // Swiggy deep link - try app first, then web
+      if (isMobile) {
+        // Try to open Swiggy app with the restaurant link
+        const swiggyAppLink = link.replace("https://www.swiggy.com", "swiggy://");
+        
+        if (isAndroid) {
+          // Android intent URL for better app detection
+          const intentUrl = `intent://www.swiggy.com${new URL(link).pathname}#Intent;scheme=https;package=in.swiggy.android;end`;
+          window.location.href = intentUrl;
+        } else if (isIOS) {
+          // iOS - try swiggy:// scheme first
+          window.location.href = swiggyAppLink;
+          // Fallback to web after delay if app not installed
+          setTimeout(() => {
+            window.open(link, "_blank");
+          }, 2500);
+        }
+      } else {
+        // Desktop - open web
+        window.open(link, "_blank");
+      }
+      toast.success("Opening Swiggy... Paste your review there! 📋", { duration: 5000 });
+    } 
+    else if (platform === "zomato") {
+      // Zomato deep link
+      if (isMobile) {
+        // Extract restaurant slug from URL for deep link
+        const zomatoAppLink = link.replace("https://www.zomato.com", "zomato://");
+        
+        if (isAndroid) {
+          // Android intent URL
+          const intentUrl = `intent://www.zomato.com${new URL(link).pathname}#Intent;scheme=https;package=com.application.zomato;end`;
+          window.location.href = intentUrl;
+        } else if (isIOS) {
+          // iOS - try zomato:// scheme
+          window.location.href = zomatoAppLink;
+          setTimeout(() => {
+            window.open(link, "_blank");
+          }, 2500);
+        }
+      } else {
+        // Desktop - open web
+        window.open(link, "_blank");
+      }
+      toast.success("Opening Zomato... Paste your review there! 📋", { duration: 5000 });
+    }
+    else if (platform === "google") {
+      // Google reviews - direct web link works best
+      window.open(link, "_blank");
+      toast.success("Opening Google Reviews... Paste your review! 📋", { duration: 5000 });
+    }
+    else if (platform === "facebook") {
+      // Facebook - add /reviews if needed
+      let finalLink = link;
+      if (!link.includes("/reviews")) {
+        finalLink = `${link.replace(/\/$/, "")}/reviews`;
+      }
+      window.open(finalLink, "_blank");
+      toast.success("Opening Facebook... Paste your review! 📋", { duration: 5000 });
+    }
+
+    // Mark as copied for UI feedback
+    setCopied(true);
+  }, [copyReviewToClipboard, getPlatformReviewLink]);
 
   const handleSubmitReview = async () => {
     if (!authorName.trim()) {
