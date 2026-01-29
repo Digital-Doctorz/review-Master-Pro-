@@ -270,11 +270,23 @@ export default function PublicReview() {
   // Deep link automation - copy review and open app in one tap
   const handleDeepLinkAutomation = useCallback(async (platform) => {
     // First, copy the review to clipboard
-    const copied = await copyReviewToClipboard();
-    if (!copied) return;
+    const copiedSuccess = await copyReviewToClipboard();
+    if (!copiedSuccess) return;
 
-    // Get the platform link
-    const link = getPlatformReviewLink(platform);
+    // Get the platform link using the local function
+    let link = null;
+    if (platform === "google") {
+      link = business?.google_review_link || business?.platforms?.google?.review_link;
+    } else if (platform === "facebook") {
+      link = business?.facebook_page_url 
+        || business?.platforms?.facebook?.review_link 
+        || business?.platforms?.facebook?.page_url;
+    } else if (platform === "swiggy") {
+      link = business?.swiggy_link || business?.platforms?.swiggy?.review_link;
+    } else if (platform === "zomato") {
+      link = business?.zomato_link || business?.platforms?.zomato?.review_link;
+    }
+
     if (!link) {
       toast.error(`No ${platform} link configured for this business`);
       return;
@@ -294,8 +306,12 @@ export default function PublicReview() {
         
         if (isAndroid) {
           // Android intent URL for better app detection
-          const intentUrl = `intent://www.swiggy.com${new URL(link).pathname}#Intent;scheme=https;package=in.swiggy.android;end`;
-          window.location.href = intentUrl;
+          try {
+            const intentUrl = `intent://www.swiggy.com${new URL(link).pathname}#Intent;scheme=https;package=in.swiggy.android;end`;
+            window.location.href = intentUrl;
+          } catch {
+            window.open(link, "_blank");
+          }
         } else if (isIOS) {
           // iOS - try swiggy:// scheme first
           window.location.href = swiggyAppLink;
@@ -318,8 +334,12 @@ export default function PublicReview() {
         
         if (isAndroid) {
           // Android intent URL
-          const intentUrl = `intent://www.zomato.com${new URL(link).pathname}#Intent;scheme=https;package=com.application.zomato;end`;
-          window.location.href = intentUrl;
+          try {
+            const intentUrl = `intent://www.zomato.com${new URL(link).pathname}#Intent;scheme=https;package=com.application.zomato;end`;
+            window.location.href = intentUrl;
+          } catch {
+            window.open(link, "_blank");
+          }
         } else if (isIOS) {
           // iOS - try zomato:// scheme
           window.location.href = zomatoAppLink;
@@ -350,7 +370,7 @@ export default function PublicReview() {
 
     // Mark as copied for UI feedback
     setCopied(true);
-  }, [copyReviewToClipboard, getPlatformReviewLink]);
+  }, [copyReviewToClipboard, business]);
 
   const handleSubmitReview = async () => {
     if (!authorName.trim()) {
