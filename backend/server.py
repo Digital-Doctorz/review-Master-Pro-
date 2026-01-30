@@ -2924,24 +2924,12 @@ async def get_payment_config():
     }
 
 @api_router.post("/payment/create-order")
-async def create_payment_order(request: Request, order_data: PaymentOrderRequest):
+async def create_payment_order(order_data: PaymentOrderRequest, user: User = Depends(get_current_user)):
     """Create a Razorpay order for one-time payment (yearly plans)"""
     if not razorpay_client:
         raise HTTPException(status_code=503, detail="Payment processing is not configured")
     
-    # Get user from session
-    session_id = request.cookies.get("session_id")
-    if not session_id:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    session = await db.sessions.find_one({"session_id": session_id})
-    if not session:
-        raise HTTPException(status_code=401, detail="Invalid session")
-    
-    user_id = session["user_id"]
-    user = await db.users.find_one({"user_id": user_id})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+    user_id = user.user_id
     
     plan_name = order_data.plan_name.lower()
     billing_cycle = order_data.billing_cycle.lower()
