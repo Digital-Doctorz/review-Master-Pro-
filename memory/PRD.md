@@ -5,7 +5,45 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## What's Been Implemented (January 2025)
 
-### Latest - v4.6 Deep Link Automation for Swiggy/Zomato (January 28, 2025):
+### Latest - v4.7 Razorpay Payment Integration (January 30, 2025):
+
+**Payment System Implemented:**
+- [x] Razorpay backend integration with order creation and verification
+- [x] Yearly plans: One-time payment for full 12 months upfront
+- [x] Monthly plans: Recurring subscription via Razorpay
+- [x] Pricing display:
+  - Yearly: Shows total amount (e.g., ₹4,788/year) with 20% savings
+  - Monthly: Shows per-month amount (e.g., ₹499/month)
+- [x] Payment verification and plan activation
+- [x] Webhook handler for subscription events
+- [x] Payment history tracking
+
+**Pricing Configuration:**
+- Starter: ₹499/month or ₹4,788/year (save ₹1,200)
+- Growth: ₹999/month or ₹9,588/year (save ₹2,400)
+- Enterprise: ₹2,499/month or ₹23,988/year (save ₹6,000)
+
+**Backend Endpoints Added:**
+- `/api/payment/config` - Get Razorpay key and pricing
+- `/api/payment/create-order` - Create one-time payment order
+- `/api/payment/verify` - Verify payment and activate plan
+- `/api/payment/create-subscription` - Create monthly subscription
+- `/api/payment/webhook` - Handle Razorpay webhooks
+- `/api/payment/history` - Get user's payment history
+
+**Frontend Updates:**
+- Updated pricing cards to show yearly totals
+- Added savings badges (Save ₹X,XXX)
+- "One-time payment • Full year access" label for yearly
+- "Billed monthly • Cancel anytime" label for monthly
+- Razorpay checkout integration
+
+**Note:** Payment is **MOCKED** until Razorpay API keys are configured in backend/.env:
+- RAZORPAY_KEY_ID
+- RAZORPAY_KEY_SECRET
+- RAZORPAY_WEBHOOK_SECRET (optional, for webhooks)
+
+### v4.6 Deep Link Automation for Swiggy/Zomato (January 28, 2025):
 
 **One-Tap Review Posting:**
 - [x] Automatic clipboard copy when tapping platform button
