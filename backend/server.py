@@ -2866,6 +2866,430 @@ async def test_platform_connection(
     return {"success": False, "error": "Unknown error"}
 
 
+# ============ RAZORPAY PAYMENT ENDPOINTS ============
+
+# Pricing configuration (in INR)
+PRICING_CONFIG = {
+    "starter": {
+        "monthly": 499,
+        "yearly_per_month": 399,  # 20% discount applied
+        "original_monthly": 999,
+        "original_yearly_per_month": 799,
+    },
+    "growth": {
+        "monthly": 999,
+        "yearly_per_month": 799,
+        "original_monthly": 1999,
+        "original_yearly_per_month": 1599,
+    },
+    "enterprise": {
+        "monthly": 2499,
+        "yearly_per_month": 1999,
+        "original_monthly": 4999,
+        "original_yearly_per_month": 3999,
+    }
+}
+
+class PaymentOrderRequest(BaseModel):
+    plan_name: str
+    billing_cycle: str  # "monthly" or "yearly"
+
+class PaymentVerifyRequest(BaseModel):
+    razorpay_order_id: str
+    razorpay_payment_id: str
+    razorpay_signature: str
+    plan_name: str
+    billing_cycle: str
+
+class SubscriptionRequest(BaseModel):
+    plan_name: str
+
+@api_router.get("/payment/config")
+async def get_payment_config():
+    """Get Razorpay publishable key and pricing info"""
+    return {
+        "razorpay_key_id": RAZORPAY_KEY_ID,
+        "payment_enabled": razorpay_client is not None,
+        "pricing": {
+            plan_name: {
+                "monthly_price": config["monthly"],
+                "yearly_price": config["yearly_per_month"] * 12,  # Full year price with 20% discount
+                "yearly_per_month": config["yearly_per_month"],
+                "original_monthly": config["original_monthly"],
+                "original_yearly": config["original_yearly_per_month"] * 12,
+                "yearly_savings": (config["monthly"] * 12) - (config["yearly_per_month"] * 12),
+            }
+            for plan_name, config in PRICING_CONFIG.items()
+        }
+    }
+
+@api_router.post("/payment/create-order")
+async def create_payment_order(request: Request, order_data: PaymentOrderRequest):
+    """Create a Razorpay order for one-time payment (yearly plans)"""
+    if not razorpay_client:
+        raise HTTPException(status_code=503, detail="Payment processing is not configured")
+    
+    # Get user from session
+    session_id = request.cookies.get("session_id")
+    if not session_id:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    session = await db.sessions.find_one({"session_id": session_id})
+    if not session:
+        raise HTTPException(status_code=401, detail="Invalid session")
+    
+    user_id = session["user_id"]
+    user = await db.users.find_one({"user_id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    plan_name = order_data.plan_name.lower()
+    billing_cycle = order_data.billing_cycle.lower()
+    
+    if plan_name not in PRICING_CONFIG:
+        raise HTTPException(status_code=400, detail="Invalid plan")
+    
+    pricing = PRICING_CONFIG[plan_name]
+    
+    # Calculate amount based on billing cycle
+    if billing_cycle == "yearly":
+        # One-time payment for full year (with 20% discount)
+        amount = pricing["yearly_per_month"] * 12 * 100  # Convert to paise
+        description = f"Review Master {plan_name.title()} Plan - 1 Year"
+    else:
+        # Monthly amount for subscription
+        amount = pricing["monthly"] * 100  # Convert to paise
+        description = f"Review Master {plan_name.title()} Plan - Monthly"
+    
+    try:
+        # Create Razorpay order
+        order_params = {
+            "amount": amount,
+            "currency": "INR",
+            "receipt": f"order_{user_id}_{uuid.uuid4().hex[:8]}",
+            "notes": {
+                "user_id": user_id,
+                "plan_name": plan_name,
+                "billing_cycle": billing_cycle,
+                "description": description
+            }
+        }
+        
+        razorpay_order = razorpay_client.order.create(data=order_params)
+        
+        # Store order in database
+        await db.payment_orders.insert_one({
+            "order_id": razorpay_order["id"],
+            "user_id": user_id,
+            "plan_name": plan_name,
+            "billing_cycle": billing_cycle,
+            "amount": amount,
+            "currency": "INR",
+            "status": "created",
+            "created_at": datetime.now(timezone.utc)
+        })
+        
+        return {
+            "order_id": razorpay_order["id"],
+            "amount": amount,
+            "currency": "INR",
+            "key_id": RAZORPAY_KEY_ID,
+            "description": description,
+            "prefill": {
+                "name": user.get("name", ""),
+                "email": user.get("email", ""),
+            }
+        }
+    except Exception as e:
+        logger.error(f"Failed to create Razorpay order: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to create payment order: {str(e)}")
+
+@api_router.post("/payment/verify")
+async def verify_payment(request: Request, verify_data: PaymentVerifyRequest):
+    """Verify Razorpay payment and activate the plan"""
+    if not razorpay_client:
+        raise HTTPException(status_code=503, detail="Payment processing is not configured")
+    
+    # Get user from session
+    session_id = request.cookies.get("session_id")
+    if not session_id:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    session = await db.sessions.find_one({"session_id": session_id})
+    if not session:
+        raise HTTPException(status_code=401, detail="Invalid session")
+    
+    user_id = session["user_id"]
+    
+    try:
+        # Verify signature
+        params_dict = {
+            'razorpay_order_id': verify_data.razorpay_order_id,
+            'razorpay_payment_id': verify_data.razorpay_payment_id,
+            'razorpay_signature': verify_data.razorpay_signature
+        }
+        
+        razorpay_client.utility.verify_payment_signature(params_dict)
+        
+        # Payment verified - update order status
+        await db.payment_orders.update_one(
+            {"order_id": verify_data.razorpay_order_id},
+            {
+                "$set": {
+                    "status": "paid",
+                    "payment_id": verify_data.razorpay_payment_id,
+                    "signature": verify_data.razorpay_signature,
+                    "paid_at": datetime.now(timezone.utc)
+                }
+            }
+        )
+        
+        # Activate the user's plan
+        plan_name = verify_data.plan_name.lower()
+        billing_cycle = verify_data.billing_cycle.lower()
+        
+        # Calculate expiration
+        if billing_cycle == "yearly":
+            expires_at = datetime.now(timezone.utc) + timedelta(days=365)
+        else:
+            expires_at = datetime.now(timezone.utc) + timedelta(days=30)
+        
+        # Update or create user plan
+        plan_data = {
+            "user_id": user_id,
+            "plan_id": plan_name,
+            "billing_cycle": billing_cycle,
+            "is_trial": False,
+            "is_active": True,
+            "activated_at": datetime.now(timezone.utc),
+            "expires_at": expires_at,
+            "payment_id": verify_data.razorpay_payment_id,
+            "updated_at": datetime.now(timezone.utc)
+        }
+        
+        await db.user_plans.update_one(
+            {"user_id": user_id},
+            {"$set": plan_data},
+            upsert=True
+        )
+        
+        # Update user record
+        await db.users.update_one(
+            {"user_id": user_id},
+            {"$set": {"plan": plan_name, "plan_expires_at": expires_at}}
+        )
+        
+        # Store payment history
+        await db.payment_history.insert_one({
+            "user_id": user_id,
+            "payment_id": verify_data.razorpay_payment_id,
+            "order_id": verify_data.razorpay_order_id,
+            "plan_name": plan_name,
+            "billing_cycle": billing_cycle,
+            "amount": PRICING_CONFIG[plan_name]["yearly_per_month"] * 12 if billing_cycle == "yearly" else PRICING_CONFIG[plan_name]["monthly"],
+            "currency": "INR",
+            "status": "success",
+            "paid_at": datetime.now(timezone.utc)
+        })
+        
+        return {
+            "success": True,
+            "message": f"Payment successful! {plan_name.title()} plan activated.",
+            "plan": plan_name,
+            "expires_at": expires_at.isoformat()
+        }
+        
+    except razorpay.errors.SignatureVerificationError:
+        logger.error(f"Payment signature verification failed for order {verify_data.razorpay_order_id}")
+        raise HTTPException(status_code=400, detail="Payment verification failed")
+    except Exception as e:
+        logger.error(f"Payment verification error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Payment verification error: {str(e)}")
+
+@api_router.post("/payment/create-subscription")
+async def create_subscription(request: Request, sub_data: SubscriptionRequest):
+    """Create a Razorpay subscription for monthly recurring payments"""
+    if not razorpay_client:
+        raise HTTPException(status_code=503, detail="Payment processing is not configured")
+    
+    # Get user from session
+    session_id = request.cookies.get("session_id")
+    if not session_id:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    session = await db.sessions.find_one({"session_id": session_id})
+    if not session:
+        raise HTTPException(status_code=401, detail="Invalid session")
+    
+    user_id = session["user_id"]
+    user = await db.users.find_one({"user_id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    plan_name = sub_data.plan_name.lower()
+    
+    if plan_name not in PRICING_CONFIG:
+        raise HTTPException(status_code=400, detail="Invalid plan")
+    
+    pricing = PRICING_CONFIG[plan_name]
+    amount = pricing["monthly"] * 100  # Convert to paise
+    
+    try:
+        # Check if plan already exists in Razorpay, if not create it
+        plan_id = f"plan_reviewmaster_{plan_name}_monthly"
+        
+        # Try to fetch existing plan or create new one
+        try:
+            razorpay_plan = razorpay_client.plan.fetch(plan_id)
+        except:
+            # Create new plan
+            razorpay_plan = razorpay_client.plan.create({
+                "period": "monthly",
+                "interval": 1,
+                "item": {
+                    "name": f"Review Master {plan_name.title()} Monthly",
+                    "amount": amount,
+                    "currency": "INR",
+                    "description": f"Monthly subscription for {plan_name.title()} plan"
+                }
+            })
+            plan_id = razorpay_plan["id"]
+        
+        # Create subscription
+        subscription = razorpay_client.subscription.create({
+            "plan_id": plan_id,
+            "customer_notify": 1,
+            "total_count": 12,  # 12 months
+            "notes": {
+                "user_id": user_id,
+                "plan_name": plan_name
+            }
+        })
+        
+        # Store subscription info
+        await db.subscriptions.insert_one({
+            "subscription_id": subscription["id"],
+            "user_id": user_id,
+            "plan_name": plan_name,
+            "status": "created",
+            "created_at": datetime.now(timezone.utc)
+        })
+        
+        return {
+            "subscription_id": subscription["id"],
+            "key_id": RAZORPAY_KEY_ID,
+            "amount": amount,
+            "currency": "INR",
+            "name": f"Review Master {plan_name.title()} Plan",
+            "description": "Monthly subscription",
+            "prefill": {
+                "name": user.get("name", ""),
+                "email": user.get("email", ""),
+            }
+        }
+    except Exception as e:
+        logger.error(f"Failed to create subscription: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to create subscription: {str(e)}")
+
+@api_router.post("/payment/webhook")
+async def razorpay_webhook(request: Request):
+    """Handle Razorpay webhooks for subscription events"""
+    webhook_secret = os.environ.get('RAZORPAY_WEBHOOK_SECRET')
+    
+    if not webhook_secret:
+        logger.warning("Razorpay webhook received but RAZORPAY_WEBHOOK_SECRET not configured")
+        return {"status": "ok"}
+    
+    try:
+        payload = await request.body()
+        signature = request.headers.get('X-Razorpay-Signature', '')
+        
+        # Verify webhook signature
+        expected_signature = hmac.new(
+            webhook_secret.encode(),
+            payload,
+            hashlib.sha256
+        ).hexdigest()
+        
+        if signature != expected_signature:
+            raise HTTPException(status_code=400, detail="Invalid webhook signature")
+        
+        import json
+        event = json.loads(payload)
+        event_type = event.get("event")
+        
+        if event_type == "subscription.activated":
+            subscription_id = event["payload"]["subscription"]["entity"]["id"]
+            await db.subscriptions.update_one(
+                {"subscription_id": subscription_id},
+                {"$set": {"status": "active", "activated_at": datetime.now(timezone.utc)}}
+            )
+            
+        elif event_type == "subscription.charged":
+            subscription_id = event["payload"]["subscription"]["entity"]["id"]
+            payment_id = event["payload"]["payment"]["entity"]["id"]
+            
+            # Get subscription details
+            sub = await db.subscriptions.find_one({"subscription_id": subscription_id})
+            if sub:
+                # Extend plan expiration by 30 days
+                user_plan = await db.user_plans.find_one({"user_id": sub["user_id"]})
+                if user_plan:
+                    new_expiry = datetime.now(timezone.utc) + timedelta(days=30)
+                    await db.user_plans.update_one(
+                        {"user_id": sub["user_id"]},
+                        {"$set": {"expires_at": new_expiry, "updated_at": datetime.now(timezone.utc)}}
+                    )
+                
+                # Record payment
+                await db.payment_history.insert_one({
+                    "user_id": sub["user_id"],
+                    "subscription_id": subscription_id,
+                    "payment_id": payment_id,
+                    "plan_name": sub["plan_name"],
+                    "billing_cycle": "monthly",
+                    "status": "success",
+                    "paid_at": datetime.now(timezone.utc)
+                })
+                
+        elif event_type == "subscription.cancelled":
+            subscription_id = event["payload"]["subscription"]["entity"]["id"]
+            await db.subscriptions.update_one(
+                {"subscription_id": subscription_id},
+                {"$set": {"status": "cancelled", "cancelled_at": datetime.now(timezone.utc)}}
+            )
+            
+        elif event_type == "payment.failed":
+            payment_id = event["payload"]["payment"]["entity"]["id"]
+            logger.warning(f"Payment failed: {payment_id}")
+        
+        return {"status": "ok"}
+        
+    except Exception as e:
+        logger.error(f"Webhook processing error: {str(e)}")
+        return {"status": "error", "message": str(e)}
+
+@api_router.get("/payment/history")
+async def get_payment_history(request: Request):
+    """Get user's payment history"""
+    session_id = request.cookies.get("session_id")
+    if not session_id:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    session = await db.sessions.find_one({"session_id": session_id})
+    if not session:
+        raise HTTPException(status_code=401, detail="Invalid session")
+    
+    user_id = session["user_id"]
+    
+    payments = await db.payment_history.find(
+        {"user_id": user_id},
+        {"_id": 0}
+    ).sort("paid_at", -1).to_list(50)
+    
+    return {"payments": payments}
+
+
 # ============ ROOT & HEALTH ============
 
 @api_router.get("/")
