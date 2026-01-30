@@ -2993,21 +2993,12 @@ async def create_payment_order(order_data: PaymentOrderRequest, user: User = Dep
         raise HTTPException(status_code=500, detail=f"Failed to create payment order: {str(e)}")
 
 @api_router.post("/payment/verify")
-async def verify_payment(request: Request, verify_data: PaymentVerifyRequest):
+async def verify_payment(verify_data: PaymentVerifyRequest, user: User = Depends(get_current_user)):
     """Verify Razorpay payment and activate the plan"""
     if not razorpay_client:
         raise HTTPException(status_code=503, detail="Payment processing is not configured")
     
-    # Get user from session
-    session_id = request.cookies.get("session_id")
-    if not session_id:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    session = await db.sessions.find_one({"session_id": session_id})
-    if not session:
-        raise HTTPException(status_code=401, detail="Invalid session")
-    
-    user_id = session["user_id"]
+    user_id = user.user_id
     
     try:
         # Verify signature
