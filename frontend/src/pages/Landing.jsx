@@ -113,6 +113,7 @@ export default function Landing() {
 
   // Handle Razorpay payment
   const handlePayment = useCallback(async (planKey) => {
+    // Always check authentication first
     if (!isLoggedIn) {
       // Store plan and redirect to auth
       sessionStorage.setItem('selected_plan', planKey);
@@ -168,6 +169,8 @@ export default function Landing() {
               navigate('/dashboard');
             } catch (error) {
               toast.error("Payment verification failed. Please contact support.");
+            } finally {
+              setUpgrading(false);
             }
           },
           prefill: orderResponse.data.prefill,
@@ -200,6 +203,7 @@ export default function Landing() {
             // For subscriptions, payment is handled via webhooks
             toast.success("Subscription activated successfully!");
             navigate('/dashboard');
+            setUpgrading(false);
           },
           prefill: subResponse.data.prefill,
           theme: {
@@ -217,8 +221,21 @@ export default function Landing() {
       }
     } catch (error) {
       console.error("Payment error:", error);
-      toast.error(error.response?.data?.detail || "Failed to initiate payment");
       setUpgrading(false);
+      
+      // Handle 401 - session expired, redirect to login
+      if (error.response?.status === 401) {
+        toast.error("Session expired. Please login again.");
+        sessionStorage.setItem('selected_plan', planKey);
+        sessionStorage.setItem('selected_billing_cycle', billingCycle);
+        // Clear stale login state
+        setIsLoggedIn(false);
+        setCurrentUser(null);
+        setTimeout(() => handleGoogleLogin(), 1500);
+        return;
+      }
+      
+      toast.error(error.response?.data?.detail || "Failed to initiate payment. Please try again.");
     }
   }, [isLoggedIn, billingCycle, paymentConfig, navigate]);
 
