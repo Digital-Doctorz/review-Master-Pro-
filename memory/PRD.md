@@ -5,12 +5,35 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## What's Been Implemented (January 2025)
 
-### Latest - v4.7 Razorpay Payment Integration (January 30, 2025):
+### Latest - v4.8 User Experience Improvements (January 30, 2025):
+
+**Auto-Login for Returning Paid Users:**
+- [x] Logged-in users with active paid plans auto-redirect to /dashboard from landing page
+- [x] Toast notification welcomes returning users
+- [x] Navigation shows "Go to Dashboard" button for paid users
+
+**Payment Flow Improvements:**
+- [x] Unauthenticated users clicking payment → redirected to Google login
+- [x] Selected plan stored in sessionStorage before login redirect
+- [x] After login, auto-triggers payment for the selected plan
+- [x] Handles 401 errors gracefully with re-authentication prompt
+
+**Enhanced Demo Mode:**
+- [x] Demo dashboard shows all 4 platforms (Google, Facebook, Swiggy, Zomato)
+- [x] Demo review page (/review/demo_qr_001) shows all platform options
+- [x] "Try QR Scan Demo" button added to landing page hero
+- [x] Demo data includes Swiggy/Zomato sample reviews
+
+**Testing Status (Iteration 26):**
+- [x] All 24 frontend tests passed (100% success rate)
+- [x] Landing page, demo mode, pricing toggle, payment flow all verified
+
+### v4.7 Razorpay Payment Integration (January 30, 2025):
 
 **Payment System Implemented:**
 - [x] Razorpay backend integration with order creation and verification
 - [x] Yearly plans: One-time payment for full 12 months upfront
-- [x] Monthly plans: Recurring subscription via Razorpay
+- [x] Monthly plans: One-time payment for 1 month (MOCKED - not true recurring)
 - [x] Pricing display:
   - Yearly: Shows total amount (e.g., ₹4,788/year) with 20% savings
   - Monthly: Shows per-month amount (e.g., ₹499/month)
