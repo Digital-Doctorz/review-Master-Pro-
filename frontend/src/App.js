@@ -122,14 +122,23 @@ const DEMO_USER = {
 const DEMO_BUSINESS = {
   business_id: "demo_business_001",
   name: "Demo Coffee Shop",
-  category: "Restaurant",
-  address: "123 Demo Street, Sample City",
+  category: "Restaurant & Cafe",
+  address: "123 Demo Street, Sample City, India",
   qr_code_id: "demo_qr_001",
   google_place_id: "demo_google_place",
   google_business_name: "Demo Coffee Shop",
   google_review_link: "https://g.page/demo-coffee-shop",
-  facebook_page_id: null,
-  is_demo: true
+  facebook_page_id: "demo_facebook_page",
+  facebook_page_url: "https://facebook.com/demo-coffee-shop",
+  swiggy_link: "https://www.swiggy.com/restaurants/demo-coffee-shop-sample-city-123456",
+  zomato_link: "https://www.zomato.com/sample-city/demo-coffee-shop",
+  is_demo: true,
+  platforms: {
+    google: { connected: true, review_link: "https://g.page/demo-coffee-shop" },
+    facebook: { connected: true, page_url: "https://facebook.com/demo-coffee-shop" },
+    swiggy: { connected: true, review_link: "https://www.swiggy.com/restaurants/demo-coffee-shop-sample-city-123456" },
+    zomato: { connected: true, review_link: "https://www.zomato.com/sample-city/demo-coffee-shop" }
+  }
 };
 
 function AuthCallback() {
