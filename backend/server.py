@@ -1172,7 +1172,7 @@ async def get_trial_status(user: User = Depends(get_current_user)):
             end_date = datetime.fromisoformat(trial_ends_at.replace("Z", "+00:00"))
             now = datetime.now(timezone.utc)
             days_remaining = max(0, (end_date - now).days)
-        except:
+        except Exception:
             days_remaining = 0
     
     return {
