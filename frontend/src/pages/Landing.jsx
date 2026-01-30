@@ -479,7 +479,7 @@ export default function Landing() {
                 AI-powered responses, and smart routing for negative feedback.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 mb-8">
+              <div className="flex flex-col sm:flex-row gap-4 mb-4">
                 <Button
                   onClick={handleDemoMode}
                   size="lg"
@@ -498,6 +498,19 @@ export default function Landing() {
                 >
                   Start Free Trial
                   <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </div>
+              
+              {/* Try QR Scan Demo Button */}
+              <div className="mb-8">
+                <Button
+                  onClick={handleScanDemoQR}
+                  variant="ghost"
+                  className="text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50"
+                  data-testid="try-qr-scan-btn"
+                >
+                  <QrCode className="w-4 h-4 mr-2" />
+                  Try QR Scan Demo (Customer Experience)
                 </Button>
               </div>
 
