@@ -63,6 +63,7 @@ export default function Landing() {
   const [currentUser, setCurrentUser] = useState(null);
   const [upgrading, setUpgrading] = useState(false);
   const [paymentConfig, setPaymentConfig] = useState(null);
+  const [userPlan, setUserPlan] = useState(null);
   const navigate = useNavigate();
 
   // Load Razorpay script
@@ -76,20 +77,43 @@ export default function Landing() {
     };
   }, []);
 
-  // Check if user is already logged in
+  // Check if user is already logged in and has an active plan
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const response = await axios.get(`${API}/auth/me`, { withCredentials: true });
         setIsLoggedIn(true);
         setCurrentUser(response.data);
+        
+        // Check if user has an active paid plan
+        try {
+          const planResponse = await axios.get(`${API}/user/plan`, { withCredentials: true });
+          setUserPlan(planResponse.data);
+          
+          // If user has an active paid plan and is not on a specific section, redirect to dashboard
+          const hash = window.location.hash;
+          const isPricingSection = hash === '#pricing';
+          
+          if (planResponse.data?.plan_id && 
+              planResponse.data?.plan_id !== 'free' && 
+              planResponse.data?.is_active &&
+              !isPricingSection) {
+            // Auto-redirect to dashboard for paid users
+            toast.success(`Welcome back! Redirecting to your dashboard...`);
+            setTimeout(() => navigate('/dashboard'), 1500);
+          }
+        } catch {
+          // No plan info - user is on free tier
+          setUserPlan(null);
+        }
       } catch {
         setIsLoggedIn(false);
         setCurrentUser(null);
+        setUserPlan(null);
       }
     };
     checkAuth();
-  }, []);
+  }, [navigate]);
 
   // Fetch payment configuration
   useEffect(() => {
