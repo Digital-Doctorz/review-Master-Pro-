@@ -1419,8 +1419,11 @@ export default function Landing() {
                 </div>
                 <span className="font-bold text-xl">Review Master</span>
               </div>
-              <p className="text-slate-400 text-sm leading-relaxed mb-6">
+              <p className="text-slate-400 text-sm leading-relaxed mb-4">
                 The #1 review management platform for local businesses. Turn customer feedback into growth.
+              </p>
+              <p className="text-slate-500 text-xs mb-6">
+                A product of <strong className="text-slate-400">Trade Me India</strong>
               </p>
               <div className="flex gap-4">
                 <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition-colors">
@@ -1447,9 +1450,11 @@ export default function Landing() {
             <div>
               <h3 className="font-semibold text-lg mb-4">Legal</h3>
               <ul className="space-y-3">
-                <li><a href="/terms" className="text-slate-400 hover:text-white transition-colors text-sm flex items-center gap-2"><FileText className="w-4 h-4" />Terms of Service</a></li>
-                <li><a href="/privacy" className="text-slate-400 hover:text-white transition-colors text-sm flex items-center gap-2"><Lock className="w-4 h-4" />Privacy Policy</a></li>
-                <li><a href="/refund" className="text-slate-400 hover:text-white transition-colors text-sm flex items-center gap-2"><Shield className="w-4 h-4" />Refund Policy</a></li>
+                <li><a href="/terms" className="text-slate-400 hover:text-white transition-colors text-sm">Terms and Conditions</a></li>
+                <li><a href="/privacy" className="text-slate-400 hover:text-white transition-colors text-sm">Privacy Policy</a></li>
+                <li><a href="/refund" className="text-slate-400 hover:text-white transition-colors text-sm">Cancellation and Refund</a></li>
+                <li><a href="/shipping" className="text-slate-400 hover:text-white transition-colors text-sm">Shipping and Delivery</a></li>
+                <li><a href="/contact" className="text-slate-400 hover:text-white transition-colors text-sm">Contact Us</a></li>
               </ul>
             </div>
 
@@ -1497,7 +1502,7 @@ export default function Landing() {
           {/* Bottom Bar */}
           <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-slate-500">
-              © 2025 Review Master. All rights reserved. Made with ❤️ in India.
+              © 2025 Trade Me India. All rights reserved. Review Master is a product of Trade Me India.
             </p>
             <div className="flex items-center gap-6">
               <span className="text-xs text-slate-600">Trusted by 2,500+ businesses</span>
