@@ -128,18 +128,22 @@ export default function Integrations() {
     max_locations: 3,
     current_locations: 1,
     can_add_location: true,
-    features: ["google_integration", "facebook_integration", "qr_codes", "ai_responses", "email_notifications", "whatsapp_alerts", "advanced_analytics", "private_feedback", "custom_branding"]
+    features: ["google_integration", "facebook_integration", "swiggy_integration", "zomato_integration", "qr_codes", "ai_responses", "email_notifications", "whatsapp_alerts", "advanced_analytics", "private_feedback", "custom_branding"]
   };
   
   const DEMO_LOCATIONS = [
     {
       location_id: "demo_loc_1",
       name: "Demo Coffee Shop - Main",
-      address: "123 Demo Street, Sample City",
+      address: "123 Demo Street, Sample City, India",
       google_review_link: "https://g.page/demo-coffee-shop/review",
       google_business_name: "Demo Coffee Shop",
       facebook_review_link: "https://facebook.com/democoffeeshop/reviews",
       facebook_page_name: "Demo Coffee FB",
+      swiggy_link: "https://www.swiggy.com/restaurants/demo-coffee-shop-sample-city-123456",
+      swiggy_restaurant_name: "Demo Coffee Shop - Swiggy",
+      zomato_link: "https://www.zomato.com/sample-city/demo-coffee-shop",
+      zomato_restaurant_name: "Demo Coffee Shop - Zomato",
       qr_code_id: "demo_qr_001",
       is_primary: true
     }
