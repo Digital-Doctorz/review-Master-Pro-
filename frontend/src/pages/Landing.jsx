@@ -63,6 +63,8 @@ export default function Landing() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [upgrading, setUpgrading] = useState(false);
+  const [paymentConfig, setPaymentConfig] = useState(null);
+  const [Razorpay] = useRazorpay();
   const navigate = useNavigate();
 
   // Check if user is already logged in
@@ -80,6 +82,19 @@ export default function Landing() {
     checkAuth();
   }, []);
 
+  // Fetch payment configuration
+  useEffect(() => {
+    const fetchPaymentConfig = async () => {
+      try {
+        const response = await axios.get(`${API}/payment/config`);
+        setPaymentConfig(response.data);
+      } catch (error) {
+        console.log("Payment config not available:", error);
+      }
+    };
+    fetchPaymentConfig();
+  }, []);
+
   const handleGoogleLogin = () => {
     const redirectUrl = window.location.origin + "/dashboard";
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(
@@ -87,28 +102,119 @@ export default function Landing() {
     )}`;
   };
 
-  const handlePlanSelection = async (planKey) => {
-    if (isLoggedIn) {
-      // User is logged in - upgrade their plan directly
-      setUpgrading(true);
-      try {
-        await axios.post(
-          `${API}/user/plan/upgrade`,
-          { plan_name: planKey, billing_cycle: billingCycle },
+  // Handle Razorpay payment
+  const handlePayment = useCallback(async (planKey) => {
+    if (!isLoggedIn) {
+      // Store plan and redirect to auth
+      sessionStorage.setItem('selected_plan', planKey);
+      sessionStorage.setItem('selected_billing_cycle', billingCycle);
+      handleGoogleLogin();
+      return;
+    }
+
+    if (!paymentConfig?.payment_enabled) {
+      toast.error("Payment processing is not configured. Please contact support.");
+      return;
+    }
+
+    setUpgrading(true);
+
+    try {
+      if (billingCycle === "yearly") {
+        // One-time payment for yearly
+        const orderResponse = await axios.post(
+          `${API}/payment/create-order`,
+          { plan_name: planKey, billing_cycle: "yearly" },
           { withCredentials: true }
         );
-        toast.success(`Successfully upgraded to ${planKey.charAt(0).toUpperCase() + planKey.slice(1)} plan!`);
-        navigate('/dashboard');
-      } catch (error) {
-        toast.error(error.response?.data?.detail || 'Failed to upgrade plan');
-      } finally {
-        setUpgrading(false);
+
+        const options = {
+          key: orderResponse.data.key_id,
+          amount: orderResponse.data.amount,
+          currency: orderResponse.data.currency,
+          name: "Review Master",
+          description: orderResponse.data.description,
+          order_id: orderResponse.data.order_id,
+          handler: async (response) => {
+            try {
+              // Verify payment
+              const verifyResponse = await axios.post(
+                `${API}/payment/verify`,
+                {
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  plan_name: planKey,
+                  billing_cycle: "yearly"
+                },
+                { withCredentials: true }
+              );
+              
+              toast.success(verifyResponse.data.message);
+              navigate('/dashboard');
+            } catch (error) {
+              toast.error("Payment verification failed. Please contact support.");
+            }
+          },
+          prefill: orderResponse.data.prefill,
+          theme: {
+            color: "#6366f1"
+          },
+          modal: {
+            ondismiss: () => {
+              setUpgrading(false);
+            }
+          }
+        };
+
+        const razorpayInstance = new Razorpay(options);
+        razorpayInstance.open();
+      } else {
+        // Monthly subscription
+        const subResponse = await axios.post(
+          `${API}/payment/create-subscription`,
+          { plan_name: planKey },
+          { withCredentials: true }
+        );
+
+        const options = {
+          key: subResponse.data.key_id,
+          subscription_id: subResponse.data.subscription_id,
+          name: "Review Master",
+          description: subResponse.data.description,
+          handler: async (response) => {
+            try {
+              // For subscriptions, payment is handled via webhooks
+              toast.success("Subscription activated successfully!");
+              navigate('/dashboard');
+            } catch (error) {
+              toast.error("Subscription activation failed. Please contact support.");
+            }
+          },
+          prefill: subResponse.data.prefill,
+          theme: {
+            color: "#6366f1"
+          },
+          modal: {
+            ondismiss: () => {
+              setUpgrading(false);
+            }
+          }
+        };
+
+        const razorpayInstance = new Razorpay(options);
+        razorpayInstance.open();
       }
-    } else {
-      // User not logged in - store plan and redirect to auth
-      sessionStorage.setItem('selected_plan', planKey);
-      handleGoogleLogin();
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast.error(error.response?.data?.detail || "Failed to initiate payment");
+      setUpgrading(false);
     }
+  }, [isLoggedIn, billingCycle, paymentConfig, Razorpay, navigate]);
+
+  const handlePlanSelection = async (planKey) => {
+    // Use payment flow
+    handlePayment(planKey);
   };
 
   const handleDemoMode = () => {
