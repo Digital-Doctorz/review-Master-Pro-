@@ -104,6 +104,27 @@ export default function Landing() {
     fetchPaymentConfig();
   }, []);
 
+  // Check if user came back from login with a selected plan
+  useEffect(() => {
+    const selectedPlan = sessionStorage.getItem('selected_plan');
+    const selectedBillingCycle = sessionStorage.getItem('selected_billing_cycle');
+    
+    if (isLoggedIn && selectedPlan && selectedBillingCycle && paymentConfig?.payment_enabled) {
+      // Clear storage first to prevent loops
+      sessionStorage.removeItem('selected_plan');
+      sessionStorage.removeItem('selected_billing_cycle');
+      
+      // Set the billing cycle and trigger payment
+      setBillingCycle(selectedBillingCycle);
+      
+      // Small delay to ensure state is updated
+      setTimeout(() => {
+        toast.info(`Continuing with ${selectedPlan} plan payment...`);
+        handlePayment(selectedPlan);
+      }, 1000);
+    }
+  }, [isLoggedIn, paymentConfig, handlePayment]);
+
   const handleGoogleLogin = () => {
     const redirectUrl = window.location.origin + "/dashboard";
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(
