@@ -332,6 +332,11 @@ function AppRouter() {
       {/* Public routes */}
       <Route path="/" element={<Landing />} />
       <Route path="/review/:qrCodeId" element={<PublicReview />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/refund" element={<Refund />} />
+      <Route path="/shipping" element={<Shipping />} />
+      <Route path="/contact" element={<Contact />} />
 
       {/* Protected routes */}
       <Route
