@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import { AnimatedLogo } from "../components/AnimatedLogo";
+import useRazorpay from "react-razorpay";
 import {
   Star,
   Zap,
@@ -34,6 +35,7 @@ import {
   MapPin,
   FileText,
   Lock,
+  CreditCard,
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
