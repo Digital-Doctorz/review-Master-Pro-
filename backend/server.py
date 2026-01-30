@@ -2984,8 +2984,8 @@ async def create_payment_order(order_data: PaymentOrderRequest, user: User = Dep
             "key_id": RAZORPAY_KEY_ID,
             "description": description,
             "prefill": {
-                "name": user.get("name", ""),
-                "email": user.get("email", ""),
+                "name": user.name or "",
+                "email": user.email or "",
             }
         }
     except Exception as e:
