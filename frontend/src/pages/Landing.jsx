@@ -63,8 +63,18 @@ export default function Landing() {
   const [currentUser, setCurrentUser] = useState(null);
   const [upgrading, setUpgrading] = useState(false);
   const [paymentConfig, setPaymentConfig] = useState(null);
-  const [Razorpay] = useRazorpay();
   const navigate = useNavigate();
+
+  // Load Razorpay script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   // Check if user is already logged in
   useEffect(() => {
@@ -112,7 +122,12 @@ export default function Landing() {
     }
 
     if (!paymentConfig?.payment_enabled) {
-      toast.error("Payment processing is not configured. Please contact support.");
+      toast.error("Payment processing is not configured yet. Please contact support.");
+      return;
+    }
+
+    if (!window.Razorpay) {
+      toast.error("Payment system is loading. Please try again.");
       return;
     }
 
@@ -166,7 +181,7 @@ export default function Landing() {
           }
         };
 
-        const razorpayInstance = new Razorpay(options);
+        const razorpayInstance = new window.Razorpay(options);
         razorpayInstance.open();
       } else {
         // Monthly subscription
@@ -181,14 +196,10 @@ export default function Landing() {
           subscription_id: subResponse.data.subscription_id,
           name: "Review Master",
           description: subResponse.data.description,
-          handler: async (response) => {
-            try {
-              // For subscriptions, payment is handled via webhooks
-              toast.success("Subscription activated successfully!");
-              navigate('/dashboard');
-            } catch (error) {
-              toast.error("Subscription activation failed. Please contact support.");
-            }
+          handler: async () => {
+            // For subscriptions, payment is handled via webhooks
+            toast.success("Subscription activated successfully!");
+            navigate('/dashboard');
           },
           prefill: subResponse.data.prefill,
           theme: {
@@ -201,7 +212,7 @@ export default function Landing() {
           }
         };
 
-        const razorpayInstance = new Razorpay(options);
+        const razorpayInstance = new window.Razorpay(options);
         razorpayInstance.open();
       }
     } catch (error) {
@@ -209,7 +220,7 @@ export default function Landing() {
       toast.error(error.response?.data?.detail || "Failed to initiate payment");
       setUpgrading(false);
     }
-  }, [isLoggedIn, billingCycle, paymentConfig, Razorpay, navigate]);
+  }, [isLoggedIn, billingCycle, paymentConfig, navigate]);
 
   const handlePlanSelection = async (planKey) => {
     // Use payment flow
