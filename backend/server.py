@@ -3150,8 +3150,8 @@ async def create_subscription(sub_data: SubscriptionRequest, user: User = Depend
             "name": f"Review Master {plan_name.title()} Plan",
             "description": "Monthly subscription",
             "prefill": {
-                "name": user.get("name", ""),
-                "email": user.get("email", ""),
+                "name": user.name or "",
+                "email": user.email or "",
             }
         }
     except Exception as e:
