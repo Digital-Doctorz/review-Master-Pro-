@@ -3086,24 +3086,12 @@ async def verify_payment(verify_data: PaymentVerifyRequest, user: User = Depends
         raise HTTPException(status_code=500, detail=f"Payment verification error: {str(e)}")
 
 @api_router.post("/payment/create-subscription")
-async def create_subscription(request: Request, sub_data: SubscriptionRequest):
+async def create_subscription(sub_data: SubscriptionRequest, user: User = Depends(get_current_user)):
     """Create a Razorpay subscription for monthly recurring payments"""
     if not razorpay_client:
         raise HTTPException(status_code=503, detail="Payment processing is not configured")
     
-    # Get user from session
-    session_id = request.cookies.get("session_id")
-    if not session_id:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    session = await db.sessions.find_one({"session_id": session_id})
-    if not session:
-        raise HTTPException(status_code=401, detail="Invalid session")
-    
-    user_id = session["user_id"]
-    user = await db.users.find_one({"user_id": user_id})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+    user_id = user.user_id
     
     plan_name = sub_data.plan_name.lower()
     
