@@ -12,6 +12,9 @@ import uuid
 from datetime import datetime, timezone, timedelta
 import httpx
 import random
+import razorpay
+import hmac
+import hashlib
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -34,6 +37,16 @@ db = client[os.environ.get('DB_NAME', 'review_master')]
 
 # Emergent LLM Key
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
+
+# Razorpay Configuration
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID')
+RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET')
+razorpay_client = None
+if RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET:
+    razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+    logging.info("Razorpay client initialized successfully")
+else:
+    logging.warning("RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET not set - payment processing disabled")
 
 # Import review services
 from services import google_reviews, facebook_reviews
