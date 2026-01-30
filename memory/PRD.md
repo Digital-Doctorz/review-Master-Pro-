@@ -7,6 +7,12 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ### Latest - v4.8 User Experience Improvements (January 30, 2025):
 
+**CRITICAL BUG FIX - Session Authentication:**
+- [x] Fixed payment endpoints using wrong cookie name (session_id → session_token)
+- [x] Payment endpoints now use get_current_user dependency for proper authentication
+- [x] Fixed User model access (user.name instead of user.get("name"))
+- [x] All 18 backend tests pass, 100% success rate
+
 **Auto-Login for Returning Paid Users:**
 - [x] Logged-in users with active paid plans auto-redirect to /dashboard from landing page
 - [x] Toast notification welcomes returning users
@@ -24,9 +30,11 @@ Build Review Master - a zero-friction review management platform focused on Goog
 - [x] "Try QR Scan Demo" button added to landing page hero
 - [x] Demo data includes Swiggy/Zomato sample reviews
 
-**Testing Status (Iteration 26):**
-- [x] All 24 frontend tests passed (100% success rate)
-- [x] Landing page, demo mode, pricing toggle, payment flow all verified
+**Testing Status (Iteration 27):**
+- [x] All 18 backend tests passed (100% success rate)
+- [x] All frontend flows verified working
+- [x] Login redirect to Google OAuth verified
+- [x] Demo mode verified with all 4 integrations
 
 ### v4.7 Razorpay Payment Integration (January 30, 2025):
 
