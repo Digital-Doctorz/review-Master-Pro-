@@ -5,7 +5,6 @@ import axios from "axios";
 import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import { AnimatedLogo } from "../components/AnimatedLogo";
-import useRazorpay from "react-razorpay";
 import {
   Star,
   Zap,
