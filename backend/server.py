@@ -103,7 +103,7 @@ async def cleanup_expired_trials():
             # Delete all user data
             await db.businesses.delete_many({"user_id": user_id})
             await db.locations.delete_many({"user_id": user_id})
-            await db.reviews.delete_many({"business_id": {"$regex": f"^biz_.*"}})  # Will be filtered properly below
+            await db.reviews.delete_many({"business_id": {"$regex": "^biz_.*"}})  # Will be filtered properly below
             await db.user_plans.delete_many({"user_id": user_id})
             await db.notification_settings.delete_many({"user_id": user_id})
             await db.sessions.delete_many({"user_id": user_id})
