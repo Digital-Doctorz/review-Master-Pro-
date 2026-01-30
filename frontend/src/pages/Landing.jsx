@@ -421,14 +421,27 @@ export default function Landing() {
             <a href="#pricing" className="text-slate-600 hover:text-slate-900 transition-colors">Pricing</a>
             <a href="#testimonials" className="text-slate-600 hover:text-slate-900 transition-colors">Reviews</a>
           </div>
-          <Button
-            onClick={handleDemoMode}
-            className="rounded-full px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow"
-            data-testid="nav-demo-btn"
-          >
-            <Play className="w-4 h-4 mr-2" />
-            See A Demo
-          </Button>
+          <div className="flex items-center gap-3">
+            {isLoggedIn && userPlan?.is_active ? (
+              <Button
+                onClick={() => navigate('/dashboard')}
+                className="rounded-full px-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg"
+                data-testid="nav-dashboard-btn"
+              >
+                <ArrowRight className="w-4 h-4 mr-2" />
+                Go to Dashboard
+              </Button>
+            ) : (
+              <Button
+                onClick={handleDemoMode}
+                className="rounded-full px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow"
+                data-testid="nav-demo-btn"
+              >
+                <Play className="w-4 h-4 mr-2" />
+                See A Demo
+              </Button>
+            )}
+          </div>
         </div>
       </nav>
 
