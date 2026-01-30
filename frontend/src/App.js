@@ -151,25 +151,34 @@ function AuthCallback() {
         setStatus("loading");
         
         // Get selected plan from session storage
-        const selectedPlan = sessionStorage.getItem('selected_plan') || 'starter';
+        const selectedPlan = sessionStorage.getItem('selected_plan');
+        const selectedBillingCycle = sessionStorage.getItem('selected_billing_cycle');
         
         await axios.post(
           `${API}/auth/session`,
           { 
             session_id: sessionId,
-            selected_plan: selectedPlan
+            selected_plan: selectedPlan || 'starter'
           },
           { withCredentials: true }
         );
         
-        // Clear the selected plan from session storage
-        sessionStorage.removeItem('selected_plan');
-        
         setStatus("success");
+        
         // Small delay to show success state
         setTimeout(() => {
-          window.history.replaceState(null, "", "/dashboard");
-          window.location.reload();
+          // If user had selected a plan before login, redirect to pricing to complete payment
+          if (selectedPlan && selectedBillingCycle) {
+            // Keep the plan info for the pricing page to pick up
+            window.history.replaceState(null, "", "/#pricing");
+            window.location.reload();
+          } else {
+            // Clear the selected plan from session storage
+            sessionStorage.removeItem('selected_plan');
+            sessionStorage.removeItem('selected_billing_cycle');
+            window.history.replaceState(null, "", "/dashboard");
+            window.location.reload();
+          }
         }, 500);
       } catch (error) {
         console.warn("Auth callback error - redirecting to home");
