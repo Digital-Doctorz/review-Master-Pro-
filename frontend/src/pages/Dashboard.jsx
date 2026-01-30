@@ -94,6 +94,28 @@ const DEMO_REVIEWS = [
   },
   {
     review_id: "demo_3",
+    author_name: "Amit P.",
+    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=amit",
+    platform: "swiggy",
+    rating: 5,
+    text: "Ordered via Swiggy and the food arrived hot and fresh! The packaging was excellent. Biryani was authentic and delicious.",
+    sentiment: "positive",
+    response: "Thank you Amit! We're glad the delivery experience was great. Order again soon! 🍛",
+    created_at: new Date(Date.now() - 43200000).toISOString()
+  },
+  {
+    review_id: "demo_4",
+    author_name: "Priya S.",
+    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=priya",
+    platform: "zomato",
+    rating: 5,
+    text: "Found this gem on Zomato! The ambiance is cozy and the pasta is simply outstanding. Must try their tiramisu!",
+    sentiment: "positive",
+    response: "Thanks Priya! So happy you discovered us. The tiramisu is indeed our specialty! 🍰",
+    created_at: new Date(Date.now() - 129600000).toISOString()
+  },
+  {
+    review_id: "demo_5",
     author_name: "Anita K.",
     author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=anita",
     platform: "google",
@@ -104,21 +126,46 @@ const DEMO_REVIEWS = [
     created_at: new Date(Date.now() - 172800000).toISOString()
   },
   {
-    review_id: "demo_4",
-    author_name: "Priya S.",
-    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=priya",
-    platform: "google",
-    rating: 5,
-    text: "The desserts here are to die for! Tried the chocolate lava cake and it was heavenly.",
+    review_id: "demo_6",
+    author_name: "Vikram R.",
+    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=vikram",
+    platform: "swiggy",
+    rating: 4,
+    text: "Quick delivery and tasty food. The portion size could be slightly bigger for the price, but overall satisfied.",
     sentiment: "positive",
     response: null,
+    created_at: new Date(Date.now() - 216000000).toISOString()
+  },
+  {
+    review_id: "demo_7",
+    author_name: "Neha G.",
+    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=neha",
+    platform: "zomato",
+    rating: 5,
+    text: "Sunday brunch here is a must! Great variety, fresh ingredients, and the staff is so friendly. 5 stars!",
+    sentiment: "positive",
+    response: "Thank you Neha! We love seeing you at our Sunday brunches. See you next weekend! 🥂",
     created_at: new Date(Date.now() - 259200000).toISOString()
+  },
+  {
+    review_id: "demo_8",
+    author_name: "Private Feedback",
+    author_avatar: null,
+    platform: "direct",
+    rating: 2,
+    text: "The service was slow today and my order was wrong. I hope this improves.",
+    sentiment: "negative",
+    response: "We sincerely apologize for the inconvenience. We've addressed this with our team and would love to make it up to you.",
+    is_private: true,
+    created_at: new Date(Date.now() - 345600000).toISOString()
   }
 ];
 
 const DEMO_PLATFORMS = [
   { platform: "google", status: "connected", last_sync: new Date().toISOString() },
-  { platform: "facebook", status: "connected", last_sync: new Date().toISOString() }
+  { platform: "facebook", status: "connected", last_sync: new Date().toISOString() },
+  { platform: "swiggy", status: "connected", last_sync: new Date().toISOString() },
+  { platform: "zomato", status: "connected", last_sync: new Date().toISOString() }
 ];
 
 export default function Dashboard() {
