@@ -95,6 +95,11 @@ import PublicReview from "./pages/PublicReview";
 import WebhookSettings from "./pages/WebhookSettings";
 import NotificationSettings from "./pages/NotificationSettings";
 import ApiSettings from "./pages/ApiSettings";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import Refund from "./pages/Refund";
+import Shipping from "./pages/Shipping";
+import Contact from "./pages/Contact";
 
 // Components
 import Layout from "./components/Layout";
