@@ -258,8 +258,15 @@ export default function Landing() {
   const handleDemoMode = () => {
     // Set demo mode in session storage
     sessionStorage.setItem('demo_mode', 'true');
+    toast.success("Welcome to Demo Mode! Explore all features including Swiggy & Zomato integrations.", { duration: 4000 });
     // Navigate to dashboard
     navigate('/dashboard');
+  };
+
+  const handleScanDemoQR = () => {
+    // Open the demo QR code review page in a new tab
+    window.open('/review/demo_qr_001', '_blank');
+    toast.info("Opening demo review page - try the complete review flow!", { duration: 3000 });
   };
 
   const features = [
