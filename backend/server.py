@@ -3141,7 +3141,7 @@ async def create_subscription(request: Request, sub_data: SubscriptionRequest):
         # Try to fetch existing plan or create new one
         try:
             razorpay_plan = razorpay_client.plan.fetch(plan_id)
-        except:
+        except Exception:
             # Create new plan
             razorpay_plan = razorpay_client.plan.create({
                 "period": "monthly",
