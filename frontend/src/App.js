@@ -252,7 +252,7 @@ function AuthCallback() {
         {status === "loading" && (
           <>
             <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-            <h2 className="text-xl font-semibold text-slate-800 mb-2">Signing you in...</h2>
+            <h2 className="text-xl font-semibold text-slate-800 mb-2">{statusMessage}</h2>
             <p className="text-slate-500">Please wait while we verify your account</p>
           </>
         )}
@@ -263,7 +263,7 @@ function AuthCallback() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="text-xl font-semibold text-slate-800 mb-2">Welcome back!</h2>
+            <h2 className="text-xl font-semibold text-slate-800 mb-2">{statusMessage}</h2>
             <p className="text-slate-500">Redirecting to your dashboard...</p>
           </>
         )}
