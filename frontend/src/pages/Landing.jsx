@@ -331,11 +331,6 @@ export default function Landing() {
     }
   }, [isLoggedIn, paymentConfig, handlePayment]);
 
-  const handlePlanSelection = async (planKey) => {
-    // Use payment flow
-    handlePayment(planKey);
-  };
-
   const handleDemoMode = () => {
     // Set demo mode in session storage
     sessionStorage.setItem('demo_mode', 'true');
