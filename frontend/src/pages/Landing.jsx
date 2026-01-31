@@ -81,10 +81,17 @@ export default function Landing() {
 
   // Load Razorpay subscription buttons when billing cycle is monthly
   useEffect(() => {
+    // Razorpay subscription button IDs
+    const buttonIds = {
+      starter: "pl_SA9GKQvxfKaKl1",
+      growth: "pl_SAA7mNmnVmBhD7",
+      enterprise: "pl_SAA8s9qROChnZS"
+    };
+
     if (billingCycle === 'monthly' && !razorpayLoaded) {
       // Load buttons for each plan
       const loadSubscriptionButtons = () => {
-        Object.entries(subscriptionButtonIds).forEach(([planKey, buttonId]) => {
+        Object.entries(buttonIds).forEach(([planKey, buttonId]) => {
           const container = document.getElementById(`razorpay-btn-container-${planKey}`);
           if (container && !container.hasChildNodes()) {
             const script = document.createElement('script');
