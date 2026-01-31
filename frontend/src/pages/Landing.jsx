@@ -159,56 +159,106 @@ export default function Landing() {
     setUpgrading(true);
 
     try {
-      // Create order for both monthly and yearly (one-time payment)
-      const orderResponse = await axios.post(
-        `${API}/payment/create-order`,
-        { plan_name: planKey, billing_cycle: billingCycle },
-        { withCredentials: true }
-      );
+      if (billingCycle === "monthly") {
+        // Create subscription for monthly recurring payments
+        const subResponse = await axios.post(
+          `${API}/payment/create-subscription`,
+          { plan_name: planKey },
+          { withCredentials: true }
+        );
 
-      const options = {
-        key: orderResponse.data.key_id,
-        amount: orderResponse.data.amount,
-        currency: orderResponse.data.currency,
-        name: "Review Master",
-        description: orderResponse.data.description,
-        order_id: orderResponse.data.order_id,
-        handler: async (response) => {
-          try {
-            // Verify payment
-            const verifyResponse = await axios.post(
-              `${API}/payment/verify`,
-              {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                plan_name: planKey,
-                billing_cycle: billingCycle
-              },
-              { withCredentials: true }
-            );
-            
-            toast.success(verifyResponse.data.message);
-            navigate('/dashboard');
-          } catch (error) {
-            toast.error("Payment verification failed. Please contact support.");
-          } finally {
-            setUpgrading(false);
+        const options = {
+          key: subResponse.data.key_id,
+          subscription_id: subResponse.data.subscription_id,
+          name: "Review Master",
+          description: subResponse.data.description,
+          handler: async (response) => {
+            try {
+              // Verify subscription payment
+              const verifyResponse = await axios.post(
+                `${API}/payment/verify-subscription`,
+                {
+                  razorpay_subscription_id: response.razorpay_subscription_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  plan_name: planKey
+                },
+                { withCredentials: true }
+              );
+              
+              toast.success(verifyResponse.data.message);
+              navigate('/dashboard');
+            } catch (error) {
+              toast.error("Subscription verification failed. Please contact support.");
+            } finally {
+              setUpgrading(false);
+            }
+          },
+          prefill: subResponse.data.prefill,
+          theme: {
+            color: "#6366f1"
+          },
+          modal: {
+            ondismiss: () => {
+              setUpgrading(false);
+            }
           }
-        },
-        prefill: orderResponse.data.prefill,
-        theme: {
-          color: "#6366f1"
-        },
-        modal: {
-          ondismiss: () => {
-            setUpgrading(false);
-          }
-        }
-      };
+        };
 
-      const razorpayInstance = new window.Razorpay(options);
-      razorpayInstance.open();
+        const razorpayInstance = new window.Razorpay(options);
+        razorpayInstance.open();
+      } else {
+        // Create one-time order for yearly payment
+        const orderResponse = await axios.post(
+          `${API}/payment/create-order`,
+          { plan_name: planKey, billing_cycle: billingCycle },
+          { withCredentials: true }
+        );
+
+        const options = {
+          key: orderResponse.data.key_id,
+          amount: orderResponse.data.amount,
+          currency: orderResponse.data.currency,
+          name: "Review Master",
+          description: orderResponse.data.description,
+          order_id: orderResponse.data.order_id,
+          handler: async (response) => {
+            try {
+              // Verify payment
+              const verifyResponse = await axios.post(
+                `${API}/payment/verify`,
+                {
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  plan_name: planKey,
+                  billing_cycle: billingCycle
+                },
+                { withCredentials: true }
+              );
+              
+              toast.success(verifyResponse.data.message);
+              navigate('/dashboard');
+            } catch (error) {
+              toast.error("Payment verification failed. Please contact support.");
+            } finally {
+              setUpgrading(false);
+            }
+          },
+          prefill: orderResponse.data.prefill,
+          theme: {
+            color: "#6366f1"
+          },
+          modal: {
+            ondismiss: () => {
+              setUpgrading(false);
+            }
+          }
+        };
+
+        const razorpayInstance = new window.Razorpay(options);
+        razorpayInstance.open();
+      }
     } catch (error) {
       console.error("Payment error:", error);
       setUpgrading(false);
