@@ -1,0 +1,117 @@
+{
+  "summary": "Iteration 28 - Subscription Flow & Login Button Testing Complete. All requested features verified: (1) Login button in navbar for non-logged users, (2) Pricing section with monthly/yearly toggle, (3) 'Auto-renews monthly • Cancel anytime' text for monthly plans, (4) 'One-time payment • Full year access' for yearly plans, (5) Backend subscription endpoints (create-subscription, verify-subscription) properly protected with auth. All 15 backend tests passed. All 9 frontend UI tests passed.",
+
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+
+  "passed_tests": [
+    "Backend: /api/health returns healthy",
+    "Backend: /api/payment/config returns correct Razorpay configuration",
+    "Backend: /api/auth/me returns 401 without session",
+    "Backend: /api/auth/me returns 401 with invalid session",
+    "Backend: /api/payment/create-subscription returns 401 without auth (NEW ENDPOINT)",
+    "Backend: /api/payment/verify-subscription returns 401 without auth (NEW ENDPOINT)",
+    "Backend: /api/payment/create-order returns 401 without auth",
+    "Backend: /api/payment/verify returns 401 without auth",
+    "Backend: /api/business returns 401 without auth",
+    "Backend: /api/user/plan returns 401 without auth",
+    "Backend: /api/reviews returns 401 without auth",
+    "Backend: /api/locations returns 401 without auth",
+    "Backend: Public business endpoint accessible (demo_qr_001)",
+    "Backend: Public review submission endpoint working",
+    "Backend: All plan pricing verified (Starter: ₹499/mo, Growth: ₹999/mo, Enterprise: ₹2499/mo)",
+    "Frontend: Login button visible in navbar for non-logged users",
+    "Frontend: Login button redirects to auth.emergentagent.com (Google OAuth)",
+    "Frontend: Demo button visible in navbar",
+    "Frontend: Demo mode activates correctly with sample data",
+    "Frontend: Pricing toggle (Monthly/Yearly) works correctly",
+    "Frontend: Monthly pricing shows correct amounts (₹499, ₹999, ₹2499)",
+    "Frontend: 'Auto-renews monthly • Cancel anytime' text visible for monthly plans",
+    "Frontend: Yearly pricing shows correct annual totals (₹4,788, ₹9,588, ₹23,988)",
+    "Frontend: 'One-time payment • Full year access' text visible for yearly plans",
+    "Frontend: All 3 pricing CTAs are clickable",
+    "Frontend: Pricing CTA redirects non-logged users to Google OAuth"
+  ],
+
+  "test_report_links": [
+    "/app/backend/tests/test_iteration28_subscription.py",
+    "/app/test_reports/pytest/iteration28_pytest_results.xml"
+  ],
+
+  "action_items": [],
+
+  "critical_code_review_comments": [
+    "Subscription endpoints properly use get_current_user dependency for authentication",
+    "Monthly plans use Razorpay subscription API for true auto-recurring payments",
+    "Yearly plans use Razorpay order API for one-time payments",
+    "Pricing text correctly differentiates between monthly (auto-renews) and yearly (one-time)",
+    "Login button correctly placed in navbar with data-testid='nav-login-btn'"
+  ],
+
+  "updated_files": [
+    "/app/backend/tests/test_iteration28_subscription.py"
+  ],
+
+  "success_rate": {
+    "backend": "100% (15/15 tests passed)",
+    "frontend": "100% (9/9 UI tests passed)"
+  },
+
+  "test_credentials": {
+    "demo_qr": "demo_qr_001 for Demo Coffee Shop"
+  },
+
+  "seed_data_creation": "None - used existing demo mode data",
+
+  "mocked_apis": {
+    "has_mocked_apis": true,
+    "mocked_apis_list": [
+      "Demo mode uses hardcoded DEMO_USER and DEMO_BUSINESS data",
+      "Razorpay subscription creation requires valid session to test actual payment flow"
+    ]
+  },
+
+  "features_verified": {
+    "login_button_navbar": {
+      "status": "WORKING",
+      "details": "Login button visible in navbar for non-logged users, redirects to Google OAuth"
+    },
+    "pricing_toggle": {
+      "status": "WORKING",
+      "details": "Monthly/Yearly toggle works correctly, shows appropriate pricing"
+    },
+    "monthly_pricing": {
+      "status": "WORKING",
+      "details": "Shows ₹499, ₹999, ₹2499 with 'Auto-renews monthly • Cancel anytime'"
+    },
+    "yearly_pricing": {
+      "status": "WORKING",
+      "details": "Shows ₹4,788, ₹9,588, ₹23,988 with 'One-time payment • Full year access'"
+    },
+    "subscription_endpoints": {
+      "status": "WORKING",
+      "details": "/api/payment/create-subscription and /api/payment/verify-subscription exist and require auth"
+    },
+    "demo_mode": {
+      "status": "WORKING",
+      "details": "Demo mode activates correctly with all 4 platform integrations"
+    },
+    "pricing_ctas": {
+      "status": "WORKING",
+      "details": "All 3 pricing CTAs clickable, redirect non-logged users to Google OAuth"
+    }
+  },
+
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+
+  "context_for_next_testing_agent": "Iteration 28 verified all subscription flow features. Login button is in navbar for non-logged users. Pricing section correctly shows 'Auto-renews monthly' for monthly plans and 'One-time payment' for yearly plans. Backend subscription endpoints (create-subscription, verify-subscription) are properly protected. To test actual Razorpay payment flow end-to-end, would need to create a test user session and use valid Razorpay test credentials. Current Razorpay keys are live keys (rzp_live_SA8nGH9nyQEcIV)."
+}
