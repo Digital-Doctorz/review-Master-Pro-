@@ -1593,27 +1593,27 @@ export default function Landing() {
               </h2>
               <p className="text-lg text-slate-600 mb-8 max-w-xl mx-auto">
                 Join 2,500+ businesses already using Review Master. 
-                <span className="font-bold text-indigo-600"> Start your free trial now!</span>
+                <span className="font-bold text-indigo-600"> Choose a plan and get started!</span>
               </p>
               
               <Button
-                onClick={handleGoogleLogin}
+                onClick={() => document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })}
                 size="lg"
                 className="rounded-full px-10 py-7 text-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow hover:-translate-y-0.5 active:translate-y-0"
                 data-testid="cta-start-btn"
               >
-                Start Free Trial - ₹0 Today
+                View Plans & Pricing
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
               
               <div className="flex items-center justify-center gap-6 mt-6">
                 <div className="flex items-center gap-2 text-sm text-slate-600">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  7-day free trial
+                  Instant setup
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-600">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  No credit card
+                  30-day money back
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-600">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500" />
