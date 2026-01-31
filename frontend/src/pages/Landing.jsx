@@ -128,6 +128,17 @@ export default function Landing() {
     fetchPaymentConfig();
   }, []);
 
+  // Load Razorpay subscription button script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.razorpay.com/static/widget/subscription-button.js';
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   const handleGoogleLogin = () => {
     const redirectUrl = window.location.origin + "/dashboard";
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(
@@ -135,7 +146,27 @@ export default function Landing() {
     )}`;
   };
 
-  // Handle Razorpay payment
+  // Handle plan selection - redirect to login first if not logged in, then process payment
+  const handlePlanSelection = useCallback((planKey, subscriptionButtonId) => {
+    if (!isLoggedIn) {
+      // Store plan info and redirect to login
+      sessionStorage.setItem('selected_plan', planKey);
+      sessionStorage.setItem('subscription_button_id', subscriptionButtonId);
+      handleGoogleLogin();
+      return;
+    }
+    
+    // For logged in users, trigger the Razorpay subscription button
+    const buttonContainer = document.getElementById(`razorpay-btn-${planKey}`);
+    if (buttonContainer) {
+      const form = buttonContainer.querySelector('form');
+      if (form) {
+        form.querySelector('button')?.click();
+      }
+    }
+  }, [isLoggedIn]);
+
+  // Handle Razorpay payment (for yearly one-time payments)
   const handlePayment = useCallback(async (planKey) => {
     // Always check authentication first
     if (!isLoggedIn) {
