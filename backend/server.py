@@ -3370,11 +3370,13 @@ async def razorpay_webhook(request: Request):
         ).hexdigest()
         
         if signature != expected_signature:
+            logger.warning("Invalid webhook signature received")
             raise HTTPException(status_code=400, detail="Invalid webhook signature")
         
         import json
         event = json.loads(payload)
         event_type = event.get("event")
+        logger.info(f"Processing Razorpay webhook: {event_type}")
         
         if event_type == "subscription.activated":
             subscription_id = event["payload"]["subscription"]["entity"]["id"]
@@ -3382,33 +3384,66 @@ async def razorpay_webhook(request: Request):
                 {"subscription_id": subscription_id},
                 {"$set": {"status": "active", "activated_at": datetime.now(timezone.utc)}}
             )
+            logger.info(f"Subscription activated: {subscription_id}")
             
         elif event_type == "subscription.charged":
             subscription_id = event["payload"]["subscription"]["entity"]["id"]
             payment_id = event["payload"]["payment"]["entity"]["id"]
+            amount = event["payload"]["payment"]["entity"].get("amount", 0) / 100  # Convert paise to rupees
             
             # Get subscription details
             sub = await db.subscriptions.find_one({"subscription_id": subscription_id})
             if sub:
+                user_id = sub["user_id"]
+                
                 # Extend plan expiration by 30 days
-                user_plan = await db.user_plans.find_one({"user_id": sub["user_id"]})
+                user_plan = await db.user_plans.find_one({"user_id": user_id})
                 if user_plan:
                     new_expiry = datetime.now(timezone.utc) + timedelta(days=30)
                     await db.user_plans.update_one(
-                        {"user_id": sub["user_id"]},
-                        {"$set": {"expires_at": new_expiry, "updated_at": datetime.now(timezone.utc)}}
+                        {"user_id": user_id},
+                        {"$set": {
+                            "expires_at": new_expiry, 
+                            "updated_at": datetime.now(timezone.utc),
+                            "is_active": True
+                        }}
+                    )
+                    
+                    # Update user document
+                    await db.users.update_one(
+                        {"user_id": user_id},
+                        {"$set": {"plan_expires_at": new_expiry}}
                     )
                 
-                # Record payment
+                # Record payment with amount
                 await db.payment_history.insert_one({
-                    "user_id": sub["user_id"],
+                    "user_id": user_id,
                     "subscription_id": subscription_id,
                     "payment_id": payment_id,
-                    "plan_name": sub["plan_name"],
+                    "plan_name": sub.get("plan_name", "unknown"),
                     "billing_cycle": "monthly",
+                    "amount": amount,
+                    "currency": "INR",
                     "status": "success",
+                    "type": "renewal",
                     "paid_at": datetime.now(timezone.utc)
                 })
+                
+                # Send renewal confirmation email
+                try:
+                    user = await db.users.find_one({"user_id": user_id})
+                    if user and user.get("email"):
+                        from services.email_service import send_payment_confirmation
+                        await send_payment_confirmation(
+                            user["email"],
+                            user.get("name", "Customer"),
+                            sub.get("plan_name", "subscription"),
+                            amount
+                        )
+                except Exception as e:
+                    logger.warning(f"Failed to send renewal email: {e}")
+                
+                logger.info(f"Subscription renewed: {subscription_id}, payment: {payment_id}")
                 
         elif event_type == "subscription.cancelled":
             subscription_id = event["payload"]["subscription"]["entity"]["id"]
@@ -3416,6 +3451,7 @@ async def razorpay_webhook(request: Request):
                 {"subscription_id": subscription_id},
                 {"$set": {"status": "cancelled", "cancelled_at": datetime.now(timezone.utc)}}
             )
+            logger.info(f"Subscription cancelled: {subscription_id}")
             
         elif event_type == "payment.failed":
             payment_id = event["payload"]["payment"]["entity"]["id"]
