@@ -350,6 +350,14 @@ function AppRouter() {
 
       {/* Protected routes */}
       <Route
+        path="/subscription"
+        element={
+          <ProtectedRoute>
+            <Subscription />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/onboarding"
         element={
           <ProtectedRoute>
