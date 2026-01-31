@@ -243,70 +243,6 @@ export default function Landing() {
     }
   }, [isLoggedIn, billingCycle, paymentConfig, navigate]);
 
-        const options = {
-          key: orderResponse.data.key_id,
-          amount: orderResponse.data.amount,
-          currency: orderResponse.data.currency,
-          name: "Review Master",
-          description: orderResponse.data.description,
-          order_id: orderResponse.data.order_id,
-          handler: async (response) => {
-            try {
-              // Verify payment
-              const verifyResponse = await axios.post(
-                `${API}/payment/verify`,
-                {
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature,
-                  plan_name: planKey,
-                  billing_cycle: billingCycle
-                },
-                { withCredentials: true }
-              );
-              
-              toast.success(verifyResponse.data.message);
-              navigate('/dashboard');
-            } catch (error) {
-              toast.error("Payment verification failed. Please contact support.");
-            } finally {
-              setUpgrading(false);
-            }
-          },
-          prefill: orderResponse.data.prefill,
-          theme: {
-            color: "#6366f1"
-          },
-          modal: {
-            ondismiss: () => {
-              setUpgrading(false);
-            }
-          }
-        };
-
-        const razorpayInstance = new window.Razorpay(options);
-        razorpayInstance.open();
-      }
-    } catch (error) {
-      console.error("Payment error:", error);
-      setUpgrading(false);
-      
-      // Handle 401 - session expired, redirect to login
-      if (error.response?.status === 401) {
-        toast.error("Session expired. Please login again.");
-        sessionStorage.setItem('selected_plan', planKey);
-        sessionStorage.setItem('selected_billing_cycle', billingCycle);
-        // Clear stale login state
-        setIsLoggedIn(false);
-        setCurrentUser(null);
-        setTimeout(() => handleGoogleLogin(), 1500);
-        return;
-      }
-      
-      toast.error(error.response?.data?.detail || "Failed to initiate payment. Please try again.");
-    }
-  }, [isLoggedIn, billingCycle, paymentConfig, navigate]);
-
   // Check if user came back from login with a selected plan - trigger payment automatically
   useEffect(() => {
     const selectedPlan = sessionStorage.getItem('selected_plan');
@@ -318,7 +254,7 @@ export default function Landing() {
       sessionStorage.removeItem('selected_billing_cycle');
       
       // Set the billing cycle and trigger payment
-      setBillingCycle(selectedBillingCycle);
+      handleBillingChange(selectedBillingCycle);
       
       // Small delay to ensure state is updated
       setTimeout(() => {
