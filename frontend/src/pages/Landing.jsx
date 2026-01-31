@@ -58,13 +58,26 @@ const FacebookIcon = ({ className = "w-6 h-6" }) => (
 );
 
 export default function Landing() {
-  const [billingCycle, setBillingCycle] = useState("monthly");
+  const navigate = useNavigate();
+  
+  // Get billing cycle from URL params or default to monthly
+  const searchParams = new URLSearchParams(window.location.search);
+  const initialBilling = searchParams.get('billing') === 'yearly' ? 'yearly' : 'monthly';
+  
+  const [billingCycle, setBillingCycle] = useState(initialBilling);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [upgrading, setUpgrading] = useState(false);
   const [paymentConfig, setPaymentConfig] = useState(null);
   const [userPlan, setUserPlan] = useState(null);
-  const navigate = useNavigate();
+
+  // Update URL when billing cycle changes
+  const handleBillingChange = (cycle) => {
+    setBillingCycle(cycle);
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.set('billing', cycle);
+    window.history.replaceState({}, '', newUrl.toString());
+  };
 
   // Load Razorpay script
   useEffect(() => {
