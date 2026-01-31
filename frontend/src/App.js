@@ -145,6 +145,7 @@ const DEMO_BUSINESS = {
 function AuthCallback() {
   const hasProcessed = useRef(false);
   const [status, setStatus] = useState("loading"); // loading, success, error
+  const [statusMessage, setStatusMessage] = useState("Signing you in...");
 
   useEffect(() => {
     if (hasProcessed.current) return;
@@ -164,21 +165,59 @@ function AuthCallback() {
 
       try {
         setStatus("loading");
+        setStatusMessage("Signing you in...");
         
-        // Get selected plan from session storage
+        // Get selected plan from session storage (old flow - select plan then pay)
         const selectedPlan = sessionStorage.getItem('selected_plan');
         const selectedBillingCycle = sessionStorage.getItem('selected_billing_cycle');
         
+        // Check for pending payment (new flow - pay first then login)
+        const pendingPaymentStr = sessionStorage.getItem('pending_payment');
+        const pendingPayment = pendingPaymentStr ? JSON.parse(pendingPaymentStr) : null;
+        
+        // Create session
         await axios.post(
           `${API}/auth/session`,
           { 
             session_id: sessionId,
-            selected_plan: selectedPlan || 'starter'
+            selected_plan: pendingPayment?.plan_name || selectedPlan || 'starter'
           },
           { withCredentials: true }
         );
         
+        // If there's a pending payment, activate the plan
+        if (pendingPayment) {
+          setStatusMessage("Activating your plan...");
+          try {
+            const activateResponse = await axios.post(
+              `${API}/payment/activate-pending`,
+              { guest_id: pendingPayment.guest_id },
+              { withCredentials: true }
+            );
+            
+            if (activateResponse.data.success) {
+              // Clear the pending payment
+              sessionStorage.removeItem('pending_payment');
+              
+              setStatus("success");
+              setStatusMessage(`${pendingPayment.plan_name.charAt(0).toUpperCase() + pendingPayment.plan_name.slice(1)} plan activated!`);
+              
+              // Small delay to show success message, then redirect to dashboard
+              setTimeout(() => {
+                window.history.replaceState(null, "", "/dashboard");
+                window.location.reload();
+              }, 1500);
+              return;
+            }
+          } catch (activateError) {
+            console.warn("Failed to activate pending payment:", activateError);
+            // Continue anyway - user can still access dashboard, support can help
+            sessionStorage.removeItem('pending_payment');
+          }
+        }
+        
         setStatus("success");
+        setStatusMessage("Welcome back!");
         
         // Small delay to show success state
         setTimeout(() => {
