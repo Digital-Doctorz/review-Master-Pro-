@@ -1153,32 +1153,34 @@ async def upgrade_plan(
     return {"message": f"Plan upgraded to {plan_name}", "plan": plan_data}
 
 
-@api_router.get("/user/trial-status")
-async def get_trial_status(user: User = Depends(get_current_user)):
-    """Get user's trial status"""
+@api_router.get("/user/plan-status")
+async def get_plan_status(user: User = Depends(get_current_user)):
+    """Get user's current plan status"""
     user_doc = await db.users.find_one({"user_id": user.user_id}, {"_id": 0})
     
     if not user_doc:
         raise HTTPException(status_code=404, detail="User not found")
     
-    is_trial = user_doc.get("is_trial", False)
-    trial_ends_at = user_doc.get("trial_ends_at")
+    # Check for active subscription
+    user_plan = await db.user_plans.find_one({"user_id": user.user_id, "is_active": True}, {"_id": 0})
     
-    days_remaining = 0
-    if is_trial and trial_ends_at:
-        try:
-            end_date = datetime.fromisoformat(trial_ends_at.replace("Z", "+00:00"))
-            now = datetime.now(timezone.utc)
-            days_remaining = max(0, (end_date - now).days)
-        except Exception:
-            days_remaining = 0
+    has_active_plan = user_plan is not None and user_plan.get("is_active", False)
     
     return {
-        "is_trial": is_trial,
-        "trial_ends_at": trial_ends_at,
-        "days_remaining": days_remaining,
-        "plan": user_doc.get("plan", "starter")
+        "has_active_plan": has_active_plan,
+        "plan": user_doc.get("plan", "free"),
+        "is_subscription": user_plan.get("is_subscription", False) if user_plan else False,
+        "expires_at": user_plan.get("expires_at") if user_plan else None,
+        "max_locations": user_doc.get("max_locations", 0),
+        "features": user_doc.get("features", [])
     }
+
+
+# Keep old endpoint for backwards compatibility
+@api_router.get("/user/trial-status")
+async def get_trial_status(user: User = Depends(get_current_user)):
+    """Get user's plan status (trial removed - all plans are paid)"""
+    return await get_plan_status(user)
 
 
 # ============ LOCATIONS ENDPOINTS ============
