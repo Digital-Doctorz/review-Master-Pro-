@@ -384,13 +384,6 @@ export default function Landing() {
     },
   ];
 
-  // Razorpay subscription button IDs for direct payment
-  const razorpaySubscriptionIds = {
-    starter: "pl_SA9GKQvxfKaKl1",
-    growth: "pl_SAA7mNmnVmBhD7",
-    enterprise: "pl_SAA8s9qROChnZS"
-  };
-
   const pricingPlans = [
     {
       name: "Starter",
