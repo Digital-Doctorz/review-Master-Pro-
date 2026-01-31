@@ -167,23 +167,27 @@ class TestProtectedEndpoints:
 class TestPublicEndpoints:
     """Test public endpoints are accessible"""
     
-    def test_public_review_page(self):
-        """Test public review page endpoint"""
-        response = requests.get(f"{BASE_URL}/api/public/review/demo_qr_001")
+    def test_public_business_page(self):
+        """Test public business page endpoint for QR code flow"""
+        response = requests.get(f"{BASE_URL}/api/public/business/demo_qr_001")
         assert response.status_code == 200
         data = response.json()
-        assert "business_name" in data
-        print(f"✅ Public review page accessible: {data.get('business_name')}")
+        assert "name" in data
+        assert data["name"] == "Demo Coffee Shop"
+        assert data["is_demo"] == True
+        print(f"✅ Public business page accessible: {data.get('name')}")
     
     def test_public_review_submission(self):
         """Test public review submission endpoint exists"""
-        # Just test that endpoint exists and accepts POST
+        # Test that endpoint exists and accepts POST
         response = requests.post(
-            f"{BASE_URL}/api/public/review/demo_qr_001",
+            f"{BASE_URL}/api/public/review",
             json={
+                "qr_code_id": "demo_qr_001",
                 "rating": 5,
-                "text": "Test review",
-                "reviewer_name": "Test User"
+                "text": "Test review from iteration 28",
+                "reviewer_name": "Test User",
+                "platform": "direct"
             }
         )
         # Should return 200 or 201 for successful submission
