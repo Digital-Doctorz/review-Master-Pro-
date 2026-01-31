@@ -3428,20 +3428,10 @@ async def razorpay_webhook(request: Request):
         return {"status": "error", "message": str(e)}
 
 @api_router.get("/payment/history")
-async def get_payment_history(request: Request):
+async def get_payment_history(user: User = Depends(get_current_user)):
     """Get user's payment history"""
-    session_id = request.cookies.get("session_id")
-    if not session_id:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    session = await db.sessions.find_one({"session_id": session_id})
-    if not session:
-        raise HTTPException(status_code=401, detail="Invalid session")
-    
-    user_id = session["user_id"]
-    
     payments = await db.payment_history.find(
-        {"user_id": user_id},
+        {"user_id": user.user_id},
         {"_id": 0}
     ).sort("paid_at", -1).to_list(50)
     
