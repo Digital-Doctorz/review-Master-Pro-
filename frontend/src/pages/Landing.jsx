@@ -1281,22 +1281,24 @@ export default function Landing() {
             {/* Billing Toggle - Fixed Alignment */}
             <div className="inline-flex items-center justify-center gap-3 p-1.5 rounded-full bg-slate-100 mb-12">
               <button
-                onClick={() => setBillingCycle("monthly")}
+                onClick={() => handleBillingChange("monthly")}
                 className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
                   billingCycle === "monthly" 
                     ? "bg-white text-slate-900 shadow-sm" 
                     : "text-slate-500 hover:text-slate-700"
                 }`}
+                data-testid="billing-monthly-btn"
               >
                 Monthly
               </button>
               <button
-                onClick={() => setBillingCycle("yearly")}
+                onClick={() => handleBillingChange("yearly")}
                 className={`px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
                   billingCycle === "yearly" 
                     ? "bg-white text-slate-900 shadow-sm" 
                     : "text-slate-500 hover:text-slate-700"
                 }`}
+                data-testid="billing-yearly-btn"
               >
                 Yearly
                 <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">
