@@ -567,16 +567,16 @@ export default function Landing() {
                   data-testid="hero-demo-btn"
                 >
                   <Play className="w-5 h-5 mr-2" />
-                  See A Demo
+                  Try A Demo
                 </Button>
                 <Button
-                  onClick={handleGoogleLogin}
+                  onClick={() => document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })}
                   size="lg"
                   variant="outline"
                   className="rounded-full px-8 py-7 text-lg border-2 border-slate-300 text-slate-700 hover:bg-slate-50 hover:-translate-y-0.5 active:translate-y-0"
                   data-testid="hero-cta-btn"
                 >
-                  Start Free Trial
+                  View Plans
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </div>
@@ -598,11 +598,11 @@ export default function Landing() {
               <div className="flex flex-wrap items-center gap-6">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                  <span className="text-sm text-slate-600">7-day free trial</span>
+                  <span className="text-sm text-slate-600">Instant setup</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                  <span className="text-sm text-slate-600">No credit card</span>
+                  <span className="text-sm text-slate-600">30-day money back</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-emerald-500" />
