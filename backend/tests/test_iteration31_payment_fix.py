@@ -152,21 +152,23 @@ class TestAuthEndpoints:
 class TestPublicEndpoints:
     """Test public endpoints that don't require auth"""
     
-    def test_demo_business_accessible(self):
-        """Test demo business endpoint is accessible"""
-        response = requests.get(f"{BASE_URL}/api/demo/business")
+    def test_demo_qr_code_accessible(self):
+        """Test demo QR code endpoint is accessible"""
+        response = requests.get(f"{BASE_URL}/api/qr/demo_qr_001")
         assert response.status_code == 200
         data = response.json()
-        assert "name" in data
-        print(f"✅ Demo business accessible: {data.get('name')}")
+        assert data.get("is_demo") == True
+        assert data.get("business_name") == "Demo Coffee Shop"
+        print(f"✅ Demo QR code accessible: {data.get('business_name')}")
     
-    def test_demo_reviews_accessible(self):
-        """Test demo reviews endpoint is accessible"""
-        response = requests.get(f"{BASE_URL}/api/demo/reviews")
+    def test_payment_config_public(self):
+        """Test payment config is publicly accessible"""
+        response = requests.get(f"{BASE_URL}/api/payment/config")
         assert response.status_code == 200
         data = response.json()
-        assert "reviews" in data
-        print(f"✅ Demo reviews accessible: {len(data.get('reviews', []))} reviews")
+        assert "payment_enabled" in data
+        assert "pricing" in data
+        print("✅ Payment config is publicly accessible")
 
 
 if __name__ == "__main__":
