@@ -1419,26 +1419,24 @@ export default function Landing() {
                     >
                       {/* Subscription Button - opens Razorpay checkout */}
                       <Button
-                        onClick={() => {
-                          if (!isLoggedIn) {
-                            sessionStorage.setItem('selected_plan', plan.planKey);
-                            sessionStorage.setItem('subscription_button_id', plan.subscriptionButtonId);
-                            handleGoogleLogin();
-                            return;
-                          }
-                          // Open Razorpay subscription checkout
-                          window.open(`https://pages.razorpay.com/pl_${plan.subscriptionButtonId.replace('pl_', '')}`, '_blank');
-                        }}
+                        onClick={() => handlePayment(plan.planKey)}
                         disabled={upgrading}
                         className={`w-full rounded-xl py-5 sm:py-6 font-semibold text-base transition-all ${
                           isGrowth
                             ? "bg-white text-violet-700 hover:bg-violet-50 shadow-lg"
                             : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg"
                         } ${upgrading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        data-testid={`pricing-cta-monthly-${index}`}
                       >
-                        <CreditCard className="w-4 h-4 mr-2 inline" />
-                        Subscribe ₹{displayPrice}/mo
-                        <ArrowRight className="w-4 h-4 ml-2 inline" />
+                        {upgrading ? (
+                          <>Processing...</>
+                        ) : (
+                          <>
+                            <CreditCard className="w-4 h-4 mr-2 inline" />
+                            Subscribe ₹{displayPrice}/mo
+                            <ArrowRight className="w-4 h-4 ml-2 inline" />
+                          </>
+                        )}
                       </Button>
                     </div>
                   ) : (
