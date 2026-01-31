@@ -5,7 +5,34 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## What's Been Implemented (January 2025)
 
-### Latest - v5.0 Paid Plans Only & UI Updates (January 31, 2025):
+### Latest - v5.1 Production Ready Release (January 31, 2025):
+
+**Subscription Management:**
+- [x] New `/subscription` page for users to manage their subscription
+- [x] `/api/user/subscription` - Get detailed subscription info
+- [x] `/api/subscription/cancel` - Cancel active subscription
+- [x] `/api/subscription/update-payment-method` - Update payment method
+- [x] `/api/payment/history` - Get payment history with proper auth
+
+**Webhook Enhancements:**
+- [x] Enhanced `subscription.charged` webhook handler
+- [x] Auto-renewal extends plan by 30 days
+- [x] Sends payment confirmation email on renewal
+- [x] Records payment amount and type in history
+
+**Pricing Fixes:**
+- [x] Yearly prices: ₹4,788 (Starter), ₹9,588 (Growth), ₹23,988 (Enterprise)
+- [x] Original prices: ₹5,988, ₹11,988, ₹29,988 (monthly × 12)
+- [x] Correct savings: ₹1,200, ₹2,400, ₹6,000
+- [x] URL param `?billing=yearly` preserved on toggle
+
+**Testing Status (Iteration 30):**
+- [x] All 13 backend tests passed (100% success rate)
+- [x] All 11 frontend tests passed (100% success rate)
+- [x] Subscription endpoints properly auth-protected
+- [x] Pricing calculations verified
+
+### v5.0 Paid Plans Only & UI Updates (January 31, 2025):
 
 **UI Text Changes:**
 - [x] "See A Demo" → "Try A Demo" everywhere
