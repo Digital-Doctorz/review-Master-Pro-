@@ -5,7 +5,29 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## What's Been Implemented (January 2025)
 
-### Latest - v5.1 Production Ready Release (January 31, 2025):
+### Latest - v5.2 Pay First, Then Login Flow (January 31, 2025):
+
+**"Pay First, Then Login" User Acquisition Flow:**
+- [x] `/api/payment/guest/create-order` - Creates Razorpay orders without authentication
+- [x] `/api/payment/guest/verify` - Verifies payment and stores pending activation
+- [x] `/api/payment/activate-pending` - Links pending payment to user after login
+- [x] Frontend `handlePayment` in Landing.jsx calls guest endpoints for unauthenticated users
+- [x] `AuthCallback` component automatically activates pending payment after login
+- [x] `pending_payment` stored in sessionStorage and passed to activation endpoint
+
+**Flow Summary:**
+1. Guest clicks payment button → Razorpay checkout opens (no login required)
+2. Guest completes payment → Payment verified → `pending_payment` stored
+3. Guest redirected to Google login
+4. After login → `AuthCallback` calls `/api/payment/activate-pending` → Plan activated
+
+**Testing Status (Iteration 34):**
+- [x] All 7 backend guest payment tests passed (100% success rate)
+- [x] All frontend UI elements verified
+- [x] Razorpay checkout opens for guest users
+- [x] Billing toggle works (Monthly/Yearly)
+
+### v5.1 Production Ready Release (January 31, 2025):
 
 **Subscription Management:**
 - [x] New `/subscription` page for users to manage their subscription
