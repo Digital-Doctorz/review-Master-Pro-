@@ -438,7 +438,7 @@ export default function Dashboard() {
       )}
 
       {/* Upgrade Plan Banner - Show for free or basic plan users */}
-      {!isDemo && userPlan && (userPlan.plan === 'free' || userPlan.plan === 'starter') && (
+      {!isDemo && userPlan && (userPlan.plan_name === 'free' || userPlan.plan_name === 'starter') && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -452,7 +452,7 @@ export default function Dashboard() {
               <div>
                 <h3 className="font-bold text-lg">Upgrade Your Plan</h3>
                 <p className="text-white/90 text-sm mt-1">
-                  {userPlan.plan === 'free' 
+                  {userPlan.plan_name === 'free' 
                     ? "Subscribe to unlock all features and grow your business" 
                     : "Upgrade to Growth or Enterprise for more features"}
                 </p>
