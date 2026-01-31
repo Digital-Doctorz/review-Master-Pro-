@@ -1348,7 +1348,7 @@ export default function Landing() {
                         <span className={`text-sm ${isGrowth ? "text-violet-200" : "text-slate-500"}`}>/year</span>
                       </div>
                       <div className={`text-sm mt-1 ${isGrowth ? "text-violet-200" : "text-slate-500"}`}>
-                        (₹{plan.yearlyPerMonth}/mo × 12 months)
+                        (₹{yearlyPerMonth}/mo × 12 months)
                       </div>
                       <div className="flex items-center gap-2 mt-2">
                         <span className={`text-sm line-through ${isGrowth ? "text-violet-300" : "text-slate-400"}`}>
@@ -1369,19 +1369,9 @@ export default function Landing() {
                       {/* Monthly: Show per month price */}
                       <div className="flex items-baseline gap-1">
                         <span className={`text-3xl sm:text-4xl font-bold ${isGrowth ? "text-white" : "text-slate-900"}`}>
-                          ₹{displayPrice}
+                          ₹{displayPrice.toLocaleString('en-IN')}
                         </span>
                         <span className={`text-sm ${isGrowth ? "text-violet-200" : "text-slate-500"}`}>/month</span>
-                      </div>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className={`text-sm line-through ${isGrowth ? "text-violet-300" : "text-slate-400"}`}>
-                          ₹{originalPrice}
-                        </span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          isGrowth ? "bg-amber-400 text-amber-900" : "bg-emerald-100 text-emerald-700"
-                        } font-semibold`}>
-                          50% OFF
-                        </span>
                       </div>
                       <div className={`mt-2 text-xs ${isGrowth ? "text-emerald-300" : "text-emerald-600"} font-medium`}>
                         ✓ Auto-renews monthly • Cancel anytime
