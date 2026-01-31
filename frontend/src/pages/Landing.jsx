@@ -74,7 +74,6 @@ export default function Landing() {
   // Update URL when billing cycle changes
   const handleBillingChange = (cycle) => {
     setBillingCycle(cycle);
-    setRazorpayLoaded(false); // Reset to reload buttons
     const newUrl = new URL(window.location.href);
     newUrl.searchParams.set('billing', cycle);
     window.history.replaceState({}, '', newUrl.toString());
