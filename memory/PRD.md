@@ -310,7 +310,7 @@ Build Review Master - a zero-friction review management platform focused on Goog
 - **Health Check**: `/api/health` returns healthy
 - **Backend**: Running on port 8001
 - **Frontend**: Running on port 3000
-- **Preview URL**: https://reviewhub-38.preview.emergentagent.com
+- **Preview URL**: https://reviewmaster-8.preview.emergentagent.com
 
 ## Prioritized Backlog
 
