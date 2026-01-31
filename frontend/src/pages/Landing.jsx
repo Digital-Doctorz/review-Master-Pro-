@@ -1297,9 +1297,10 @@ export default function Landing() {
           <div className="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
             {pricingPlans.map((plan, index) => {
               const isGrowth = plan.name === "Growth";
-              const displayPrice = billingCycle === "monthly" ? plan.monthlyPrice : plan.yearlyTotal;
-              const originalPrice = billingCycle === "monthly" ? plan.originalMonthly : plan.originalYearly;
-              const savings = billingCycle === "yearly" ? (plan.monthlyPrice * 12) - plan.yearlyTotal : 0;
+              const displayPrice = billingCycle === "monthly" ? plan.monthlyPrice : plan.yearlyPrice;
+              const originalPrice = billingCycle === "monthly" ? (plan.monthlyPrice * 2) : plan.originalYearly;
+              const savings = plan.originalYearly - plan.yearlyPrice; // Correct savings calculation
+              const yearlyPerMonth = Math.round(plan.yearlyPrice / 12);
               
               return (
               <motion.div
