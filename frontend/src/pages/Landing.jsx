@@ -128,17 +128,6 @@ export default function Landing() {
     fetchPaymentConfig();
   }, []);
 
-  // Load Razorpay subscription button script
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.razorpay.com/static/widget/subscription-button.js';
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
   const handleGoogleLogin = () => {
     const redirectUrl = window.location.origin + "/dashboard";
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(
