@@ -3232,17 +3232,31 @@ async def verify_guest_payment(verify_data: GuestPaymentVerifyRequest):
         raise HTTPException(status_code=500, detail=f"Payment verification error: {str(e)}")
 
 
+class ActivatePendingRequest(BaseModel):
+    guest_id: Optional[str] = None
+
 @api_router.post("/payment/activate-pending")
-async def activate_pending_payment(user: User = Depends(get_current_user)):
+async def activate_pending_payment(
+    request_data: ActivatePendingRequest = Body(default=None),
+    user: User = Depends(get_current_user)
+):
     """Activate a pending plan after user logs in (called after guest payment + login)"""
-    # Check for pending activation using guest_id from session storage (passed from frontend)
-    # Or check by payment order that hasn't been linked to a user yet
+    # Check for pending activation using guest_id from request body
+    # or find the most recent pending activation if no guest_id provided
     
-    # Find any pending activations
-    pending = await db.pending_plan_activations.find_one(
-        {"status": "pending"},
-        sort=[("created_at", -1)]
-    )
+    guest_id = request_data.guest_id if request_data else None
+    
+    # Find pending activation
+    if guest_id:
+        pending = await db.pending_plan_activations.find_one(
+            {"guest_id": guest_id, "status": "pending"}
+        )
+    else:
+        # Fallback: find most recent pending activation
+        pending = await db.pending_plan_activations.find_one(
+            {"status": "pending"},
+            sort=[("created_at", -1)]
+        )
     
     if not pending:
         return {"success": False, "message": "No pending plan activation found"}
