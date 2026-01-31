@@ -5,7 +5,32 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## What's Been Implemented (January 2025)
 
-### Latest - v4.8 User Experience Improvements (January 30, 2025):
+### Latest - v4.9 Subscription Flow & Login Button (January 31, 2025):
+
+**Login Button for Existing Users:**
+- [x] Added Login button in navbar for non-logged users
+- [x] Login redirects to Google OAuth (auth.emergentagent.com)
+- [x] Shows "Dashboard" button for logged-in users without paid plan
+- [x] Shows "Go to Dashboard" for users with active paid plans
+
+**True Monthly Recurring Subscriptions:**
+- [x] Monthly plans now use Razorpay Subscription API (auto-recurring)
+- [x] Payment creates subscription that auto-renews every month
+- [x] Added `/api/payment/verify-subscription` endpoint
+- [x] Users see "✓ Auto-renews monthly • Cancel anytime" messaging
+- [x] Button shows "Subscribe ₹X/mo" for monthly plans
+
+**Yearly One-Time Payments:**
+- [x] Yearly plans remain as one-time payments
+- [x] Users see "✓ One-time payment • Full year access" messaging
+- [x] Button shows "Pay ₹X,XXX" for yearly plans
+
+**Testing Status (Iteration 28):**
+- [x] All 15 backend tests passed (100% success rate)
+- [x] All 9 frontend UI tests passed
+- [x] Login button, subscription endpoints, pricing UI all verified
+
+### v4.8 User Experience Improvements (January 30, 2025):
 
 **CRITICAL BUG FIX - Session Authentication:**
 - [x] Fixed payment endpoints using wrong cookie name (session_id → session_token)
