@@ -1268,7 +1268,7 @@ export default function Landing() {
               Simple, Transparent Pricing
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
-              Start free, upgrade when you&apos;re ready. No hidden fees, cancel anytime.
+              Choose your plan and start growing. No hidden fees, cancel anytime.
             </p>
 
             {/* Billing Toggle - Fixed Alignment */}
