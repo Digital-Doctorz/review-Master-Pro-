@@ -70,10 +70,53 @@ export default function Landing() {
   const [upgrading, setUpgrading] = useState(false);
   const [paymentConfig, setPaymentConfig] = useState(null);
   const [userPlan, setUserPlan] = useState(null);
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
+
+  // Razorpay subscription button IDs
+  const subscriptionButtonIds = {
+    starter: "pl_SA9GKQvxfKaKl1",
+    growth: "pl_SAA7mNmnVmBhD7",
+    enterprise: "pl_SAA8s9qROChnZS"
+  };
+
+  // Load Razorpay subscription buttons when billing cycle is monthly
+  useEffect(() => {
+    if (billingCycle === 'monthly' && !razorpayLoaded) {
+      // Load buttons for each plan
+      const loadSubscriptionButtons = () => {
+        Object.entries(subscriptionButtonIds).forEach(([planKey, buttonId]) => {
+          const container = document.getElementById(`razorpay-btn-container-${planKey}`);
+          if (container && !container.hasChildNodes()) {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.razorpay.com/static/widget/subscription-button.js';
+            script.setAttribute('data-subscription_button_id', buttonId);
+            script.setAttribute('data-button_theme', 'brand-color');
+            script.async = true;
+            
+            const form = document.createElement('form');
+            form.appendChild(script);
+            container.appendChild(form);
+          }
+        });
+        setRazorpayLoaded(true);
+      };
+
+      // Small delay to ensure containers are rendered
+      setTimeout(loadSubscriptionButtons, 500);
+    }
+  }, [billingCycle, razorpayLoaded]);
+
+  // Reset razorpay loaded state when switching to yearly
+  useEffect(() => {
+    if (billingCycle === 'yearly') {
+      setRazorpayLoaded(false);
+    }
+  }, [billingCycle]);
 
   // Update URL when billing cycle changes
   const handleBillingChange = (cycle) => {
     setBillingCycle(cycle);
+    setRazorpayLoaded(false); // Reset to reload buttons
     const newUrl = new URL(window.location.href);
     newUrl.searchParams.set('billing', cycle);
     window.history.replaceState({}, '', newUrl.toString());
