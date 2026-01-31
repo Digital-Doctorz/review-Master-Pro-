@@ -389,6 +389,13 @@ export default function Landing() {
     },
   ];
 
+  // Razorpay subscription button IDs for direct payment
+  const razorpaySubscriptionIds = {
+    starter: "pl_SA9GKQvxfKaKl1",
+    growth: "pl_SAA7mNmnVmBhD7",
+    enterprise: "pl_SAA8s9qROChnZS"
+  };
+
   const pricingPlans = [
     {
       name: "Starter",
@@ -410,8 +417,9 @@ export default function Landing() {
         "Email notifications",
         "Basic analytics",
       ],
-      cta: "Get Started",
+      cta: "Subscribe Now",
       planKey: "starter",
+      subscriptionButtonId: "pl_SA9GKQvxfKaKl1",
     },
     {
       name: "Growth",
@@ -436,8 +444,9 @@ export default function Landing() {
         "Private feedback inbox",
         "Custom branding",
       ],
-      cta: "Get Started",
+      cta: "Subscribe Now",
       planKey: "growth",
+      subscriptionButtonId: "pl_SAA7mNmnVmBhD7",
     },
     {
       name: "Enterprise",
@@ -462,8 +471,9 @@ export default function Landing() {
         "White-label option",
         "Priority 24/7 support",
       ],
-      cta: "Get All Features",
+      cta: "Subscribe Now",
       planKey: "enterprise",
+      subscriptionButtonId: "pl_SAA8s9qROChnZS",
     },
   ];
 
