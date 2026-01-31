@@ -182,6 +182,16 @@ export default function Dashboard() {
   const [refreshing, setRefreshing] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [showDemoBanner, setShowDemoBanner] = useState(true);
+  const [userPlan, setUserPlan] = useState(null);
+
+  // Fetch user plan info
+  useEffect(() => {
+    if (!isDemo) {
+      axios.get(`${API}/user/plan`, { withCredentials: true })
+        .then(res => setUserPlan(res.data))
+        .catch(err => console.warn("Failed to fetch user plan:", err));
+    }
+  }, [isDemo]);
 
   const exitDemo = () => {
     sessionStorage.removeItem('demo_mode');
