@@ -3091,6 +3091,242 @@ async def create_payment_order(order_data: PaymentOrderRequest, user: User = Dep
         logger.error(f"Failed to create Razorpay order: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to create payment order: {str(e)}")
 
+
+# New endpoint for guest payment (no authentication required)
+class GuestPaymentOrderRequest(BaseModel):
+    plan_name: str
+    billing_cycle: str
+    email: Optional[str] = None
+
+@api_router.post("/payment/guest/create-order")
+async def create_guest_payment_order(order_data: GuestPaymentOrderRequest):
+    """Create a Razorpay order for guest users (no authentication required)"""
+    if not razorpay_client:
+        raise HTTPException(status_code=503, detail="Payment processing is not configured")
+    
+    plan_name = order_data.plan_name.lower()
+    billing_cycle = order_data.billing_cycle.lower()
+    
+    if plan_name not in PRICING_CONFIG:
+        raise HTTPException(status_code=400, detail="Invalid plan")
+    
+    pricing = PRICING_CONFIG[plan_name]
+    
+    # Calculate amount based on billing cycle
+    if billing_cycle == "yearly":
+        amount = pricing["yearly_per_month"] * 12 * 100  # Convert to paise
+        description = f"Review Master {plan_name.title()} Plan - 1 Year"
+    else:
+        amount = pricing["monthly"] * 100  # Convert to paise
+        description = f"Review Master {plan_name.title()} Plan - Monthly"
+    
+    try:
+        # Generate a temporary guest ID for tracking
+        guest_id = f"guest_{uuid.uuid4().hex[:12]}"
+        
+        # Create Razorpay order
+        order_params = {
+            "amount": amount,
+            "currency": "INR",
+            "receipt": f"order_{guest_id}",
+            "notes": {
+                "guest_id": guest_id,
+                "plan_name": plan_name,
+                "billing_cycle": billing_cycle,
+                "description": description
+            }
+        }
+        
+        razorpay_order = razorpay_client.order.create(data=order_params)
+        
+        # Store order in database (without user_id - will be linked after login)
+        await db.payment_orders.insert_one({
+            "order_id": razorpay_order["id"],
+            "guest_id": guest_id,
+            "user_id": None,  # Will be set after login
+            "plan_name": plan_name,
+            "billing_cycle": billing_cycle,
+            "amount": amount,
+            "currency": "INR",
+            "status": "created",
+            "created_at": datetime.now(timezone.utc)
+        })
+        
+        return {
+            "order_id": razorpay_order["id"],
+            "guest_id": guest_id,
+            "amount": amount,
+            "currency": "INR",
+            "key_id": RAZORPAY_KEY_ID,
+            "description": description,
+            "prefill": {
+                "email": order_data.email or "",
+            }
+        }
+    except Exception as e:
+        logger.error(f"Failed to create guest Razorpay order: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to create payment order: {str(e)}")
+
+
+class GuestPaymentVerifyRequest(BaseModel):
+    razorpay_order_id: str
+    razorpay_payment_id: str
+    razorpay_signature: str
+    plan_name: str
+    billing_cycle: str
+    guest_id: str
+
+@api_router.post("/payment/guest/verify")
+async def verify_guest_payment(verify_data: GuestPaymentVerifyRequest):
+    """Verify Razorpay payment for guest users and store pending activation"""
+    if not razorpay_client:
+        raise HTTPException(status_code=503, detail="Payment processing is not configured")
+    
+    try:
+        # Verify signature
+        params_dict = {
+            'razorpay_order_id': verify_data.razorpay_order_id,
+            'razorpay_payment_id': verify_data.razorpay_payment_id,
+            'razorpay_signature': verify_data.razorpay_signature
+        }
+        
+        razorpay_client.utility.verify_payment_signature(params_dict)
+        
+        # Payment verified - update order status
+        await db.payment_orders.update_one(
+            {"order_id": verify_data.razorpay_order_id},
+            {
+                "$set": {
+                    "status": "paid",
+                    "payment_id": verify_data.razorpay_payment_id,
+                    "signature": verify_data.razorpay_signature,
+                    "paid_at": datetime.now(timezone.utc)
+                }
+            }
+        )
+        
+        # Store pending plan activation (will be activated after user logs in)
+        await db.pending_plan_activations.insert_one({
+            "guest_id": verify_data.guest_id,
+            "order_id": verify_data.razorpay_order_id,
+            "payment_id": verify_data.razorpay_payment_id,
+            "plan_name": verify_data.plan_name.lower(),
+            "billing_cycle": verify_data.billing_cycle.lower(),
+            "status": "pending",
+            "created_at": datetime.now(timezone.utc)
+        })
+        
+        return {
+            "success": True,
+            "message": "Payment successful! Please login to activate your plan.",
+            "guest_id": verify_data.guest_id,
+            "plan_name": verify_data.plan_name,
+            "redirect_to_login": True
+        }
+        
+    except razorpay.errors.SignatureVerificationError:
+        logger.error(f"Payment signature verification failed for order {verify_data.razorpay_order_id}")
+        raise HTTPException(status_code=400, detail="Payment verification failed")
+    except Exception as e:
+        logger.error(f"Payment verification error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Payment verification error: {str(e)}")
+
+
+@api_router.post("/payment/activate-pending")
+async def activate_pending_payment(user: User = Depends(get_current_user)):
+    """Activate a pending plan after user logs in (called after guest payment + login)"""
+    # Check for pending activation using guest_id from session storage (passed from frontend)
+    # Or check by payment order that hasn't been linked to a user yet
+    
+    # Find any pending activations
+    pending = await db.pending_plan_activations.find_one(
+        {"status": "pending"},
+        sort=[("created_at", -1)]
+    )
+    
+    if not pending:
+        return {"success": False, "message": "No pending plan activation found"}
+    
+    plan_name = pending["plan_name"]
+    billing_cycle = pending["billing_cycle"]
+    
+    # Calculate expiration
+    if billing_cycle == "yearly":
+        expires_at = datetime.now(timezone.utc) + timedelta(days=365)
+    else:
+        expires_at = datetime.now(timezone.utc) + timedelta(days=30)
+    
+    # Activate the user's plan
+    plan_data = {
+        "user_id": user.user_id,
+        "plan_id": plan_name,
+        "billing_cycle": billing_cycle,
+        "is_trial": False,
+        "is_active": True,
+        "activated_at": datetime.now(timezone.utc),
+        "expires_at": expires_at,
+        "payment_id": pending.get("payment_id"),
+        "updated_at": datetime.now(timezone.utc)
+    }
+    
+    await db.user_plans.update_one(
+        {"user_id": user.user_id},
+        {"$set": plan_data},
+        upsert=True
+    )
+    
+    # Update user record with plan details
+    plan_configs = {
+        "starter": {"max_locations": 1, "features": ["google_reviews", "qr_codes", "ai_responses", "email_alerts", "basic_analytics"]},
+        "growth": {"max_locations": 3, "features": ["google_reviews", "facebook_reviews", "swiggy_reviews", "zomato_reviews", "unlimited_qr", "ai_responses", "whatsapp_alerts", "advanced_analytics", "private_feedback", "custom_branding"]},
+        "enterprise": {"max_locations": 999, "features": ["all_platforms", "unlimited_qr", "ai_responses", "dedicated_manager", "custom_analytics", "api_access", "white_label", "priority_support"]}
+    }
+    
+    config = plan_configs.get(plan_name, plan_configs["starter"])
+    
+    await db.users.update_one(
+        {"user_id": user.user_id},
+        {"$set": {
+            "plan": plan_name,
+            "plan_expires_at": expires_at,
+            "max_locations": config["max_locations"],
+            "features": config["features"]
+        }}
+    )
+    
+    # Link the payment order to the user
+    await db.payment_orders.update_one(
+        {"order_id": pending["order_id"]},
+        {"$set": {"user_id": user.user_id}}
+    )
+    
+    # Mark pending activation as completed
+    await db.pending_plan_activations.update_one(
+        {"_id": pending["_id"]},
+        {"$set": {"status": "activated", "user_id": user.user_id, "activated_at": datetime.now(timezone.utc)}}
+    )
+    
+    # Store payment history
+    await db.payment_history.insert_one({
+        "user_id": user.user_id,
+        "payment_id": pending.get("payment_id"),
+        "order_id": pending["order_id"],
+        "plan_name": plan_name,
+        "billing_cycle": billing_cycle,
+        "amount": PRICING_CONFIG[plan_name]["monthly"] if billing_cycle == "monthly" else PRICING_CONFIG[plan_name]["yearly_per_month"] * 12,
+        "currency": "INR",
+        "status": "success",
+        "paid_at": datetime.now(timezone.utc)
+    })
+    
+    return {
+        "success": True,
+        "message": f"Your {plan_name.title()} plan has been activated!",
+        "plan": plan_name,
+        "expires_at": expires_at.isoformat()
+    }
+
+
 @api_router.post("/payment/verify")
 async def verify_payment(verify_data: PaymentVerifyRequest, user: User = Depends(get_current_user)):
     """Verify Razorpay payment and activate the plan"""
