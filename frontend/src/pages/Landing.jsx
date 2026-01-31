@@ -72,13 +72,6 @@ export default function Landing() {
   const [userPlan, setUserPlan] = useState(null);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
 
-  // Razorpay subscription button IDs
-  const subscriptionButtonIds = {
-    starter: "pl_SA9GKQvxfKaKl1",
-    growth: "pl_SAA7mNmnVmBhD7",
-    enterprise: "pl_SAA8s9qROChnZS"
-  };
-
   // Load Razorpay subscription buttons when billing cycle is monthly
   useEffect(() => {
     // Razorpay subscription button IDs
