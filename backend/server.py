@@ -2904,6 +2904,12 @@ class PaymentVerifyRequest(BaseModel):
 class SubscriptionRequest(BaseModel):
     plan_name: str
 
+class SubscriptionVerifyRequest(BaseModel):
+    razorpay_subscription_id: str
+    razorpay_payment_id: str
+    razorpay_signature: str
+    plan_name: str
+
 @api_router.get("/payment/config")
 async def get_payment_config():
     """Get Razorpay publishable key and pricing info"""
