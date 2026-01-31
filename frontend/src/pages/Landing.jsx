@@ -1359,39 +1359,32 @@ export default function Landing() {
                   ))}
                 </ul>
 
-                {/* Subscription Button Section */}
+                {/* Payment Button Section */}
                 <div className="space-y-3">
                   {billingCycle === "monthly" ? (
-                    /* Razorpay Subscription Button for Monthly */
-                    <div 
-                      id={`razorpay-btn-${plan.planKey}`}
-                      className="subscription-button-container"
-                      data-testid={`pricing-cta-${index}`}
+                    /* Monthly Payment Button */
+                    <Button
+                      onClick={() => handlePayment(plan.planKey)}
+                      disabled={upgrading}
+                      className={`w-full rounded-xl py-5 sm:py-6 font-semibold text-base transition-all ${
+                        isGrowth
+                          ? "bg-white text-violet-700 hover:bg-violet-50 shadow-lg"
+                          : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg"
+                      } ${upgrading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      data-testid={`pricing-cta-monthly-${index}`}
                     >
-                      {/* Subscription Button - opens Razorpay checkout */}
-                      <Button
-                        onClick={() => handlePayment(plan.planKey)}
-                        disabled={upgrading}
-                        className={`w-full rounded-xl py-5 sm:py-6 font-semibold text-base transition-all ${
-                          isGrowth
-                            ? "bg-white text-violet-700 hover:bg-violet-50 shadow-lg"
-                            : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg"
-                        } ${upgrading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        data-testid={`pricing-cta-monthly-${index}`}
-                      >
-                        {upgrading ? (
-                          <>Processing...</>
-                        ) : (
-                          <>
-                            <CreditCard className="w-4 h-4 mr-2 inline" />
-                            Subscribe ₹{displayPrice}/mo
-                            <ArrowRight className="w-4 h-4 ml-2 inline" />
-                          </>
-                        )}
-                      </Button>
-                    </div>
+                      {upgrading ? (
+                        <>Processing...</>
+                      ) : (
+                        <>
+                          <CreditCard className="w-4 h-4 mr-2 inline" />
+                          Pay ₹{displayPrice.toLocaleString('en-IN')}/month
+                          <ArrowRight className="w-4 h-4 ml-2 inline" />
+                        </>
+                      )}
+                    </Button>
                   ) : (
-                    /* One-time Payment Button for Yearly */
+                    /* Yearly Payment Button */
                     <Button
                       onClick={() => handlePayment(plan.planKey)}
                       disabled={upgrading}
