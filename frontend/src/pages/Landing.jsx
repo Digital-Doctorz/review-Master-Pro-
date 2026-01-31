@@ -1451,30 +1451,67 @@ export default function Landing() {
                   ))}
                 </ul>
 
-                <Button
-                  onClick={() => handlePlanSelection(plan.planKey)}
-                  disabled={upgrading}
-                  className={`w-full rounded-xl py-5 sm:py-6 font-semibold text-base transition-all ${
-                    isGrowth
-                      ? "bg-white text-violet-700 hover:bg-violet-50 shadow-lg"
-                      : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg"
-                  } ${upgrading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  data-testid={`pricing-cta-${index}`}
-                >
-                  {upgrading ? (
-                    <>Processing...</>
+                {/* Subscription Button Section */}
+                <div className="space-y-3">
+                  {billingCycle === "monthly" ? (
+                    /* Razorpay Subscription Button for Monthly */
+                    <div 
+                      id={`razorpay-btn-${plan.planKey}`}
+                      className="razorpay-subscription-container"
+                      data-testid={`pricing-cta-${index}`}
+                    >
+                      <form className="w-full">
+                        <script 
+                          src="https://cdn.razorpay.com/static/widget/subscription-button.js" 
+                          data-subscription_button_id={plan.subscriptionButtonId}
+                          data-button_theme="brand-color"
+                          async
+                        />
+                      </form>
+                      {/* Custom styled overlay button */}
+                      <Button
+                        onClick={() => {
+                          if (!isLoggedIn) {
+                            sessionStorage.setItem('selected_plan', plan.planKey);
+                            handleGoogleLogin();
+                          }
+                        }}
+                        className={`w-full rounded-xl py-5 sm:py-6 font-semibold text-base transition-all ${
+                          isGrowth
+                            ? "bg-white text-violet-700 hover:bg-violet-50 shadow-lg"
+                            : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg"
+                        }`}
+                        style={{ display: isLoggedIn ? 'none' : 'flex' }}
+                      >
+                        <CreditCard className="w-4 h-4 mr-2 inline" />
+                        Subscribe ₹{displayPrice}/mo
+                        <ArrowRight className="w-4 h-4 ml-2 inline" />
+                      </Button>
+                    </div>
                   ) : (
-                    <>
-                      <CreditCard className="w-4 h-4 mr-2 inline" />
-                      {isLoggedIn 
-                        ? (billingCycle === "monthly" 
-                            ? `Subscribe ₹${displayPrice}/mo` 
-                            : `Pay ₹${displayPrice.toLocaleString('en-IN')}`)
-                        : plan.cta}
-                      <ArrowRight className="w-4 h-4 ml-2 inline" />
-                    </>
+                    /* One-time Payment Button for Yearly */
+                    <Button
+                      onClick={() => handlePayment(plan.planKey)}
+                      disabled={upgrading}
+                      className={`w-full rounded-xl py-5 sm:py-6 font-semibold text-base transition-all ${
+                        isGrowth
+                          ? "bg-white text-violet-700 hover:bg-violet-50 shadow-lg"
+                          : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg"
+                      } ${upgrading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      data-testid={`pricing-cta-yearly-${index}`}
+                    >
+                      {upgrading ? (
+                        <>Processing...</>
+                      ) : (
+                        <>
+                          <CreditCard className="w-4 h-4 mr-2 inline" />
+                          Pay ₹{displayPrice.toLocaleString('en-IN')}/year
+                          <ArrowRight className="w-4 h-4 ml-2 inline" />
+                        </>
+                      )}
+                    </Button>
                   )}
-                </Button>
+                </div>
               </motion.div>
             )})}
           </div>
