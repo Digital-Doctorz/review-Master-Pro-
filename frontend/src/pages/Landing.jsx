@@ -1425,7 +1425,11 @@ export default function Landing() {
                   ) : (
                     <>
                       <CreditCard className="w-4 h-4 mr-2 inline" />
-                      {isLoggedIn ? `Pay ₹${displayPrice.toLocaleString('en-IN')}` : plan.cta}
+                      {isLoggedIn 
+                        ? (billingCycle === "monthly" 
+                            ? `Subscribe ₹${displayPrice}/mo` 
+                            : `Pay ₹${displayPrice.toLocaleString('en-IN')}`)
+                        : plan.cta}
                       <ArrowRight className="w-4 h-4 ml-2 inline" />
                     </>
                   )}
