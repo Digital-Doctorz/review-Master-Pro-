@@ -525,7 +525,8 @@ export default function Landing() {
                 >
                   <Play className="w-4 h-4 mr-2" />
                   Try A Demo
-                </Button>              </>
+                </Button>
+              </>
             )}
           </div>
         </div>
