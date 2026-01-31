@@ -422,3 +422,99 @@ async def send_welcome_email(
     subject = f"Welcome to ReviewFlow, {user_name}! 🎉"
     html = get_welcome_email(user_name, business_name, dashboard_url)
     return await send_email(to_email, subject, html)
+
+
+
+async def send_payment_confirmation(
+    to_email: str,
+    user_name: str,
+    plan_name: str,
+    amount: float
+) -> Dict[str, Any]:
+    """Send payment confirmation email for subscription renewal"""
+    subject = f"Payment Confirmation - Review Master {plan_name.title()} Plan"
+    
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #F8FAFC; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #F8FAFC; padding: 40px 20px;">
+            <tr>
+                <td align="center">
+                    <table width="100%" style="max-width: 600px; background-color: #FFFFFF; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                        <!-- Header -->
+                        <tr>
+                            <td style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); padding: 32px; text-align: center;">
+                                <h1 style="color: #FFFFFF; margin: 0; font-size: 24px; font-weight: 700;">
+                                    ✅ Payment Successful
+                                </h1>
+                            </td>
+                        </tr>
+                        
+                        <!-- Content -->
+                        <tr>
+                            <td style="padding: 32px;">
+                                <p style="color: #0F172A; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+                                    Hi {user_name},
+                                </p>
+                                
+                                <p style="color: #64748B; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+                                    Your payment has been successfully processed. Here are the details:
+                                </p>
+                                
+                                <!-- Payment Details -->
+                                <div style="background-color: #F8FAFC; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td style="color: #64748B; padding: 8px 0;">Plan</td>
+                                            <td style="color: #0F172A; font-weight: 600; text-align: right; padding: 8px 0;">{plan_name.title()} Plan</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #64748B; padding: 8px 0;">Amount</td>
+                                            <td style="color: #0F172A; font-weight: 600; text-align: right; padding: 8px 0;">₹{amount:,.0f}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #64748B; padding: 8px 0;">Billing Cycle</td>
+                                            <td style="color: #0F172A; font-weight: 600; text-align: right; padding: 8px 0;">Monthly</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #64748B; padding: 8px 0;">Status</td>
+                                            <td style="color: #10B981; font-weight: 600; text-align: right; padding: 8px 0;">Paid ✓</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                
+                                <p style="color: #64748B; font-size: 14px; line-height: 1.6; margin: 0 0 24px 0;">
+                                    Your subscription has been renewed and you have continued access to all features. 
+                                    Your next billing date is in 30 days.
+                                </p>
+                                
+                                <!-- CTA Button -->
+                                <a href="https://reviewmaster.trademeindi.com/subscription" style="display: inline-block; background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); color: #FFFFFF; text-decoration: none; padding: 14px 28px; border-radius: 9999px; font-weight: 600; font-size: 14px;">
+                                    View Subscription →
+                                </a>
+                            </td>
+                        </tr>
+                        
+                        <!-- Footer -->
+                        <tr>
+                            <td style="padding: 24px; background-color: #F8FAFC; text-align: center; border-top: 1px solid #E2E8F0;">
+                                <p style="color: #94A3B8; font-size: 12px; margin: 0;">
+                                    Review Master by Trade Me India<br>
+                                    Questions? Contact us at support@trademeindi.com
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>
+    """
+    
+    return await send_email(to_email, subject, html)
