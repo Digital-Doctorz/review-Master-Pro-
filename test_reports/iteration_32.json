@@ -1,0 +1,99 @@
+{
+  "summary": "Iteration 32 - Subscription Button Redirect Testing. Verified that monthly subscription buttons now redirect directly to Razorpay payment pages using window.open(). All 3 subscription buttons (Starter, Growth, Enterprise) open correct Razorpay URLs. Yearly pricing still uses one-time payment buttons. Login and Demo mode work correctly.",
+
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+
+  "passed_tests": [
+    "Frontend: Landing page loads correctly",
+    "Frontend: Login button visible and redirects to Emergent Auth",
+    "Frontend: Demo button visible and navigates to /dashboard with demo data",
+    "Frontend: Monthly billing selected by default",
+    "Frontend: Starter subscription button shows 'Subscribe ₹499/month'",
+    "Frontend: Growth subscription button shows 'Subscribe ₹999/month'",
+    "Frontend: Enterprise subscription button shows 'Subscribe ₹2,499/month'",
+    "Frontend: 'Auto-renews monthly • Cancel anytime' text visible on all monthly cards",
+    "Frontend: Starter button opens https://pages.razorpay.com/pl_SA9GKQvxfKaKl1",
+    "Frontend: Growth button opens https://pages.razorpay.com/pl_SAA7mNmnVmBhD7",
+    "Frontend: Enterprise button opens https://pages.razorpay.com/pl_SAA8s9qROChnZS",
+    "Frontend: Yearly billing toggle works correctly",
+    "Frontend: Yearly Starter shows 'Pay ₹4,788/year' (one-time payment)",
+    "Frontend: Yearly Growth shows 'Pay ₹9,588/year' (one-time payment)",
+    "Frontend: Yearly Enterprise shows 'Pay ₹23,988/year' (one-time payment)",
+    "Frontend: 'One-time payment • Full year access' text visible on yearly cards"
+  ],
+
+  "test_report_links": [],
+
+  "action_items": [],
+
+  "critical_code_review_comments": [
+    "Subscription buttons correctly implemented using window.open() to open Razorpay payment pages in new tab",
+    "Monthly pricing uses subscriptionButtonId from pricingPlans array to construct Razorpay URL",
+    "Yearly pricing still uses handlePayment() for one-time orders via backend API",
+    "Clear distinction between monthly (subscription) and yearly (one-time) payment flows"
+  ],
+
+  "updated_files": [],
+
+  "success_rate": {
+    "backend": "N/A (frontend-only testing)",
+    "frontend": "100% (16/16 tests passed)"
+  },
+
+  "test_credentials": {
+    "demo_mode": "Click 'Try A Demo' button to access demo dashboard"
+  },
+
+  "seed_data_creation": "None - used existing demo mode data",
+
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": [],
+    "note": "Subscription buttons redirect to real Razorpay payment pages"
+  },
+
+  "features_verified": {
+    "monthly_subscription_buttons": {
+      "status": "WORKING",
+      "details": "All 3 subscription buttons open correct Razorpay payment page URLs in new tab"
+    },
+    "razorpay_urls": {
+      "status": "WORKING",
+      "details": {
+        "starter": "https://pages.razorpay.com/pl_SA9GKQvxfKaKl1",
+        "growth": "https://pages.razorpay.com/pl_SAA7mNmnVmBhD7",
+        "enterprise": "https://pages.razorpay.com/pl_SAA8s9qROChnZS"
+      }
+    },
+    "monthly_pricing_text": {
+      "status": "WORKING",
+      "details": "Buttons show 'Subscribe ₹X/month' format with auto-renew text"
+    },
+    "yearly_pricing": {
+      "status": "WORKING",
+      "details": "Yearly buttons show 'Pay ₹X/year' for one-time payment"
+    },
+    "login_button": {
+      "status": "WORKING",
+      "details": "Redirects to auth.emergentagent.com for Google OAuth"
+    },
+    "demo_mode": {
+      "status": "WORKING",
+      "details": "Navigates to /dashboard with sample data and demo banner"
+    }
+  },
+
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+
+  "context_for_next_testing_agent": "Iteration 32 verified the subscription button redirect feature. Monthly subscription buttons now use window.open() to redirect directly to Razorpay hosted payment pages (pages.razorpay.com/{subscriptionButtonId}). This enables automatic recurring payments via Razorpay's subscription system. Yearly pricing still uses one-time payment via backend API. All UI elements working correctly."
+}
