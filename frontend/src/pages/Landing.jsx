@@ -1362,48 +1362,32 @@ export default function Landing() {
 
                 {/* Payment Button Section */}
                 <div className="space-y-3">
-                  {billingCycle === "monthly" ? (
-                    /* Monthly Subscription - Razorpay Subscription Button */
-                    <div 
-                      id={`razorpay-btn-container-${plan.planKey}`}
-                      className="razorpay-button-container w-full"
-                      data-testid={`pricing-cta-monthly-${index}`}
-                    >
-                      {/* Loading placeholder while Razorpay button loads */}
-                      {!razorpayLoaded && (
-                        <div className={`w-full flex items-center justify-center rounded-xl py-5 sm:py-6 font-semibold text-base ${
-                          isGrowth
-                            ? "bg-white text-violet-700"
-                            : "bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
-                        }`}>
-                          <CreditCard className="w-4 h-4 mr-2" />
-                          Loading payment...
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    /* Yearly One-Time Payment */
-                    <Button
-                      onClick={() => handlePayment(plan.planKey)}
-                      disabled={upgrading}
-                      className={`w-full rounded-xl py-5 sm:py-6 font-semibold text-base transition-all ${
-                        isGrowth
-                          ? "bg-white text-violet-700 hover:bg-violet-50 shadow-lg"
-                          : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg"
-                      } ${upgrading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      data-testid={`pricing-cta-yearly-${index}`}
-                    >
-                      {upgrading ? (
-                        <>Processing...</>
-                      ) : (
-                        <>
-                          <CreditCard className="w-4 h-4 mr-2 inline" />
-                          Pay ₹{displayPrice.toLocaleString('en-IN')}/year
-                          <ArrowRight className="w-4 h-4 ml-2 inline" />
-                        </>
-                      )}
-                    </Button>
-                  )}
+                  <Button
+                    onClick={() => handlePayment(plan.planKey)}
+                    disabled={upgrading}
+                    className={`w-full rounded-xl py-5 sm:py-6 font-semibold text-base transition-all ${
+                      isGrowth
+                        ? "bg-white text-violet-700 hover:bg-violet-50 shadow-lg"
+                        : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg"
+                    } ${upgrading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    data-testid={`pricing-cta-${billingCycle}-${index}`}
+                  >
+                    {upgrading ? (
+                      <>Processing...</>
+                    ) : billingCycle === "monthly" ? (
+                      <>
+                        <CreditCard className="w-4 h-4 mr-2 inline" />
+                        Pay ₹{displayPrice.toLocaleString('en-IN')}/month
+                        <ArrowRight className="w-4 h-4 ml-2 inline" />
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard className="w-4 h-4 mr-2 inline" />
+                        Pay ₹{displayPrice.toLocaleString('en-IN')}/year
+                        <ArrowRight className="w-4 h-4 ml-2 inline" />
+                      </>
+                    )}
+                  </Button>
                 </div>
               </motion.div>
             )})}
