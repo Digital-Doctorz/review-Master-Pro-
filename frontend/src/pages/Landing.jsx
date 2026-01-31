@@ -438,15 +438,45 @@ export default function Landing() {
                 <ArrowRight className="w-4 h-4 mr-2" />
                 Go to Dashboard
               </Button>
+            ) : isLoggedIn ? (
+              <>
+                <Button
+                  onClick={() => navigate('/dashboard')}
+                  variant="outline"
+                  className="rounded-full px-5 border-slate-300 text-slate-700 hover:bg-slate-50"
+                  data-testid="nav-dashboard-loggedin-btn"
+                >
+                  Dashboard
+                </Button>
+                <Button
+                  onClick={handleDemoMode}
+                  className="rounded-full px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow"
+                  data-testid="nav-demo-btn"
+                >
+                  <Play className="w-4 h-4 mr-2" />
+                  See A Demo
+                </Button>
+              </>
             ) : (
-              <Button
-                onClick={handleDemoMode}
-                className="rounded-full px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow"
-                data-testid="nav-demo-btn"
-              >
-                <Play className="w-4 h-4 mr-2" />
-                See A Demo
-              </Button>
+              <>
+                <Button
+                  onClick={handleGoogleLogin}
+                  variant="outline"
+                  className="rounded-full px-5 border-slate-300 text-slate-700 hover:bg-slate-50"
+                  data-testid="nav-login-btn"
+                >
+                  <Users className="w-4 h-4 mr-2" />
+                  Login
+                </Button>
+                <Button
+                  onClick={handleDemoMode}
+                  className="rounded-full px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow"
+                  data-testid="nav-demo-btn"
+                >
+                  <Play className="w-4 h-4 mr-2" />
+                  See A Demo
+                </Button>
+              </>
             )}
           </div>
         </div>
