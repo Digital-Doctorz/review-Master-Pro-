@@ -100,6 +100,7 @@ import Privacy from "./pages/Privacy";
 import Refund from "./pages/Refund";
 import Shipping from "./pages/Shipping";
 import Contact from "./pages/Contact";
+import Subscription from "./pages/Subscription";
 
 // Components
 import Layout from "./components/Layout";
