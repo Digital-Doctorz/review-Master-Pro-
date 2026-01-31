@@ -1405,30 +1405,23 @@ export default function Landing() {
                 {/* Payment Button Section */}
                 <div className="space-y-3">
                   {billingCycle === "monthly" ? (
-                    /* Monthly Subscription - Embedded Razorpay Subscription Button */
+                    /* Monthly Subscription - Razorpay Subscription Button */
                     <div 
-                      className="razorpay-subscription-btn-wrapper"
+                      id={`razorpay-btn-container-${plan.planKey}`}
+                      className="razorpay-button-container w-full"
                       data-testid={`pricing-cta-monthly-${index}`}
                     >
-                      {/* Razorpay Subscription Button Container */}
-                      <div 
-                        id={`razorpay-subscription-${plan.planKey}`}
-                        className="razorpay-button-container"
-                        dangerouslySetInnerHTML={{
-                          __html: `<form><script src="https://cdn.razorpay.com/static/widget/subscription-button.js" data-subscription_button_id="${plan.subscriptionButtonId}" data-button_theme="brand-color" async></script></form>`
-                        }}
-                      />
-                      {/* Fallback styled button that shows while Razorpay loads */}
-                      <div className="razorpay-fallback-btn hidden">
-                        <span className={`w-full flex items-center justify-center rounded-xl py-5 sm:py-6 font-semibold text-base ${
+                      {/* Loading placeholder while Razorpay button loads */}
+                      {!razorpayLoaded && (
+                        <div className={`w-full flex items-center justify-center rounded-xl py-5 sm:py-6 font-semibold text-base ${
                           isGrowth
                             ? "bg-white text-violet-700"
                             : "bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
                         }`}>
                           <CreditCard className="w-4 h-4 mr-2" />
-                          Subscribe ₹{displayPrice.toLocaleString('en-IN')}/month
-                        </span>
-                      </div>
+                          Loading payment...
+                        </div>
+                      )}
                     </div>
                   ) : (
                     /* Yearly One-Time Payment */
