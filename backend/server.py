@@ -3164,6 +3164,98 @@ async def create_subscription(sub_data: SubscriptionRequest, user: User = Depend
         logger.error(f"Failed to create subscription: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to create subscription: {str(e)}")
 
+@api_router.post("/payment/verify-subscription")
+async def verify_subscription(verify_data: SubscriptionVerifyRequest, user: User = Depends(get_current_user)):
+    """Verify Razorpay subscription payment and activate the plan"""
+    if not razorpay_client:
+        raise HTTPException(status_code=503, detail="Payment processing is not configured")
+    
+    user_id = user.user_id
+    
+    try:
+        # Verify signature
+        params_dict = {
+            'razorpay_subscription_id': verify_data.razorpay_subscription_id,
+            'razorpay_payment_id': verify_data.razorpay_payment_id,
+            'razorpay_signature': verify_data.razorpay_signature
+        }
+        
+        razorpay_client.utility.verify_subscription_payment_signature(params_dict)
+        
+        # Subscription verified - update subscription status
+        await db.subscriptions.update_one(
+            {"subscription_id": verify_data.razorpay_subscription_id},
+            {
+                "$set": {
+                    "status": "active",
+                    "payment_id": verify_data.razorpay_payment_id,
+                    "signature": verify_data.razorpay_signature,
+                    "activated_at": datetime.now(timezone.utc)
+                }
+            }
+        )
+        
+        # Activate the user's plan
+        plan_name = verify_data.plan_name.lower()
+        
+        # Monthly subscription expires in 30 days (auto-renews)
+        expires_at = datetime.now(timezone.utc) + timedelta(days=30)
+        
+        # Update or create user plan
+        plan_data = {
+            "user_id": user_id,
+            "plan_id": plan_name,
+            "billing_cycle": "monthly",
+            "subscription_id": verify_data.razorpay_subscription_id,
+            "is_trial": False,
+            "is_active": True,
+            "is_subscription": True,
+            "activated_at": datetime.now(timezone.utc),
+            "expires_at": expires_at,
+            "payment_id": verify_data.razorpay_payment_id,
+            "updated_at": datetime.now(timezone.utc)
+        }
+        
+        await db.user_plans.update_one(
+            {"user_id": user_id},
+            {"$set": plan_data},
+            upsert=True
+        )
+        
+        # Update user record
+        await db.users.update_one(
+            {"user_id": user_id},
+            {"$set": {"plan": plan_name, "plan_expires_at": expires_at, "is_subscription": True}}
+        )
+        
+        # Store payment history
+        await db.payment_history.insert_one({
+            "user_id": user_id,
+            "payment_id": verify_data.razorpay_payment_id,
+            "subscription_id": verify_data.razorpay_subscription_id,
+            "plan_name": plan_name,
+            "billing_cycle": "monthly",
+            "amount": PRICING_CONFIG[plan_name]["monthly"],
+            "currency": "INR",
+            "status": "success",
+            "paid_at": datetime.now(timezone.utc)
+        })
+        
+        return {
+            "success": True,
+            "message": f"Subscription activated! {plan_name.title()} plan is now active.",
+            "plan": plan_name,
+            "expires_at": expires_at.isoformat(),
+            "is_subscription": True
+        }
+        
+    except razorpay.errors.SignatureVerificationError:
+        logger.error(f"Subscription signature verification failed for {verify_data.razorpay_subscription_id}")
+        raise HTTPException(status_code=400, detail="Subscription verification failed")
+    except Exception as e:
+        logger.error(f"Subscription verification error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Subscription verification error: {str(e)}")
+
 @api_router.post("/payment/webhook")
 async def razorpay_webhook(request: Request):
     """Handle Razorpay webhooks for subscription events"""
