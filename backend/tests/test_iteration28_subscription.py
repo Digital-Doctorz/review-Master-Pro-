@@ -183,15 +183,17 @@ class TestPublicEndpoints:
         response = requests.post(
             f"{BASE_URL}/api/public/review",
             json={
-                "qr_code_id": "demo_qr_001",
+                "business_id": "demo_business_001",
                 "rating": 5,
                 "text": "Test review from iteration 28",
-                "reviewer_name": "Test User",
+                "author_name": "Test User",
                 "platform": "direct"
             }
         )
         # Should return 200 or 201 for successful submission
         assert response.status_code in [200, 201]
+        data = response.json()
+        assert "review_id" in data
         print("✅ Public review submission endpoint working")
 
 
