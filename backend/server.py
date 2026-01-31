@@ -1176,6 +1176,99 @@ async def get_plan_status(user: User = Depends(get_current_user)):
     }
 
 
+@api_router.get("/user/subscription")
+async def get_user_subscription(user: User = Depends(get_current_user)):
+    """Get detailed subscription information for the user"""
+    user_doc = await db.users.find_one({"user_id": user.user_id}, {"_id": 0})
+    
+    if not user_doc:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Get user plan
+    user_plan = await db.user_plans.find_one({"user_id": user.user_id}, {"_id": 0})
+    
+    # Get subscription details if exists
+    subscription = None
+    if user_plan and user_plan.get("subscription_id"):
+        subscription = await db.subscriptions.find_one(
+            {"subscription_id": user_plan["subscription_id"]}, 
+            {"_id": 0}
+        )
+    
+    return {
+        "plan": user_doc.get("plan", "free"),
+        "is_active": user_plan.get("is_active", False) if user_plan else False,
+        "is_subscription": user_plan.get("is_subscription", False) if user_plan else False,
+        "billing_cycle": user_plan.get("billing_cycle", "monthly") if user_plan else None,
+        "subscription_id": user_plan.get("subscription_id") if user_plan else None,
+        "activated_at": user_plan.get("activated_at") if user_plan else None,
+        "expires_at": user_plan.get("expires_at") if user_plan else None,
+        "cancelled_at": subscription.get("cancelled_at") if subscription else None,
+        "status": subscription.get("status") if subscription else "inactive"
+    }
+
+
+@api_router.post("/subscription/cancel")
+async def cancel_subscription(user: User = Depends(get_current_user)):
+    """Cancel user's subscription"""
+    user_plan = await db.user_plans.find_one({"user_id": user.user_id, "is_active": True})
+    
+    if not user_plan:
+        raise HTTPException(status_code=404, detail="No active subscription found")
+    
+    if not user_plan.get("subscription_id"):
+        raise HTTPException(status_code=400, detail="This is not a subscription plan")
+    
+    try:
+        # Cancel subscription in Razorpay
+        if razorpay_client:
+            razorpay_client.subscription.cancel(user_plan["subscription_id"])
+        
+        # Update subscription status in database
+        await db.subscriptions.update_one(
+            {"subscription_id": user_plan["subscription_id"]},
+            {"$set": {
+                "status": "cancelled",
+                "cancelled_at": datetime.now(timezone.utc)
+            }}
+        )
+        
+        # Note: Keep is_active = True until expires_at
+        # The user should have access until the end of their billing period
+        
+        return {
+            "success": True,
+            "message": "Subscription cancelled. You'll have access until your current period ends.",
+            "expires_at": user_plan.get("expires_at")
+        }
+    except Exception as e:
+        logger.error(f"Failed to cancel subscription: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to cancel subscription")
+
+
+@api_router.post("/subscription/update-payment-method")
+async def update_payment_method(user: User = Depends(get_current_user)):
+    """Generate a link to update payment method"""
+    user_plan = await db.user_plans.find_one({"user_id": user.user_id, "is_active": True})
+    
+    if not user_plan or not user_plan.get("subscription_id"):
+        raise HTTPException(status_code=404, detail="No active subscription found")
+    
+    try:
+        # For Razorpay, we can create a payment link for updating payment method
+        # However, Razorpay doesn't have a direct "update payment method" API
+        # The user typically needs to go through their Razorpay dashboard
+        
+        return {
+            "success": True,
+            "message": "Please contact support or visit Razorpay dashboard to update payment method",
+            "payment_link": None  # Razorpay doesn't support direct payment method update links
+        }
+    except Exception as e:
+        logger.error(f"Failed to generate payment update link: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to generate payment update link")
+
+
 # Keep old endpoint for backwards compatibility
 @api_router.get("/user/trial-status")
 async def get_trial_status(user: User = Depends(get_current_user)):
