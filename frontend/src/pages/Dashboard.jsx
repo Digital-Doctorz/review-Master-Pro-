@@ -437,6 +437,39 @@ export default function Dashboard() {
         </motion.div>
       )}
 
+      {/* Upgrade Plan Banner - Show for free or basic plan users */}
+      {!isDemo && userPlan && (userPlan.plan === 'free' || userPlan.plan === 'starter') && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl p-6 text-white"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start sm:items-center gap-4">
+              <div className="p-3 bg-white/20 rounded-xl shrink-0">
+                <Crown className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg">Upgrade Your Plan</h3>
+                <p className="text-white/90 text-sm mt-1">
+                  {userPlan.plan === 'free' 
+                    ? "Subscribe to unlock all features and grow your business" 
+                    : "Upgrade to Growth or Enterprise for more features"}
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={() => navigate('/#pricing')}
+              className="bg-white text-indigo-600 hover:bg-white/90 rounded-xl font-semibold px-6"
+              data-testid="upgrade-plan-btn"
+            >
+              <CreditCard className="w-4 h-4 mr-2" />
+              View Plans
+            </Button>
+          </div>
+        </motion.div>
+      )}
+
       {/* Quick Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <motion.div
