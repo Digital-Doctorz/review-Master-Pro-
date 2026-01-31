@@ -389,10 +389,8 @@ export default function Landing() {
       name: "Starter",
       icon: Rocket,
       monthlyPrice: 499,
-      yearlyPerMonth: 399,
-      yearlyTotal: 399 * 12, // ₹4,788 for full year (20% off)
-      originalMonthly: 999,
-      originalYearly: 799 * 12,
+      yearlyPrice: 4788, // ₹4,788 for full year
+      originalYearly: 499 * 12, // ₹5,988 (monthly × 12)
       reviews: 100,
       color: "from-sky-500 to-cyan-500",
       badge: null,
@@ -413,10 +411,8 @@ export default function Landing() {
       name: "Growth",
       icon: TrendingUp,
       monthlyPrice: 999,
-      yearlyPerMonth: 799,
-      yearlyTotal: 799 * 12, // ₹9,588 for full year (20% off)
-      originalMonthly: 1999,
-      originalYearly: 1599 * 12,
+      yearlyPrice: 9588, // ₹9,588 for full year
+      originalYearly: 999 * 12, // ₹11,988 (monthly × 12)
       reviews: 500,
       color: "from-violet-500 to-purple-600",
       badge: "BEST VALUE",
@@ -440,10 +436,8 @@ export default function Landing() {
       name: "Enterprise",
       icon: Building2,
       monthlyPrice: 2499,
-      yearlyPerMonth: 1999,
-      yearlyTotal: 1999 * 12, // ₹23,988 for full year (20% off)
-      originalMonthly: 4999,
-      originalYearly: 3999 * 12,
+      yearlyPrice: 23988, // ₹23,988 for full year
+      originalYearly: 2499 * 12, // ₹29,988 (monthly × 12)
       reviews: "Unlimited",
       color: "from-amber-500 to-orange-500",
       badge: null,
