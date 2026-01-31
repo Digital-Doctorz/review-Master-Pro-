@@ -275,7 +275,7 @@ export default function Landing() {
         return;
       }
       
-      toast.error(error.response?.data?.detail  "Failed to initiate payment. Please try again.");
+      toast.error(error.response?.data?.detail || "Failed to initiate payment. Please try again.");
     }
   }, [isLoggedIn, billingCycle, paymentConfig, navigate]);
 
