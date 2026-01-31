@@ -135,27 +135,7 @@ export default function Landing() {
     )}`;
   };
 
-  // Handle plan selection - redirect to login first if not logged in, then process payment
-  const handlePlanSelection = useCallback((planKey, subscriptionButtonId) => {
-    if (!isLoggedIn) {
-      // Store plan info and redirect to login
-      sessionStorage.setItem('selected_plan', planKey);
-      sessionStorage.setItem('subscription_button_id', subscriptionButtonId);
-      handleGoogleLogin();
-      return;
-    }
-    
-    // For logged in users, trigger the Razorpay subscription button
-    const buttonContainer = document.getElementById(`razorpay-btn-${planKey}`);
-    if (buttonContainer) {
-      const form = buttonContainer.querySelector('form');
-      if (form) {
-        form.querySelector('button')?.click();
-      }
-    }
-  }, [isLoggedIn]);
-
-  // Handle Razorpay payment (for yearly one-time payments)
+  // Handle Razorpay payment
   const handlePayment = useCallback(async (planKey) => {
     // Always check authentication first
     if (!isLoggedIn) {
