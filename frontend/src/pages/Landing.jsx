@@ -1362,25 +1362,31 @@ export default function Landing() {
                 {/* Payment Button Section */}
                 <div className="space-y-3">
                   {billingCycle === "monthly" ? (
-                    /* Monthly Subscription - Direct Razorpay Payment Link */
-                    <Button
-                      onClick={() => {
-                        // Open Razorpay subscription payment page directly
-                        const subscriptionUrl = `https://pages.razorpay.com/${plan.subscriptionButtonId}`;
-                        window.open(subscriptionUrl, '_blank');
-                      }}
-                      disabled={upgrading}
-                      className={`w-full rounded-xl py-5 sm:py-6 font-semibold text-base transition-all ${
-                        isGrowth
-                          ? "bg-white text-violet-700 hover:bg-violet-50 shadow-lg"
-                          : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg"
-                      }`}
+                    /* Monthly Subscription - Embedded Razorpay Subscription Button */
+                    <div 
+                      className="razorpay-subscription-btn-wrapper"
                       data-testid={`pricing-cta-monthly-${index}`}
                     >
-                      <CreditCard className="w-4 h-4 mr-2 inline" />
-                      Subscribe ₹{displayPrice.toLocaleString('en-IN')}/month
-                      <ArrowRight className="w-4 h-4 ml-2 inline" />
-                    </Button>
+                      {/* Razorpay Subscription Button Container */}
+                      <div 
+                        id={`razorpay-subscription-${plan.planKey}`}
+                        className="razorpay-button-container"
+                        dangerouslySetInnerHTML={{
+                          __html: `<form><script src="https://cdn.razorpay.com/static/widget/subscription-button.js" data-subscription_button_id="${plan.subscriptionButtonId}" data-button_theme="brand-color" async></script></form>`
+                        }}
+                      />
+                      {/* Fallback styled button that shows while Razorpay loads */}
+                      <div className="razorpay-fallback-btn hidden">
+                        <span className={`w-full flex items-center justify-center rounded-xl py-5 sm:py-6 font-semibold text-base ${
+                          isGrowth
+                            ? "bg-white text-violet-700"
+                            : "bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+                        }`}>
+                          <CreditCard className="w-4 h-4 mr-2" />
+                          Subscribe ₹{displayPrice.toLocaleString('en-IN')}/month
+                        </span>
+                      </div>
+                    </div>
                   ) : (
                     /* Yearly One-Time Payment */
                     <Button
