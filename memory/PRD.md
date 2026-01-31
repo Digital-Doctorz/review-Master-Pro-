@@ -5,7 +5,36 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## What's Been Implemented (January 2025)
 
-### Latest - v4.9 Subscription Flow & Login Button (January 31, 2025):
+### Latest - v5.0 Paid Plans Only & UI Updates (January 31, 2025):
+
+**UI Text Changes:**
+- [x] "See A Demo" → "Try A Demo" everywhere
+- [x] "Start Free Trial" → "View Plans" in hero
+- [x] "Start Free Trial - ₹0 Today" → "View Plans & Pricing" in final CTA
+- [x] Trust indicators: "7-day free trial" → "Instant setup", "No credit card" → "30-day money back"
+
+**Free Trial Removed - All Plans Paid:**
+- [x] New users created with plan="free" (no features until payment)
+- [x] Removed is_trial, trial_ends_at from user creation
+- [x] Backend cleanup_expired_trials still exists but won't create new trial users
+- [x] Added /api/user/plan-status endpoint
+
+**Login Button Added:**
+- [x] Login button visible in navbar for non-logged users
+- [x] Redirects to Google OAuth
+- [x] Shows "Dashboard" for logged-in users, "Go to Dashboard" for paid users
+
+**Pricing Buttons Updated:**
+- [x] Monthly: "Subscribe ₹499/mo", "Subscribe ₹999/mo", "Subscribe ₹2499/mo"
+- [x] Yearly: "Pay ₹4,788/year", "Pay ₹9,588/year", "Pay ₹23,988/year"
+- [x] Processing state shows "Processing..."
+
+**Testing Status (Iteration 29):**
+- [x] All 15 frontend tests passed (100% success rate)
+- [x] All free trial references removed
+- [x] All UI text changes verified
+
+### v4.9 Subscription Flow & Login Button (January 31, 2025):
 
 **Login Button for Existing Users:**
 - [x] Added Login button in navbar for non-logged users
