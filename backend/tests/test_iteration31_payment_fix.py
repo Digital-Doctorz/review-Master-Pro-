@@ -154,12 +154,12 @@ class TestPublicEndpoints:
     
     def test_demo_qr_code_accessible(self):
         """Test demo QR code endpoint is accessible"""
-        response = requests.get(f"{BASE_URL}/api/qr/demo_qr_001")
+        response = requests.get(f"{BASE_URL}/api/public/business/demo_qr_001")
         assert response.status_code == 200
         data = response.json()
         assert data.get("is_demo") == True
-        assert data.get("business_name") == "Demo Coffee Shop"
-        print(f"✅ Demo QR code accessible: {data.get('business_name')}")
+        assert data.get("name") == "Demo Coffee Shop"
+        print(f"✅ Demo QR code accessible: {data.get('name')}")
     
     def test_payment_config_public(self):
         """Test payment config is publicly accessible"""
