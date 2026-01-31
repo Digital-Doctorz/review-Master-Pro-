@@ -499,7 +499,6 @@ export default function Landing() {
                   Dashboard
                 </Button>
                 <Button
-                <Button
                   onClick={handleDemoMode}
                   className="rounded-full px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow"
                   data-testid="nav-demo-btn"
