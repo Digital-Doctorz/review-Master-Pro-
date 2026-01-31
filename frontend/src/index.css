@@ -422,3 +422,39 @@ input:focus, textarea:focus, select:focus {
   background-size: 200% 100%;
   animation: badge-shine 3s ease-in-out infinite;
 }
+
+/* Razorpay Subscription Button Styling */
+.razorpay-subscription-container {
+  position: relative;
+  width: 100%;
+}
+
+.razorpay-subscription-container form {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.razorpay-subscription-container form button,
+.razorpay-subscription-container form .razorpay-payment-button {
+  width: 100% !important;
+  border-radius: 12px !important;
+  padding: 18px 24px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3) !important;
+}
+
+.razorpay-subscription-container form button:hover,
+.razorpay-subscription-container form .razorpay-payment-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4) !important;
+}
+
+/* Ensure Razorpay iframe/widget fits well */
+.razorpay-subscription-container iframe {
+  width: 100% !important;
+  min-height: 50px;
+}
