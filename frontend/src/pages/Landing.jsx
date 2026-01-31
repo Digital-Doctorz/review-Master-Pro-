@@ -1390,8 +1390,8 @@ export default function Landing() {
                           50% OFF
                         </span>
                       </div>
-                      <div className={`mt-2 text-xs ${isGrowth ? "text-violet-200" : "text-slate-500"}`}>
-                        Billed monthly • Cancel anytime
+                      <div className={`mt-2 text-xs ${isGrowth ? "text-emerald-300" : "text-emerald-600"} font-medium`}>
+                        ✓ Auto-renews monthly • Cancel anytime
                       </div>
                     </>
                   )}
