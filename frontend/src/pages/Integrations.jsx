@@ -994,6 +994,177 @@ export default function Integrations() {
                   </div>
                 </div>
 
+                {/* Amazon, Flipkart, JustDial Row */}
+                <div className="grid md:grid-cols-3 gap-4 mt-4">
+                  {/* Amazon Integration */}
+                  <div className={`p-4 rounded-xl border-2 transition-all ${
+                    location.amazon_link 
+                      ? "bg-amber-50 border-amber-200" 
+                      : "bg-slate-50 border-slate-200"
+                  }`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <AmazonIcon className="w-5 h-5" />
+                        <span className="font-medium text-slate-900">Amazon</span>
+                      </div>
+                      <Badge className={location.amazon_link 
+                        ? "bg-amber-100 text-amber-700" 
+                        : "bg-slate-100 text-slate-600"
+                      }>
+                        {location.amazon_link ? "Connected" : "Not Connected"}
+                      </Badge>
+                    </div>
+                    
+                    {location.amazon_link ? (
+                      <div className="space-y-3">
+                        <p className="text-sm text-amber-700 font-medium truncate">
+                          {location.amazon_seller_name || location.name}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => copyToClipboard(location.amazon_link, "Amazon link copied!")}
+                            className="flex-1 rounded-lg text-xs"
+                          >
+                            <Copy className="w-3 h-3 mr-1" />
+                            Copy
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => window.open(location.amazon_link, "_blank")}
+                            className="rounded-lg text-xs text-amber-600 hover:bg-amber-50"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={() => setAmazonModal({ open: true, locationId: location.location_id })}
+                        className="w-full rounded-lg bg-amber-500 hover:bg-amber-600 text-white"
+                        size="sm"
+                      >
+                        <Plus className="w-4 h-4 mr-1" />
+                        Connect Amazon
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Flipkart Integration */}
+                  <div className={`p-4 rounded-xl border-2 transition-all ${
+                    location.flipkart_link 
+                      ? "bg-blue-50 border-blue-200" 
+                      : "bg-slate-50 border-slate-200"
+                  }`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <FlipkartIcon className="w-5 h-5" />
+                        <span className="font-medium text-slate-900">Flipkart</span>
+                      </div>
+                      <Badge className={location.flipkart_link 
+                        ? "bg-blue-100 text-blue-700" 
+                        : "bg-slate-100 text-slate-600"
+                      }>
+                        {location.flipkart_link ? "Connected" : "Not Connected"}
+                      </Badge>
+                    </div>
+                    
+                    {location.flipkart_link ? (
+                      <div className="space-y-3">
+                        <p className="text-sm text-blue-700 font-medium truncate">
+                          {location.flipkart_seller_name || location.name}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => copyToClipboard(location.flipkart_link, "Flipkart link copied!")}
+                            className="flex-1 rounded-lg text-xs"
+                          >
+                            <Copy className="w-3 h-3 mr-1" />
+                            Copy
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => window.open(location.flipkart_link, "_blank")}
+                            className="rounded-lg text-xs text-blue-600 hover:bg-blue-50"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={() => setFlipkartModal({ open: true, locationId: location.location_id })}
+                        className="w-full rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+                        size="sm"
+                      >
+                        <Plus className="w-4 h-4 mr-1" />
+                        Connect Flipkart
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* JustDial Integration */}
+                  <div className={`p-4 rounded-xl border-2 transition-all ${
+                    location.justdial_link 
+                      ? "bg-yellow-50 border-yellow-200" 
+                      : "bg-slate-50 border-slate-200"
+                  }`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <JustDialIcon className="w-5 h-5" />
+                        <span className="font-medium text-slate-900">JustDial</span>
+                      </div>
+                      <Badge className={location.justdial_link 
+                        ? "bg-yellow-100 text-yellow-700" 
+                        : "bg-slate-100 text-slate-600"
+                      }>
+                        {location.justdial_link ? "Connected" : "Not Connected"}
+                      </Badge>
+                    </div>
+                    
+                    {location.justdial_link ? (
+                      <div className="space-y-3">
+                        <p className="text-sm text-yellow-700 font-medium truncate">
+                          {location.justdial_business_name || location.name}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => copyToClipboard(location.justdial_link, "JustDial link copied!")}
+                            className="flex-1 rounded-lg text-xs"
+                          >
+                            <Copy className="w-3 h-3 mr-1" />
+                            Copy
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => window.open(location.justdial_link, "_blank")}
+                            className="rounded-lg text-xs text-yellow-600 hover:bg-yellow-50"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={() => setJustdialModal({ open: true, locationId: location.location_id })}
+                        className="w-full rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white"
+                        size="sm"
+                      >
+                        <Plus className="w-4 h-4 mr-1" />
+                        Connect JustDial
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
                 {/* QR Code Info - Persistent ID */}
                 <div className="mt-4 p-3 rounded-lg bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100">
                   <div className="flex items-center justify-between flex-wrap gap-2">
