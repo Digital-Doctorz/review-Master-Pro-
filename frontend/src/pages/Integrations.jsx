@@ -451,6 +451,84 @@ export default function Integrations() {
     }
   };
 
+  // Amazon Connect
+  const handleAmazonConnect = async (locationId) => {
+    if (!amazonLink.trim()) {
+      toast.error("Please enter your Amazon seller/store link");
+      return;
+    }
+    
+    if (!amazonLink.toLowerCase().includes("amazon")) {
+      toast.error("Please enter a valid Amazon link");
+      return;
+    }
+    
+    try {
+      await axios.post(`${API}/amazon/connect-location/${locationId}`, {
+        amazon_link: amazonLink
+      }, { withCredentials: true });
+      
+      toast.success("Amazon connected successfully! 🎉");
+      setAmazonModal({ open: false, locationId: null });
+      setAmazonLink("");
+      loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Failed to connect Amazon");
+    }
+  };
+
+  // Flipkart Connect
+  const handleFlipkartConnect = async (locationId) => {
+    if (!flipkartLink.trim()) {
+      toast.error("Please enter your Flipkart seller link");
+      return;
+    }
+    
+    if (!flipkartLink.toLowerCase().includes("flipkart")) {
+      toast.error("Please enter a valid Flipkart link");
+      return;
+    }
+    
+    try {
+      await axios.post(`${API}/flipkart/connect-location/${locationId}`, {
+        flipkart_link: flipkartLink
+      }, { withCredentials: true });
+      
+      toast.success("Flipkart connected successfully! 🎉");
+      setFlipkartModal({ open: false, locationId: null });
+      setFlipkartLink("");
+      loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Failed to connect Flipkart");
+    }
+  };
+
+  // JustDial Connect
+  const handleJustdialConnect = async (locationId) => {
+    if (!justdialLink.trim()) {
+      toast.error("Please enter your JustDial business link");
+      return;
+    }
+    
+    if (!justdialLink.toLowerCase().includes("justdial")) {
+      toast.error("Please enter a valid JustDial link");
+      return;
+    }
+    
+    try {
+      await axios.post(`${API}/justdial/connect-location/${locationId}`, {
+        justdial_link: justdialLink
+      }, { withCredentials: true });
+      
+      toast.success("JustDial connected successfully! 🎉");
+      setJustdialModal({ open: false, locationId: null });
+      setJustdialLink("");
+      loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Failed to connect JustDial");
+    }
+  };
+
   const handleAddLocationClick = () => {
     // Check plan limits before opening modal
     const maxLocations = userPlan?.max_locations || 1;
