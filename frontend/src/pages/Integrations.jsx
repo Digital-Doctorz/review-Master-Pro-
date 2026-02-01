@@ -39,7 +39,7 @@ import {
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-// Google Icon
+// Google Icon - Official colors
 const GoogleIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -49,26 +49,57 @@ const GoogleIcon = ({ className = "w-6 h-6" }) => (
   </svg>
 );
 
-// Facebook Icon
+// Facebook Icon - Official color
 const FacebookIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
     <path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
   </svg>
 );
 
-// Swiggy Icon
-const SwiggyIcon = ({ className = "w-6 h-6" }) => (
+// Amazon Icon - Official smile logo
+const AmazonIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
-    <rect fill="#FC8019" width="24" height="24" rx="4"/>
-    <text x="12" y="16" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="Arial">S</text>
+    <path fill="#FF9900" d="M.045 18.02c.072-.116.187-.124.348-.022 3.636 2.11 7.594 3.166 11.87 3.166 2.852 0 5.668-.533 8.447-1.595l.315-.14c.138-.06.234-.1.293-.13.226-.088.39-.046.483.126.094.172.063.343-.093.513-.156.17-.385.37-.688.6-.661.505-1.425.97-2.293 1.398-1.64.808-3.442 1.349-5.405 1.622-.6.084-1.188.136-1.758.154a23.66 23.66 0 01-1.982-.03 15.138 15.138 0 01-5.086-1.196c-1.324-.545-2.563-1.258-3.714-2.14-.28-.216-.456-.454-.392-.725.064-.271.174-.392.355-.505zm7.394-4.79c0-.792.193-1.474.578-2.05.385-.575.927-.973 1.625-1.194a5.756 5.756 0 012.426-.164c.56.07 1.094.2 1.602.392v-.338c0-.612-.152-1.05-.459-1.308-.305-.26-.778-.389-1.418-.389-.373 0-.75.054-1.13.163-.38.107-.77.267-1.167.474a1.27 1.27 0 01-.51.142c-.18 0-.334-.073-.46-.22a.833.833 0 01-.187-.567c0-.218.063-.418.188-.598.124-.18.34-.378.647-.593.61-.43 1.24-.752 1.889-.967a7.313 7.313 0 012.048-.322c.726 0 1.364.126 1.912.376.55.252.988.613 1.317 1.086.328.473.492 1.024.492 1.655v4.476c0 .345.076.595.228.754.152.156.357.236.615.236.24 0 .438-.08.598-.236a.69.69 0 00.236-.593v-.164h.882v.164c0 .6-.183 1.052-.55 1.36-.368.306-.826.459-1.373.459-.434 0-.825-.095-1.17-.285a1.843 1.843 0 01-.775-.82 3.298 3.298 0 01-1.162.82 3.64 3.64 0 01-1.526.322c-.772 0-1.436-.217-1.988-.652-.553-.434-.83-1.07-.83-1.912zm4.23.328c.408-.126.72-.318.94-.578v-1.72a4.715 4.715 0 00-1.09-.252 5.08 5.08 0 00-.82-.073c-.568 0-1.013.135-1.335.404-.322.27-.484.66-.484 1.166 0 .476.13.84.39 1.086.26.246.623.37 1.09.37.465 0 .9-.134 1.308-.404z"/>
+    <path fill="#232F3E" d="M21.12 17.543c-.264-.172-.4-.364-.4-.644 0-.175.058-.332.174-.473a.56.56 0 01.45-.212c.136 0 .29.058.464.173 1.008.66 2.106.99 3.295.99.844 0 1.513-.164 2.008-.492.495-.327.742-.78.742-1.359 0-.515-.205-.912-.616-1.194-.41-.28-1.06-.528-1.947-.742l-1.163-.279c-.94-.226-1.687-.581-2.242-1.068-.555-.487-.832-1.14-.832-1.96 0-.587.154-1.104.463-1.55.308-.445.737-.79 1.287-1.032.55-.243 1.177-.364 1.88-.364 1.162 0 2.18.264 3.055.792.265.165.398.362.398.592 0 .172-.06.327-.18.464a.573.573 0 01-.444.206c-.104 0-.252-.05-.444-.149-.78-.421-1.628-.631-2.546-.631-.703 0-1.259.152-1.666.458-.408.305-.612.725-.612 1.26 0 .484.183.865.55 1.142.365.278.915.505 1.647.682l1.135.27c1.04.247 1.847.608 2.424 1.083.577.475.866 1.127.866 1.954 0 .6-.16 1.13-.478 1.592-.318.462-.762.82-1.33 1.075-.57.256-1.22.384-1.954.384-1.355 0-2.56-.343-3.617-1.03z"/>
   </svg>
 );
 
-// Zomato Icon
+// Flipkart Icon - Official blue/yellow
+const FlipkartIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <rect fill="#2874F0" width="24" height="24" rx="3"/>
+    <path fill="#FFFFFF" d="M6 7h5.5c1.38 0 2.5 1.12 2.5 2.5S12.88 12 11.5 12H8v5H6V7z"/>
+    <circle fill="#FFE500" cx="8" cy="7" r="1.5"/>
+    <path fill="#FFFFFF" d="M8 9.5h3.5c.55 0 1 .45 1 1s-.45 1-1 1H8V9.5z"/>
+  </svg>
+);
+
+// JustDial Icon - Blue/Orange official colors
+const JustDialIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <rect fill="#FFFFFF" width="24" height="24" rx="3"/>
+    <rect fill="#2C3E50" x="1" y="1" width="22" height="22" rx="2"/>
+    <text x="4" y="15" fill="#3498DB" fontSize="8" fontWeight="bold" fontFamily="Arial">Just</text>
+    <text x="4" y="20" fill="#E67E22" fontSize="6" fontWeight="bold" fontFamily="Arial">Dial</text>
+  </svg>
+);
+
+// Swiggy Icon - Official orange with white arc
+const SwiggyIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <rect fill="#FC8019" width="24" height="24" rx="4"/>
+    <path fill="#FFFFFF" d="M12 4C7.58 4 4 7.58 4 12s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/>
+    <path fill="#FFFFFF" d="M12 8v8M8 12h8" strokeWidth="1.5" stroke="#FC8019"/>
+    <circle fill="#FFFFFF" cx="12" cy="12" r="3"/>
+    <text x="9.5" y="14.5" fill="#FC8019" fontSize="6" fontWeight="bold" fontFamily="Arial">S</text>
+  </svg>
+);
+
+// Zomato Icon - Official red with spoon
 const ZomatoIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
     <rect fill="#E23744" width="24" height="24" rx="4"/>
-    <text x="12" y="16" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="Arial">Z</text>
+    <text x="6" y="16" fill="#FFFFFF" fontSize="10" fontWeight="bold" fontFamily="Arial">zomato</text>
   </svg>
 );
 
