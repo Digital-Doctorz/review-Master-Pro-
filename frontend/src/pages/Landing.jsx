@@ -1051,22 +1051,22 @@ export default function Landing() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.4 + index * 0.1 }}
-                    className="flex items-center gap-4"
+                    className="flex items-center gap-3 bg-white/5 backdrop-blur-sm rounded-xl p-2.5 sm:p-3 border border-white/10"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20">
-                      <benefit.icon className="w-5 h-5 text-white" />
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 flex-shrink-0">
+                      <benefit.icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                     </div>
-                    <span className="text-white/90 font-medium">{benefit.text}</span>
+                    <span className="text-white/90 font-medium text-sm sm:text-base">{benefit.text}</span>
                   </motion.div>
                 ))}
               </div>
               
-              {/* CTAs */}
-              <div className="flex flex-wrap gap-4">
+              {/* CTAs - Responsive */}
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
                 <Button
                   onClick={handleGoogleLogin}
                   size="lg"
-                  className="rounded-full px-8 py-6 bg-white text-indigo-700 hover:bg-white/90 font-semibold shadow-lg hover:shadow-xl transition-all"
+                  className="rounded-full px-6 sm:px-8 py-5 sm:py-6 bg-white text-indigo-700 hover:bg-white/90 font-semibold shadow-lg hover:shadow-xl transition-all"
                   data-testid="grow-section-cta"
                 >
                   Get Started Free
@@ -1076,7 +1076,7 @@ export default function Landing() {
                   onClick={handleDemoMode}
                   size="lg"
                   variant="outline"
-                  className="rounded-full px-8 py-6 bg-transparent border-2 border-white/30 text-white hover:bg-white/10 font-semibold transition-all"
+                  className="rounded-full px-6 sm:px-8 py-5 sm:py-6 bg-transparent border-2 border-white/30 text-white hover:bg-white/10 font-semibold transition-all"
                 >
                   <Play className="w-5 h-5 mr-2" />
                   Watch Demo
@@ -1087,10 +1087,10 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Dashboard Screenshots Section */}
-      <section className="py-20 px-6 bg-gradient-to-b from-white/50 to-indigo-50/50">
+      {/* Dashboard Screenshots Section - Enhanced */}
+      <section className="py-12 sm:py-20 px-4 sm:px-6 bg-gradient-to-b from-white/50 to-indigo-50/50">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 sm:mb-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -1100,34 +1100,34 @@ export default function Landing() {
               <Eye className="w-4 h-4" />
               See It In Action
             </motion.div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight mb-3 sm:mb-4">
               Powerful Dashboard,
               <span className="block text-gradient">Simple Interface</span>
             </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto px-4">
               Everything you need to manage reviews in one beautiful dashboard
             </p>
           </div>
 
-          {/* Dashboard Preview Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Dashboard Preview Grid - Mobile Optimized */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* Analytics Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="glass-card rounded-2xl p-6 hover:shadow-xl transition-all"
+              className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 hover:shadow-xl transition-all border border-white/60"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-cyan-500 flex items-center justify-center">
-                  <BarChart3 className="w-5 h-5 text-white" />
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-sky-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-sky-500/30">
+                  <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900">Analytics Dashboard</h3>
+                  <h3 className="font-semibold text-slate-900 text-sm sm:text-base">Analytics Dashboard</h3>
                   <p className="text-xs text-slate-500">Track your growth</p>
                 </div>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2.5 sm:space-y-3">
                 <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
                   <span className="text-sm text-slate-600">This Month</span>
                   <span className="font-bold text-emerald-600">+127 reviews</span>
