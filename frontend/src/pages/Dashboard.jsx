@@ -338,6 +338,11 @@ export default function Dashboard() {
     const colors = {
       google: "bg-blue-100 text-blue-700",
       facebook: "bg-indigo-100 text-indigo-700",
+      amazon: "bg-amber-100 text-amber-700",
+      flipkart: "bg-yellow-100 text-yellow-700",
+      justdial: "bg-yellow-100 text-yellow-800",
+      swiggy: "bg-orange-100 text-orange-700",
+      zomato: "bg-red-100 text-red-700",
       direct: "bg-teal-100 text-teal-700",
     };
     return colors[platform] || "bg-slate-100 text-slate-700";
