@@ -167,7 +167,7 @@ export default function Integrations() {
     max_locations: 3,
     current_locations: 1,
     can_add_location: true,
-    features: ["google_integration", "facebook_integration", "swiggy_integration", "zomato_integration", "qr_codes", "ai_responses", "email_notifications", "whatsapp_alerts", "advanced_analytics", "private_feedback", "custom_branding"]
+    features: ["google_integration", "facebook_integration", "amazon_integration", "flipkart_integration", "justdial_integration", "swiggy_integration", "zomato_integration", "qr_codes", "ai_responses", "email_notifications", "whatsapp_alerts", "advanced_analytics", "private_feedback", "custom_branding"]
   };
   
   const DEMO_LOCATIONS = [
@@ -179,6 +179,12 @@ export default function Integrations() {
       google_business_name: "Demo Coffee Shop",
       facebook_review_link: "https://facebook.com/democoffeeshop/reviews",
       facebook_page_name: "Demo Coffee FB",
+      amazon_link: "https://www.amazon.in/sp?seller=DEMO123456",
+      amazon_seller_name: "Demo Coffee Shop Store",
+      flipkart_link: "https://www.flipkart.com/seller/demo-coffee-shop",
+      flipkart_seller_name: "Demo Coffee Shop - Flipkart",
+      justdial_link: "https://www.justdial.com/Sample-City/Demo-Coffee-Shop",
+      justdial_business_name: "Demo Coffee Shop - JustDial",
       swiggy_link: "https://www.swiggy.com/restaurants/demo-coffee-shop-sample-city-123456",
       swiggy_restaurant_name: "Demo Coffee Shop - Swiggy",
       zomato_link: "https://www.zomato.com/sample-city/demo-coffee-shop",
