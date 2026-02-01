@@ -750,17 +750,32 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Critical Role of Online Reviews Section */}
-      <section className="py-24 px-6 bg-gradient-to-b from-slate-50 via-white to-indigo-50/30" data-testid="reviews-stats-section">
+      {/* Critical Role of Online Reviews Section - Enhanced */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-slate-50 via-white to-indigo-50/30" data-testid="reviews-stats-section">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-start">
-            {/* Left Content */}
+          {/* Section Header - Mobile First */}
+          <div className="text-center mb-10 sm:mb-16 lg:hidden">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 text-sm font-medium mb-4">
+              <BarChart3 className="w-4 h-4" />
+              Industry Statistics
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight leading-tight mb-4">
+              The Critical Role of
+              <span className="block text-gradient">Online Reviews</span>
+            </h2>
+            <p className="text-base text-slate-600 leading-relaxed max-w-lg mx-auto">
+              Online reviews are a <span className="font-semibold text-indigo-600">powerful tool</span> for any business, directly impacting sales, trust, and reputation.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
+            {/* Left Content - Hidden on mobile, shown on desktop */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="lg:sticky lg:top-32"
+              className="hidden lg:block lg:sticky lg:top-32"
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 text-sm font-medium mb-6">
                 <BarChart3 className="w-4 h-4" />
@@ -792,38 +807,46 @@ export default function Landing() {
               </Button>
             </motion.div>
 
-            {/* Right Content - Stats Cards */}
+            {/* Right Content - Stats Cards - 2x2 Grid on mobile */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="grid grid-cols-2 gap-3 sm:gap-5">
                 {[
                   {
                     percentage: "78%",
                     text: "of consumers trust online reviews as much as recommendations from friends and family.",
+                    shortText: "trust reviews like friend recommendations",
                     gradient: "from-indigo-500 to-purple-500",
-                    bg: "bg-indigo-50"
+                    bg: "bg-gradient-to-br from-indigo-50 to-purple-50",
+                    icon: Users
                   },
                   {
                     percentage: "93%",
                     text: "of users have made buying decisions based upon an online review.",
+                    shortText: "make buying decisions from reviews",
                     gradient: "from-violet-500 to-purple-600",
-                    bg: "bg-violet-50"
+                    bg: "bg-gradient-to-br from-violet-50 to-fuchsia-50",
+                    icon: TrendingUp
                   },
                   {
                     percentage: "81%",
                     text: "of consumers use Google to evaluate local businesses, making it the most influential review site.",
+                    shortText: "use Google to evaluate businesses",
                     gradient: "from-sky-500 to-indigo-500",
-                    bg: "bg-sky-50"
+                    bg: "bg-gradient-to-br from-sky-50 to-blue-50",
+                    icon: Globe
                   },
                   {
                     percentage: "31%",
                     text: "of consumers read more than 10 reviews before their trust is formed.",
+                    shortText: "read 10+ reviews before trusting",
                     gradient: "from-emerald-500 to-teal-500",
-                    bg: "bg-emerald-50"
+                    bg: "bg-gradient-to-br from-emerald-50 to-teal-50",
+                    icon: Eye
                   }
                 ].map((stat, index) => (
                   <motion.div
@@ -832,15 +855,38 @@ export default function Landing() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.3 + index * 0.1 }}
-                    className={`${stat.bg} rounded-2xl p-6 border border-white/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300`}
+                    className={`${stat.bg} rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative overflow-hidden`}
                     data-testid={`review-stat-card-${index}`}
                   >
-                    <p className={`text-5xl font-bold bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent mb-4`}>
+                    {/* Decorative icon */}
+                    <div className="absolute top-2 right-2 sm:top-3 sm:right-3 opacity-10">
+                      <stat.icon className="w-8 h-8 sm:w-12 sm:h-12" />
+                    </div>
+                    
+                    {/* Percentage with gradient */}
+                    <p className={`text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent mb-2 sm:mb-4`}>
                       {stat.percentage}
                     </p>
-                    <p className="text-sm text-slate-600 leading-relaxed">{stat.text}</p>
+                    
+                    {/* Text - shorter on mobile */}
+                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                      <span className="hidden sm:inline">{stat.text}</span>
+                      <span className="sm:hidden">{stat.shortText}</span>
+                    </p>
                   </motion.div>
                 ))}
+              </div>
+
+              {/* Mobile CTA Button */}
+              <div className="mt-6 text-center lg:hidden">
+                <Button
+                  onClick={handleDemoMode}
+                  size="lg"
+                  className="rounded-full px-8 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold shadow-lg"
+                >
+                  See How It Works
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
               </div>
             </motion.div>
           </div>
