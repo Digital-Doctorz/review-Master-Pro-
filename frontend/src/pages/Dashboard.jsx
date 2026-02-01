@@ -65,10 +65,10 @@ const formatReviewDate = (dateString) => {
 // Demo data for demonstration mode
 const DEMO_ANALYTICS = {
   average_rating: 4.7,
-  total_reviews: 1284,
+  total_reviews: 1847,
   response_rate: 98,
-  positive_ratio: 89,
-  sentiment_breakdown: { positive: 1142, neutral: 98, negative: 44 }
+  positive_ratio: 91,
+  sentiment_breakdown: { positive: 1682, neutral: 112, negative: 53 }
 };
 
 const DEMO_REVIEWS = [
@@ -102,7 +102,7 @@ const DEMO_REVIEWS = [
     rating: 5,
     text: "Ordered via Swiggy and the food arrived hot and fresh! The packaging was excellent. Biryani was authentic and delicious.",
     sentiment: "positive",
-    response: "Thank you Amit! We're glad the delivery experience was great. Order again soon! 🍛",
+    response: "Thank you Amit! We're glad the delivery experience was great. Order again soon!",
     created_at: new Date(Date.now() - 43200000).toISOString()
   },
   {
@@ -113,11 +113,44 @@ const DEMO_REVIEWS = [
     rating: 5,
     text: "Found this gem on Zomato! The ambiance is cozy and the pasta is simply outstanding. Must try their tiramisu!",
     sentiment: "positive",
-    response: "Thanks Priya! So happy you discovered us. The tiramisu is indeed our specialty! 🍰",
+    response: "Thanks Priya! So happy you discovered us. The tiramisu is indeed our specialty!",
     created_at: new Date(Date.now() - 129600000).toISOString()
   },
   {
     review_id: "demo_5",
+    author_name: "Deepak V.",
+    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=deepak",
+    platform: "amazon",
+    rating: 5,
+    text: "Great product quality! Exactly as described. Delivery was quick and packaging was secure. Very satisfied!",
+    sentiment: "positive",
+    response: "Thank you Deepak! We take pride in product quality. Shop with us again!",
+    created_at: new Date(Date.now() - 172800000).toISOString()
+  },
+  {
+    review_id: "demo_6",
+    author_name: "Meera K.",
+    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=meera",
+    platform: "flipkart",
+    rating: 5,
+    text: "Flipkart delivered this product on time! Quality is excellent and value for money. Highly recommend this seller.",
+    sentiment: "positive",
+    response: "Thanks Meera! We appreciate your trust in us. Happy shopping!",
+    created_at: new Date(Date.now() - 216000000).toISOString()
+  },
+  {
+    review_id: "demo_7",
+    author_name: "Suresh R.",
+    author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=suresh",
+    platform: "justdial",
+    rating: 5,
+    text: "Found this business on JustDial and was not disappointed! Professional service and great rates. Will use again.",
+    sentiment: "positive",
+    response: "Thank you Suresh! We're glad JustDial helped you find us. See you soon!",
+    created_at: new Date(Date.now() - 259200000).toISOString()
+  },
+  {
+    review_id: "demo_8",
     author_name: "Anita K.",
     author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=anita",
     platform: "google",
@@ -125,10 +158,10 @@ const DEMO_REVIEWS = [
     text: "Great food but parking was a bit difficult. Otherwise a lovely experience!",
     sentiment: "positive",
     response: "Thank you Anita! We're working on improving parking options. Appreciate your feedback!",
-    created_at: new Date(Date.now() - 172800000).toISOString()
+    created_at: new Date(Date.now() - 302400000).toISOString()
   },
   {
-    review_id: "demo_6",
+    review_id: "demo_9",
     author_name: "Vikram R.",
     author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=vikram",
     platform: "swiggy",
@@ -136,21 +169,21 @@ const DEMO_REVIEWS = [
     text: "Quick delivery and tasty food. The portion size could be slightly bigger for the price, but overall satisfied.",
     sentiment: "positive",
     response: null,
-    created_at: new Date(Date.now() - 216000000).toISOString()
+    created_at: new Date(Date.now() - 345600000).toISOString()
   },
   {
-    review_id: "demo_7",
+    review_id: "demo_10",
     author_name: "Neha G.",
     author_avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=neha",
     platform: "zomato",
     rating: 5,
     text: "Sunday brunch here is a must! Great variety, fresh ingredients, and the staff is so friendly. 5 stars!",
     sentiment: "positive",
-    response: "Thank you Neha! We love seeing you at our Sunday brunches. See you next weekend! 🥂",
-    created_at: new Date(Date.now() - 259200000).toISOString()
+    response: "Thank you Neha! We love seeing you at our Sunday brunches. See you next weekend!",
+    created_at: new Date(Date.now() - 388800000).toISOString()
   },
   {
-    review_id: "demo_8",
+    review_id: "demo_11",
     author_name: "Private Feedback",
     author_avatar: null,
     platform: "direct",
@@ -159,13 +192,16 @@ const DEMO_REVIEWS = [
     sentiment: "negative",
     response: "We sincerely apologize for the inconvenience. We've addressed this with our team and would love to make it up to you.",
     is_private: true,
-    created_at: new Date(Date.now() - 345600000).toISOString()
+    created_at: new Date(Date.now() - 432000000).toISOString()
   }
 ];
 
 const DEMO_PLATFORMS = [
   { platform: "google", status: "connected", last_sync: new Date().toISOString() },
   { platform: "facebook", status: "connected", last_sync: new Date().toISOString() },
+  { platform: "amazon", status: "connected", last_sync: new Date().toISOString() },
+  { platform: "flipkart", status: "connected", last_sync: new Date().toISOString() },
+  { platform: "justdial", status: "connected", last_sync: new Date().toISOString() },
   { platform: "swiggy", status: "connected", last_sync: new Date().toISOString() },
   { platform: "zomato", status: "connected", last_sync: new Date().toISOString() }
 ];
