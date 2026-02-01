@@ -594,7 +594,7 @@ export default function Integrations() {
           Connect Your Review Platforms
         </h1>
         <p className="text-slate-600">
-          Connect Google & Facebook to collect reviews. Settings are saved automatically.
+          Connect all 7 platforms to collect reviews. Settings are saved automatically.
         </p>
       </div>
 
