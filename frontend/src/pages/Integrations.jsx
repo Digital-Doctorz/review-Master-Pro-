@@ -141,6 +141,14 @@ export default function Integrations() {
   const [swiggyLink, setSwiggyLink] = useState("");
   const [zomatoLink, setZomatoLink] = useState("");
   
+  // Amazon, Flipkart, JustDial setup modals
+  const [amazonModal, setAmazonModal] = useState({ open: false, locationId: null });
+  const [flipkartModal, setFlipkartModal] = useState({ open: false, locationId: null });
+  const [justdialModal, setJustdialModal] = useState({ open: false, locationId: null });
+  const [amazonLink, setAmazonLink] = useState("");
+  const [flipkartLink, setFlipkartLink] = useState("");
+  const [justdialLink, setJustdialLink] = useState("");
+  
   // Modal states
   const [setupModal, setSetupModal] = useState({ open: false, platform: null, locationId: null });
   const [locationModal, setLocationModal] = useState({ open: false, editing: null });
