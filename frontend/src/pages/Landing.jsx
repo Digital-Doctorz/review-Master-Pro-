@@ -560,7 +560,7 @@ export default function Landing() {
 
               <p className="text-lg text-slate-600 mb-8 max-w-lg leading-relaxed">
                 Join <span className="font-bold text-indigo-600">2,500+ businesses</span> already using Review Master. 
-                Collect reviews from <span className="font-semibold">Google, Facebook, Swiggy & Zomato</span> with one-click setup, 
+                Collect reviews from <span className="font-semibold">Google, Facebook, Amazon, Flipkart, JustDial, Swiggy & Zomato</span> with one-click setup, 
                 AI-powered responses, and smart routing for negative feedback.
               </p>
 
