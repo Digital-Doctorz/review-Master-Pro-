@@ -893,14 +893,15 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="py-24 px-6 bg-gradient-to-br from-indigo-600 via-purple-600 to-violet-700 relative overflow-hidden" data-testid="grow-faster-section">
+      {/* How It Works Section - Enhanced */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-br from-indigo-600 via-purple-600 to-violet-700 relative overflow-hidden" data-testid="grow-faster-section">
         {/* Background decorations */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+        <div className="absolute top-0 left-0 w-64 sm:w-96 h-64 sm:h-96 bg-white/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-white/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+        <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-pink-500/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
         
         <div className="max-w-7xl mx-auto relative">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left Content - App Flow Illustration */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -909,33 +910,34 @@ export default function Landing() {
               transition={{ duration: 0.6 }}
               className="order-2 lg:order-1"
             >
-              <div className="flex flex-col items-center gap-6">
+              <div className="flex flex-col items-center gap-4 sm:gap-6">
                 {/* Step 1 - SMS */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.2 }}
-                  className="w-full max-w-sm bg-white rounded-2xl p-5 shadow-2xl"
+                  className="w-full max-w-sm bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl transform hover:scale-[1.02] transition-transform"
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
-                      <MessageSquare className="w-5 h-5 text-white" />
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                      <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-slate-800">Automated SMS</p>
                       <p className="text-xs text-slate-500">Sent after visit</p>
                     </div>
-                    <span className="ml-auto text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 font-medium">Step 1</span>
+                    <span className="ml-auto text-xs px-2 py-1 rounded-full bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-700 font-semibold">Step 1</span>
                   </div>
-                  <p className="text-sm text-slate-600 leading-relaxed bg-slate-50 rounded-xl p-3">
-                    &quot;Hi! Thank you for visiting us today. We&apos;d love to hear about your experience. Tap here to leave a quick review!&quot;
-                  </p>
+                  <div className="text-sm text-slate-600 leading-relaxed bg-gradient-to-br from-slate-50 to-indigo-50/50 rounded-xl p-3 border border-slate-100">
+                    <p>&quot;Hi! Thank you for visiting us today. We&apos;d love to hear about your experience.&quot;</p>
+                    <span className="inline-block mt-2 text-indigo-600 font-medium text-xs underline decoration-indigo-200 underline-offset-2">Tap here to leave a review</span>
+                  </div>
                 </motion.div>
 
-                {/* Arrow */}
+                {/* Arrow with step connector */}
                 <div className="flex items-center justify-center">
-                  <div className="w-0.5 h-8 bg-white/30" />
+                  <div className="w-0.5 h-6 sm:h-8 bg-gradient-to-b from-white/50 to-white/20 rounded-full" />
                 </div>
 
                 {/* Step 2 - Rating Selection */}
@@ -944,24 +946,24 @@ export default function Landing() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.4 }}
-                  className="w-full max-w-sm bg-white rounded-2xl p-5 shadow-2xl"
+                  className="w-full max-w-sm bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl transform hover:scale-[1.02] transition-transform"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
-                        <Star className="w-5 h-5 text-white" />
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                       </div>
                       <p className="text-sm font-semibold text-slate-800">Rate Experience</p>
                     </div>
-                    <span className="text-xs px-2 py-1 rounded-full bg-violet-100 text-violet-700 font-medium">Step 2</span>
+                    <span className="text-xs px-2 py-1 rounded-full bg-gradient-to-r from-violet-100 to-purple-100 text-violet-700 font-semibold">Step 2</span>
                   </div>
                   <p className="text-center text-sm text-slate-600 mb-4">How was your experience?</p>
                   <div className="flex gap-3 justify-center">
-                    <button className="flex-1 py-3 rounded-xl bg-emerald-500 text-white text-sm font-medium flex items-center justify-center gap-2 hover:bg-emerald-600 transition-colors">
+                    <button className="flex-1 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/30 transition-all">
                       <ThumbsUp className="w-4 h-4" />
                       Positive
                     </button>
-                    <button className="flex-1 py-3 rounded-xl bg-slate-200 text-slate-700 text-sm font-medium flex items-center justify-center gap-2 hover:bg-slate-300 transition-colors">
+                    <button className="flex-1 py-2.5 sm:py-3 rounded-xl bg-slate-100 text-slate-700 text-sm font-medium flex items-center justify-center gap-2 hover:bg-slate-200 transition-colors border border-slate-200">
                       <Shield className="w-4 h-4" />
                       Private
                     </button>
@@ -970,7 +972,7 @@ export default function Landing() {
 
                 {/* Arrow */}
                 <div className="flex items-center justify-center">
-                  <div className="w-0.5 h-8 bg-white/30" />
+                  <div className="w-0.5 h-6 sm:h-8 bg-gradient-to-b from-white/50 to-white/20 rounded-full" />
                 </div>
 
                 {/* Step 3 - Platform Selection */}
@@ -979,29 +981,29 @@ export default function Landing() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.6 }}
-                  className="w-full max-w-sm bg-white rounded-2xl p-5 shadow-2xl"
+                  className="w-full max-w-sm bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl transform hover:scale-[1.02] transition-transform"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-500 flex items-center justify-center">
-                        <Globe className="w-5 h-5 text-white" />
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-sky-500/30">
+                        <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                       </div>
                       <p className="text-sm font-semibold text-slate-800">Choose Platform</p>
                     </div>
-                    <span className="text-xs px-2 py-1 rounded-full bg-sky-100 text-sky-700 font-medium">Step 3</span>
+                    <span className="text-xs px-2 py-1 rounded-full bg-gradient-to-r from-sky-100 to-blue-100 text-sky-700 font-semibold">Step 3</span>
                   </div>
                   <p className="text-center text-xs text-slate-500 mb-4">Where would you like to leave your review?</p>
-                  <div className="grid grid-cols-4 gap-3">
-                    <div className="aspect-square rounded-xl bg-slate-50 flex items-center justify-center border-2 border-indigo-200 hover:border-indigo-400 cursor-pointer transition-colors">
-                      <GoogleIcon className="w-6 h-6" />
+                  <div className="grid grid-cols-4 gap-2 sm:gap-3">
+                    <div className="aspect-square rounded-xl bg-gradient-to-br from-slate-50 to-white flex items-center justify-center border-2 border-indigo-300 hover:border-indigo-500 cursor-pointer transition-all shadow-sm hover:shadow-md">
+                      <GoogleIcon className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
-                    <div className="aspect-square rounded-xl bg-slate-50 flex items-center justify-center border-2 border-slate-200 hover:border-indigo-400 cursor-pointer transition-colors">
-                      <FacebookIcon className="w-6 h-6" />
+                    <div className="aspect-square rounded-xl bg-gradient-to-br from-slate-50 to-white flex items-center justify-center border-2 border-slate-200 hover:border-blue-400 cursor-pointer transition-all shadow-sm hover:shadow-md">
+                      <FacebookIcon className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
-                    <div className="aspect-square rounded-xl bg-orange-500 flex items-center justify-center border-2 border-orange-400">
+                    <div className="aspect-square rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center border-2 border-orange-400 shadow-lg shadow-orange-500/30">
                       <span className="text-white text-sm font-bold">S</span>
                     </div>
-                    <div className="aspect-square rounded-xl bg-red-500 flex items-center justify-center border-2 border-red-400">
+                    <div className="aspect-square rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center border-2 border-red-400 shadow-lg shadow-red-500/30">
                       <span className="text-white text-sm font-bold">Z</span>
                     </div>
                   </div>
@@ -1015,33 +1017,33 @@ export default function Landing() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="order-1 lg:order-2 text-white"
+              className="order-1 lg:order-2 text-white text-center lg:text-left"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white/90 text-sm font-medium mb-6 border border-white/20">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white/90 text-sm font-medium mb-4 sm:mb-6 border border-white/20">
                 <Rocket className="w-4 h-4" />
                 How It Works
               </div>
               
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight mb-6">
+              <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold tracking-tight leading-tight mb-4 sm:mb-6">
                 We help you grow
                 <span className="block text-white/90">faster and better</span>
               </h2>
               
-              <p className="text-lg text-white/80 leading-relaxed mb-4">
+              <p className="text-base sm:text-lg text-white/80 leading-relaxed mb-3 sm:mb-4 max-w-lg mx-auto lg:mx-0">
                 If you&apos;re struggling with negative feedback affecting your business growth, <span className="font-bold text-white">Review Master</span> is here to help.
               </p>
               
-              <p className="text-white/70 leading-relaxed mb-10">
+              <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-6 sm:mb-10 max-w-lg mx-auto lg:mx-0 hidden sm:block">
                 Manage your online presence, route negative feedback privately, and boost your credibility with positive reviews on the platforms that matter most.
               </p>
               
-              {/* Benefits List */}
-              <div className="space-y-4 mb-10">
+              {/* Benefits List - Responsive Grid */}
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-10 max-w-lg mx-auto lg:mx-0">
                 {[
-                  { icon: Eye, text: "Monitor your reputation in real-time" },
-                  { icon: Shield, text: "Route negative feedback privately" },
-                  { icon: TrendingUp, text: "Boost ratings with positive reviews" },
-                  { icon: BadgeCheck, text: "Build trust and credibility" }
+                  { icon: Eye, text: "Monitor reputation" },
+                  { icon: Shield, text: "Route feedback privately" },
+                  { icon: TrendingUp, text: "Boost ratings" },
+                  { icon: BadgeCheck, text: "Build credibility" }
                 ].map((benefit, index) => (
                   <motion.div
                     key={index}
