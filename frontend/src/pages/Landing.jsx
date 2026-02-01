@@ -1268,7 +1268,7 @@ export default function Landing() {
               </div>
             </motion.div>
 
-            {/* QR Code Card */}
+            {/* QR Code Card - Enhanced with all platforms */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -1282,15 +1282,42 @@ export default function Landing() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 text-sm sm:text-base">QR Code Generator</h3>
-                  <p className="text-xs text-slate-500">Easy review collection</p>
+                  <p className="text-xs text-slate-500">Collect reviews on 7 platforms</p>
                 </div>
               </div>
-              <div className="text-center p-4 sm:p-6 rounded-xl bg-gradient-to-br from-slate-50 to-emerald-50/30 border border-slate-100">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4 bg-white rounded-xl border-2 border-slate-200 flex items-center justify-center shadow-sm">
-                  <QrCode className="w-12 h-12 sm:w-16 sm:h-16 text-slate-400" />
+              <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-br from-slate-50 to-emerald-50/30 border border-slate-100">
+                <div className="flex justify-center mb-3">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-xl border-2 border-slate-200 flex items-center justify-center shadow-sm">
+                    <QrCode className="w-10 h-10 sm:w-12 sm:h-12 text-slate-400" />
+                  </div>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-600 mb-2 sm:mb-3">Scan to leave a review</p>
-                <Button size="sm" className="rounded-full px-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg shadow-emerald-500/25">Download QR</Button>
+                <p className="text-xs text-center text-slate-500 mb-3">Customer scans & selects platform:</p>
+                <div className="grid grid-cols-7 gap-1.5 mb-3">
+                  <div className="aspect-square rounded-lg bg-white flex items-center justify-center border border-slate-200 hover:border-blue-300 transition-colors">
+                    <GoogleIcon className="w-4 h-4" />
+                  </div>
+                  <div className="aspect-square rounded-lg bg-white flex items-center justify-center border border-slate-200 hover:border-blue-300 transition-colors">
+                    <FacebookIcon className="w-4 h-4" />
+                  </div>
+                  <div className="aspect-square rounded-lg bg-white flex items-center justify-center border border-slate-200 hover:border-amber-300 transition-colors">
+                    <AmazonIcon className="w-4 h-4" />
+                  </div>
+                  <div className="aspect-square rounded-lg bg-white flex items-center justify-center border border-slate-200 hover:border-yellow-300 transition-colors">
+                    <FlipkartIcon className="w-4 h-4" />
+                  </div>
+                  <div className="aspect-square rounded-lg bg-white flex items-center justify-center border border-slate-200 hover:border-yellow-300 transition-colors">
+                    <JustDialIcon className="w-4 h-4" />
+                  </div>
+                  <div className="aspect-square rounded-lg bg-orange-500 flex items-center justify-center">
+                    <span className="text-white text-xs font-bold">S</span>
+                  </div>
+                  <div className="aspect-square rounded-lg bg-red-500 flex items-center justify-center">
+                    <span className="text-white text-xs font-bold">Z</span>
+                  </div>
+                </div>
+                <Button size="sm" className="w-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg shadow-emerald-500/25 text-xs">
+                  Generate QR Code
+                </Button>
               </div>
             </motion.div>
           </div>
