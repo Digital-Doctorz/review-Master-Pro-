@@ -665,7 +665,7 @@ export default function Landing() {
                 {/* Stats Grid */}
                 <div className="grid grid-cols-3 gap-3 mb-6">
                   {[
-                    { label: "Total Reviews", value: "1,284", change: "+12%", color: "text-sky-600", bg: "bg-sky-50" },
+                    { label: "Total Reviews", value: "1,847", change: "+12%", color: "text-sky-600", bg: "bg-sky-50" },
                     { label: "Avg Rating", value: "4.7", change: "+0.3", color: "text-amber-600", bg: "bg-amber-50" },
                     { label: "Response Rate", value: "98%", change: "+5%", color: "text-emerald-600", bg: "bg-emerald-50" },
                   ].map((stat, i) => (
