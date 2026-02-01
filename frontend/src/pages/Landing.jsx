@@ -1149,26 +1149,26 @@ export default function Landing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="glass-card rounded-2xl p-6 hover:shadow-xl transition-all"
+              className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 hover:shadow-xl transition-all border border-white/60"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
-                  <MessageSquare className="w-5 h-5 text-white" />
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center shadow-lg shadow-violet-500/30">
+                  <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900">Review Management</h3>
+                  <h3 className="font-semibold text-slate-900 text-sm sm:text-base">Review Management</h3>
                   <p className="text-xs text-slate-500">All reviews in one place</p>
                 </div>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2.5 sm:space-y-3">
                 {[
                   { name: "Amit K.", stars: 5, text: "Best restaurant in town!" },
                   { name: "Neha S.", stars: 4, text: "Great food, nice ambiance" },
                   { name: "Raj P.", stars: 5, text: "Amazing experience!" },
                 ].map((review, i) => (
-                  <div key={i} className="p-3 rounded-lg bg-slate-50">
+                  <div key={i} className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-br from-slate-50 to-white border border-slate-100">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium text-slate-900">{review.name}</span>
+                      <span className="text-xs sm:text-sm font-medium text-slate-900">{review.name}</span>
                       <div className="flex">
                         {[...Array(review.stars)].map((_, j) => (
                           <Star key={j} className="w-3 h-3 fill-amber-400 text-amber-400" />
@@ -1187,43 +1187,43 @@ export default function Landing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="glass-card rounded-2xl p-6 hover:shadow-xl transition-all"
+              className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 hover:shadow-xl transition-all border border-white/60 sm:col-span-2 lg:col-span-1"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
-                  <QrCode className="w-5 h-5 text-white" />
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                  <QrCode className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900">QR Code Generator</h3>
+                  <h3 className="font-semibold text-slate-900 text-sm sm:text-base">QR Code Generator</h3>
                   <p className="text-xs text-slate-500">Easy review collection</p>
                 </div>
               </div>
-              <div className="text-center p-6 rounded-xl bg-slate-50">
-                <div className="w-24 h-24 mx-auto mb-4 bg-white rounded-xl border-2 border-slate-200 flex items-center justify-center">
-                  <QrCode className="w-16 h-16 text-slate-400" />
+              <div className="text-center p-4 sm:p-6 rounded-xl bg-gradient-to-br from-slate-50 to-emerald-50/30 border border-slate-100">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4 bg-white rounded-xl border-2 border-slate-200 flex items-center justify-center shadow-sm">
+                  <QrCode className="w-12 h-12 sm:w-16 sm:h-16 text-slate-400" />
                 </div>
-                <p className="text-sm text-slate-600 mb-2">Scan to leave a review</p>
-                <Button size="sm" className="rounded-lg">Download QR</Button>
+                <p className="text-xs sm:text-sm text-slate-600 mb-2 sm:mb-3">Scan to leave a review</p>
+                <Button size="sm" className="rounded-full px-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg shadow-emerald-500/25">Download QR</Button>
               </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 px-6">
+      {/* Features Section - Enhanced */}
+      <section id="features" className="py-12 sm:py-20 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 sm:mb-16">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4"
+              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight mb-3 sm:mb-4"
             >
               Everything you need to
               <span className="block text-gradient">dominate reviews</span>
             </motion.h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto px-4">
               Built for business owners who want results, not complexity.
             </p>
           </div>
