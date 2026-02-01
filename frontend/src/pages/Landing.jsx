@@ -677,31 +677,38 @@ export default function Landing() {
                   ))}
                 </div>
 
-                {/* Platform Status */}
-                <div className="flex items-center gap-3 mb-6 p-3 rounded-xl bg-slate-50 flex-wrap">
-                  <div className="flex items-center gap-2">
-                    <GoogleIcon className="w-5 h-5" />
-                    <span className="text-sm font-medium text-slate-700">Google</span>
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <FacebookIcon className="w-5 h-5" />
-                    <span className="text-sm font-medium text-slate-700">Facebook</span>
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 rounded bg-orange-500 flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">S</span>
+                {/* Platform Status - All 7 Platforms */}
+                <div className="mb-6">
+                  <p className="text-xs text-slate-500 mb-2 font-medium">Connected Platforms (7)</p>
+                  <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+                    <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
+                      <GoogleIcon className="w-5 h-5" />
+                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                     </div>
-                    <span className="text-sm font-medium text-slate-700">Swiggy</span>
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 rounded bg-red-500 flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">Z</span>
+                    <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
+                      <FacebookIcon className="w-5 h-5" />
+                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                     </div>
-                    <span className="text-sm font-medium text-slate-700">Zomato</span>
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                    <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
+                      <AmazonIcon className="w-5 h-5" />
+                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                    </div>
+                    <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
+                      <FlipkartIcon className="w-5 h-5" />
+                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                    </div>
+                    <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
+                      <JustDialIcon className="w-5 h-5" />
+                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                    </div>
+                    <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-orange-50 hover:bg-orange-100 transition-colors">
+                      <SwiggyIcon className="w-5 h-5" />
+                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                    </div>
+                    <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-red-50 hover:bg-red-100 transition-colors">
+                      <ZomatoIcon className="w-5 h-5" />
+                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                    </div>
                   </div>
                 </div>
 
