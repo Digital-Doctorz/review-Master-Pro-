@@ -416,42 +416,44 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen animated-bg overflow-hidden">
-      {/* Navigation */}
+      {/* Navigation - Enhanced for mobile */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-nav">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <AnimatedLogo size="default" />
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-slate-600 hover:text-slate-900 transition-colors">Features</a>
-            <a href="#pricing" className="text-slate-600 hover:text-slate-900 transition-colors">Pricing</a>
-            <a href="#testimonials" className="text-slate-600 hover:text-slate-900 transition-colors">Reviews</a>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+          <div className="flex-shrink-0">
+            <AnimatedLogo size="default" className="scale-90 sm:scale-100" />
           </div>
-          <div className="flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-8">
+            <a href="#features" className="text-slate-600 hover:text-slate-900 transition-colors font-medium">Features</a>
+            <a href="#pricing" className="text-slate-600 hover:text-slate-900 transition-colors font-medium">Pricing</a>
+            <a href="#testimonials" className="text-slate-600 hover:text-slate-900 transition-colors font-medium">Reviews</a>
+          </div>
+          <div className="flex items-center gap-2 sm:gap-3">
             {isLoggedIn && userPlan?.is_active ? (
               <Button
                 onClick={() => navigate('/dashboard')}
-                className="rounded-full px-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg"
+                className="rounded-full px-4 sm:px-6 text-sm sm:text-base bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg"
                 data-testid="nav-dashboard-btn"
               >
-                <ArrowRight className="w-4 h-4 mr-2" />
-                Go to Dashboard
+                <ArrowRight className="w-4 h-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Go to </span>Dashboard
               </Button>
             ) : isLoggedIn ? (
               <>
                 <Button
                   onClick={() => navigate('/dashboard')}
                   variant="outline"
-                  className="rounded-full px-5 border-slate-300 text-slate-700 hover:bg-slate-50"
+                  className="rounded-full px-3 sm:px-5 text-sm border-slate-300 text-slate-700 hover:bg-slate-50"
                   data-testid="nav-dashboard-loggedin-btn"
                 >
                   Dashboard
                 </Button>
                 <Button
                   onClick={handleDemoMode}
-                  className="rounded-full px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow"
+                  className="rounded-full px-4 sm:px-6 text-sm sm:text-base bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow"
                   data-testid="nav-demo-btn"
                 >
-                  <Play className="w-4 h-4 mr-2" />
-                  Try A Demo
+                  <Play className="w-4 h-4 mr-1 sm:mr-2" />
+                  <span className="hidden xs:inline">Try A </span>Demo
                 </Button>
               </>
             ) : (
@@ -459,19 +461,19 @@ export default function Landing() {
                 <Button
                   onClick={handleGoogleLogin}
                   variant="outline"
-                  className="rounded-full px-5 border-slate-300 text-slate-700 hover:bg-slate-50"
+                  className="rounded-full px-3 sm:px-5 text-sm border-slate-300 text-slate-700 hover:bg-slate-50"
                   data-testid="nav-login-btn"
                 >
-                  <Users className="w-4 h-4 mr-2" />
-                  Login
+                  <Users className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Login</span>
                 </Button>
                 <Button
                   onClick={handleDemoMode}
-                  className="rounded-full px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow"
+                  className="rounded-full px-4 sm:px-6 text-sm sm:text-base bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white btn-glow"
                   data-testid="nav-demo-btn"
                 >
-                  <Play className="w-4 h-4 mr-2" />
-                  Try A Demo
+                  <Play className="w-4 h-4 mr-1 sm:mr-2" />
+                  <span className="hidden xs:inline">Try A </span>Demo
                 </Button>
               </>
             )}
