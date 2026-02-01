@@ -836,41 +836,47 @@ export default function Dashboard() {
             <Card className="glass-card border-0">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold">
-                  Platform Status
+                  Platform Status ({platforms.filter(p => p.status === "connected").length} Connected)
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                {platforms.map((platform) => (
-                  <div
-                    key={platform.platform}
-                    className="flex items-center justify-between p-3 rounded-xl bg-slate-50"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                        platform.platform === "google" ? "bg-blue-100" : "bg-indigo-100"
-                      }`}>
-                        {platform.platform === "google" ? (
-                          <span className="text-blue-600 font-bold text-xs">G</span>
-                        ) : (
-                          <span className="text-indigo-600 font-bold text-xs">f</span>
-                        )}
-                      </div>
-                      <span className="font-medium text-slate-700 capitalize">
-                        {platform.platform}
-                      </span>
-                    </div>
-                    <Badge
-                      variant={platform.status === "connected" ? "default" : "secondary"}
-                      className={
-                        platform.status === "connected"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-slate-200 text-slate-600"
-                      }
+              <CardContent className="space-y-2">
+                {platforms.map((platform) => {
+                  const platformColors = {
+                    google: { bg: "bg-blue-100", text: "text-blue-600", icon: "G" },
+                    facebook: { bg: "bg-indigo-100", text: "text-indigo-600", icon: "f" },
+                    amazon: { bg: "bg-amber-100", text: "text-amber-600", icon: "A" },
+                    flipkart: { bg: "bg-yellow-100", text: "text-yellow-700", icon: "F" },
+                    justdial: { bg: "bg-yellow-100", text: "text-yellow-800", icon: "JD" },
+                    swiggy: { bg: "bg-orange-100", text: "text-orange-600", icon: "S" },
+                    zomato: { bg: "bg-red-100", text: "text-red-600", icon: "Z" }
+                  };
+                  const colors = platformColors[platform.platform] || { bg: "bg-slate-100", text: "text-slate-600", icon: "?" };
+                  return (
+                    <div
+                      key={platform.platform}
+                      className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50"
                     >
-                      {platform.status === "connected" ? "Connected" : "Disconnected"}
-                    </Badge>
-                  </div>
-                ))}
+                      <div className="flex items-center gap-3">
+                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${colors.bg}`}>
+                          <span className={`${colors.text} font-bold text-xs`}>{colors.icon}</span>
+                        </div>
+                        <span className="font-medium text-slate-700 capitalize text-sm">
+                          {platform.platform}
+                        </span>
+                      </div>
+                      <Badge
+                        variant={platform.status === "connected" ? "default" : "secondary"}
+                        className={`text-xs ${
+                          platform.status === "connected"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-slate-200 text-slate-600"
+                        }`}
+                      >
+                        {platform.status === "connected" ? "Connected" : "Disconnected"}
+                      </Badge>
+                    </div>
+                  );
+                })}
               </CardContent>
             </Card>
           </motion.div>
