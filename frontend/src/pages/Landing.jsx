@@ -327,9 +327,15 @@ export default function Landing() {
 
   const features = [
     {
+      icon: Globe,
+      title: "7 Platform Support",
+      description: "Connect Google, Facebook, Amazon, Flipkart, JustDial, Swiggy & Zomato - all in one dashboard.",
+      color: "from-indigo-400 to-purple-500",
+    },
+    {
       icon: Zap,
       title: "60-Second Setup",
-      description: "Connect Google & Facebook instantly. Just paste your review link - no API keys needed.",
+      description: "Connect all 7 platforms instantly. Just paste your review links - no API keys needed.",
       color: "from-amber-400 to-orange-500",
     },
     {
@@ -341,26 +347,20 @@ export default function Landing() {
     {
       icon: Shield,
       title: "Reputation Shield",
-      description: "Low ratings (1-3 stars) go directly to your inbox - not public. Fix issues privately.",
+      description: "Low ratings (1-3 stars) go directly to your dashboard - not public. Fix issues privately.",
       color: "from-emerald-400 to-teal-500",
     },
     {
       icon: QrCode,
       title: "Magic QR Codes",
-      description: "Print QR codes for tables, receipts, or counters. Customers review in 30 seconds.",
+      description: "Print QR codes for tables, receipts, or counters. Customers choose from 7 platforms to review.",
       color: "from-violet-400 to-purple-500",
     },
     {
       icon: BarChart3,
       title: "Smart Analytics",
-      description: "Track sentiment trends, response rates, and platform performance in real-time.",
+      description: "Track sentiment trends, response rates, and platform performance across all 7 platforms.",
       color: "from-pink-400 to-rose-500",
-    },
-    {
-      icon: Sparkles,
-      title: "AI Review Writer",
-      description: "Customers can use AI to write reviews. More reviews, less friction.",
-      color: "from-indigo-400 to-blue-500",
     },
   ];
 
