@@ -35,6 +35,9 @@ import {
   FileText,
   Lock,
   CreditCard,
+  Layout,
+  ShoppingCart,
+  Target,
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -56,6 +59,59 @@ const FacebookIcon = ({ className = "w-6 h-6" }) => (
     <path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
   </svg>
 );
+
+// Amazon Icon
+const AmazonIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <path fill="#FF9900" d="M13.958 10.09c0 1.232.029 2.256-.591 3.351-.502.891-1.301 1.438-2.186 1.438-1.214 0-1.922-.924-1.922-2.292 0-2.692 2.415-3.182 4.7-3.182v.685zm3.186 7.705c-.209.189-.512.201-.748.074-1.051-.872-1.238-1.276-1.814-2.106-1.736 1.77-2.965 2.3-5.209 2.3-2.66 0-4.731-1.641-4.731-4.925 0-2.565 1.391-4.309 3.37-5.164 1.715-.754 4.11-.891 5.942-1.095v-.41c0-.754.058-1.646-.385-2.297-.385-.579-1.124-.82-1.775-.82-1.205 0-2.277.618-2.54 1.897-.054.285-.261.566-.549.58l-3.061-.331c-.259-.056-.548-.266-.473-.66C6.03 2.97 8.476 2 10.637 2c1.104 0 2.543.295 3.413 1.132 1.104 1.027 1 2.397 1 3.889v3.522c0 1.06.439 1.524.851 2.098.145.201.177.445-.007.594-.461.384-1.281 1.099-1.733 1.499l-.017.06z"/>
+    <path fill="#FF9900" d="M21.112 16.504c-2.263 1.671-5.544 2.559-8.37 2.559-3.96 0-7.528-1.463-10.224-3.9-.212-.192-.023-.453.232-.304 2.912 1.693 6.513 2.712 10.231 2.712 2.507 0 5.264-.52 7.802-1.597.383-.165.703.251.329.53z"/>
+    <path fill="#FF9900" d="M22.06 15.429c-.289-.37-1.913-.175-2.644-.089-.222.027-.256-.166-.056-.306 1.294-.908 3.417-.646 3.663-.342.246.307-.065 2.435-1.279 3.449-.186.156-.363.073-.28-.133.273-.68.886-2.208.596-2.579z"/>
+  </svg>
+);
+
+// Flipkart Icon
+const FlipkartIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <path fill="#2874F0" d="M3 3h18v18H3V3z"/>
+    <path fill="#FFFF00" d="M17.5 9.5c0-.83-.67-1.5-1.5-1.5H8c-.83 0-1.5.67-1.5 1.5v5c0 .83.67 1.5 1.5 1.5h8c.83 0 1.5-.67 1.5-1.5v-5z"/>
+    <text x="8" y="14" fill="#2874F0" fontSize="5" fontWeight="bold" fontFamily="Arial">F</text>
+  </svg>
+);
+
+// JustDial Icon
+const JustDialIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="11" fill="#FFD700"/>
+    <text x="7" y="16" fill="#000" fontSize="8" fontWeight="bold" fontFamily="Arial">JD</text>
+  </svg>
+);
+
+// Swiggy Icon
+const SwiggyIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <rect width="24" height="24" rx="4" fill="#FC8019"/>
+    <text x="7" y="16" fill="#FFF" fontSize="8" fontWeight="bold" fontFamily="Arial">S</text>
+  </svg>
+);
+
+// Zomato Icon
+const ZomatoIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <rect width="24" height="24" rx="4" fill="#E23744"/>
+    <text x="7" y="16" fill="#FFF" fontSize="8" fontWeight="bold" fontFamily="Arial">Z</text>
+  </svg>
+);
+
+// All platform icons for easy access
+const PLATFORM_ICONS = {
+  google: GoogleIcon,
+  facebook: FacebookIcon,
+  amazon: AmazonIcon,
+  flipkart: FlipkartIcon,
+  justdial: JustDialIcon,
+  swiggy: SwiggyIcon,
+  zomato: ZomatoIcon
+};
 
 export default function Landing() {
   const navigate = useNavigate();
