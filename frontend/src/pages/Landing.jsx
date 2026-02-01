@@ -958,7 +958,7 @@ export default function Landing() {
         
         <div className="max-w-7xl mx-auto relative">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            {/* Left Content - App Flow Illustration */}
+            {/* Left Content - Key Features Cards */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -966,102 +966,124 @@ export default function Landing() {
               transition={{ duration: 0.6 }}
               className="order-2 lg:order-1"
             >
-              <div className="flex flex-col items-center gap-4 sm:gap-6">
-                {/* Step 1 - SMS */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Supported Platforms Card */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.2 }}
-                  className="w-full max-w-sm bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl transform hover:scale-[1.02] transition-transform"
+                  className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl"
                 >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                      <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+                      <Globe className="w-4 h-4 text-white" />
                     </div>
-                    <div>
-                      <p className="text-sm font-semibold text-slate-800">Automated SMS</p>
-                      <p className="text-xs text-slate-500">Sent after visit</p>
-                    </div>
-                    <span className="ml-auto text-xs px-2 py-1 rounded-full bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-700 font-semibold">Step 1</span>
+                    <p className="text-sm font-semibold text-slate-800">7 Platforms</p>
                   </div>
-                  <div className="text-sm text-slate-600 leading-relaxed bg-gradient-to-br from-slate-50 to-indigo-50/50 rounded-xl p-3 border border-slate-100">
-                    <p>&quot;Hi! Thank you for visiting us today. We&apos;d love to hear about your experience.&quot;</p>
-                    <span className="inline-block mt-2 text-indigo-600 font-medium text-xs underline decoration-indigo-200 underline-offset-2">Tap here to leave a review</span>
+                  <div className="grid grid-cols-4 gap-2">
+                    <div className="aspect-square rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 hover:border-indigo-300 transition-all">
+                      <GoogleIcon className="w-4 h-4" />
+                    </div>
+                    <div className="aspect-square rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 hover:border-blue-300 transition-all">
+                      <FacebookIcon className="w-4 h-4" />
+                    </div>
+                    <div className="aspect-square rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 hover:border-orange-300 transition-all">
+                      <AmazonIcon className="w-4 h-4" />
+                    </div>
+                    <div className="aspect-square rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 hover:border-blue-300 transition-all">
+                      <FlipkartIcon className="w-4 h-4" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    <div className="aspect-square rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 hover:border-yellow-300 transition-all">
+                      <JustDialIcon className="w-4 h-4" />
+                    </div>
+                    <div className="aspect-square rounded-lg bg-orange-500 flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">S</span>
+                    </div>
+                    <div className="aspect-square rounded-lg bg-red-500 flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">Z</span>
+                    </div>
                   </div>
                 </motion.div>
 
-                {/* Arrow with step connector */}
-                <div className="flex items-center justify-center">
-                  <div className="w-0.5 h-6 sm:h-8 bg-gradient-to-b from-white/50 to-white/20 rounded-full" />
-                </div>
+                {/* Real-time Analytics Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
+                  className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
+                      <BarChart3 className="w-4 h-4 text-white" />
+                    </div>
+                    <p className="text-sm font-semibold text-slate-800">Analytics</p>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-50">
+                      <span className="text-xs text-slate-600">New Reviews</span>
+                      <span className="text-sm font-bold text-emerald-600">+47</span>
+                    </div>
+                    <div className="flex items-center justify-between p-2 rounded-lg bg-amber-50">
+                      <span className="text-xs text-slate-600">Avg Rating</span>
+                      <span className="text-sm font-bold text-amber-600">4.8★</span>
+                    </div>
+                    <div className="flex items-center justify-between p-2 rounded-lg bg-sky-50">
+                      <span className="text-xs text-slate-600">Response Rate</span>
+                      <span className="text-sm font-bold text-sky-600">98%</span>
+                    </div>
+                  </div>
+                </motion.div>
 
-                {/* Step 2 - Rating Selection */}
+                {/* AI Response Card */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.4 }}
-                  className="w-full max-w-sm bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl transform hover:scale-[1.02] transition-transform"
+                  className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/30">
-                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                      </div>
-                      <p className="text-sm font-semibold text-slate-800">Rate Experience</p>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
+                      <Sparkles className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-xs px-2 py-1 rounded-full bg-gradient-to-r from-violet-100 to-purple-100 text-violet-700 font-semibold">Step 2</span>
+                    <p className="text-sm font-semibold text-slate-800">AI Replies</p>
                   </div>
-                  <p className="text-center text-sm text-slate-600 mb-4">How was your experience?</p>
-                  <div className="flex gap-3 justify-center">
-                    <button className="flex-1 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/30 transition-all">
-                      <ThumbsUp className="w-4 h-4" />
-                      Positive
-                    </button>
-                    <button className="flex-1 py-2.5 sm:py-3 rounded-xl bg-slate-100 text-slate-700 text-sm font-medium flex items-center justify-center gap-2 hover:bg-slate-200 transition-colors border border-slate-200">
-                      <Shield className="w-4 h-4" />
-                      Private
-                    </button>
+                  <div className="p-3 rounded-xl bg-violet-50 border border-violet-100">
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      &quot;Thank you for your wonderful feedback! We&apos;re thrilled you enjoyed your experience...&quot;
+                    </p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-xs text-violet-600 font-medium">AI Generated</span>
+                      <CheckCircle2 className="w-3 h-3 text-violet-500" />
+                    </div>
                   </div>
                 </motion.div>
 
-                {/* Arrow */}
-                <div className="flex items-center justify-center">
-                  <div className="w-0.5 h-6 sm:h-8 bg-gradient-to-b from-white/50 to-white/20 rounded-full" />
-                </div>
-
-                {/* Step 3 - Platform Selection */}
+                {/* Negative Feedback Routing Card */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.6 }}
-                  className="w-full max-w-sm bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl transform hover:scale-[1.02] transition-transform"
+                  transition={{ delay: 0.5 }}
+                  className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-sky-500/30">
-                        <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                      </div>
-                      <p className="text-sm font-semibold text-slate-800">Choose Platform</p>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center">
+                      <Shield className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-xs px-2 py-1 rounded-full bg-gradient-to-r from-sky-100 to-blue-100 text-sky-700 font-semibold">Step 3</span>
+                    <p className="text-sm font-semibold text-slate-800">Protected</p>
                   </div>
-                  <p className="text-center text-xs text-slate-500 mb-4">Where would you like to leave your review?</p>
-                  <div className="grid grid-cols-4 gap-2 sm:gap-3">
-                    <div className="aspect-square rounded-xl bg-gradient-to-br from-slate-50 to-white flex items-center justify-center border-2 border-indigo-300 hover:border-indigo-500 cursor-pointer transition-all shadow-sm hover:shadow-md">
-                      <GoogleIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-100">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Star className="w-3 h-3 text-slate-400" />
+                      <Star className="w-3 h-3 text-slate-400" />
+                      <span className="text-xs text-rose-600">Negative</span>
                     </div>
-                    <div className="aspect-square rounded-xl bg-gradient-to-br from-slate-50 to-white flex items-center justify-center border-2 border-slate-200 hover:border-blue-400 cursor-pointer transition-all shadow-sm hover:shadow-md">
-                      <FacebookIcon className="w-5 h-5 sm:w-6 sm:h-6" />
-                    </div>
-                    <div className="aspect-square rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center border-2 border-orange-400 shadow-lg shadow-orange-500/30">
-                      <span className="text-white text-sm font-bold">S</span>
-                    </div>
-                    <div className="aspect-square rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center border-2 border-red-400 shadow-lg shadow-red-500/30">
-                      <span className="text-white text-sm font-bold">Z</span>
-                    </div>
+                    <p className="text-xs text-slate-600">Routed to dashboard for private resolution</p>
                   </div>
                 </motion.div>
               </div>
@@ -1077,7 +1099,7 @@ export default function Landing() {
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white/90 text-sm font-medium mb-4 sm:mb-6 border border-white/20">
                 <Rocket className="w-4 h-4" />
-                How It Works
+                Why Choose Us
               </div>
               
               <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold tracking-tight leading-tight mb-4 sm:mb-6">
@@ -1090,15 +1112,17 @@ export default function Landing() {
               </p>
               
               <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-6 sm:mb-10 max-w-lg mx-auto lg:mx-0 hidden sm:block">
-                Manage your online presence, route negative feedback privately, and boost your credibility with positive reviews on the platforms that matter most.
+                Manage your online presence across 7 platforms, route negative feedback to your dashboard, and boost your credibility with positive reviews.
               </p>
               
-              {/* Benefits List - Responsive Grid */}
+              {/* Benefits List - 6 items in 2x3 grid */}
               <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-10 max-w-lg mx-auto lg:mx-0">
                 {[
                   { icon: Eye, text: "Monitor reputation" },
-                  { icon: Shield, text: "Route feedback privately" },
+                  { icon: Shield, text: "Route negative to dashboard" },
                   { icon: TrendingUp, text: "Boost ratings" },
+                  { icon: ShoppingCart, text: "Boost sales" },
+                  { icon: Layout, text: "All-in-one platform" },
                   { icon: BadgeCheck, text: "Build credibility" }
                 ].map((benefit, index) => (
                   <motion.div
