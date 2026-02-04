@@ -49,8 +49,10 @@ const categories = [
 ];
 
 export default function Settings() {
+  const navigate = useNavigate();
   const { user, business, setBusiness, isDemo } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const [planStatus, setPlanStatus] = useState(null);
   const [formData, setFormData] = useState({
     name: business?.name || (isDemo ? "Demo Coffee Shop" : ""),
     category: business?.category || "Restaurant",
@@ -58,6 +60,28 @@ export default function Settings() {
     phone: business?.phone || (isDemo ? "+1 (555) 123-4567" : ""),
     website: business?.website || (isDemo ? "https://democoffeeshop.com" : ""),
   });
+
+  // Fetch plan status
+  useEffect(() => {
+    const fetchPlanStatus = async () => {
+      if (isDemo) {
+        setPlanStatus({
+          plan: "growth",
+          has_active_plan: true,
+          has_lifetime_access: false,
+          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+        });
+        return;
+      }
+      try {
+        const response = await axios.get(`${API}/user/plan-status`, { withCredentials: true });
+        setPlanStatus(response.data);
+      } catch (error) {
+        console.error("Failed to fetch plan status:", error);
+      }
+    };
+    fetchPlanStatus();
+  }, [isDemo]);
 
   const handleSave = async (e) => {
     e.preventDefault();
