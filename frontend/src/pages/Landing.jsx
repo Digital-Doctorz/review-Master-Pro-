@@ -952,221 +952,134 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* How It Works Section - Enhanced */}
+      {/* How It Works Section - Clean Design without cards */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-br from-indigo-600 via-purple-600 to-violet-700 relative overflow-hidden" data-testid="grow-faster-section">
         {/* Background decorations */}
         <div className="absolute top-0 left-0 w-64 sm:w-96 h-64 sm:h-96 bg-white/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
         <div className="absolute bottom-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-white/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
         <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-pink-500/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
         
-        <div className="max-w-7xl mx-auto relative">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            {/* Left Content - Key Features Cards */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="order-2 lg:order-1"
+        <div className="max-w-4xl mx-auto relative text-center">
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white/90 text-sm font-medium mb-6 sm:mb-8 border border-white/20"
+          >
+            <Rocket className="w-4 h-4" />
+            Why Choose Us
+          </motion.div>
+          
+          {/* Title */}
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight mb-6 text-white"
+          >
+            We help you grow
+            <span className="block text-white/90">faster and better</span>
+          </motion.h2>
+          
+          {/* Description */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-base sm:text-lg text-white/80 leading-relaxed mb-8 max-w-2xl mx-auto"
+          >
+            Manage your online presence across <span className="font-bold text-white">7 platforms</span>, route negative feedback to your dashboard, and boost your credibility with positive reviews.
+          </motion.p>
+          
+          {/* Platform Icons - Round logos in a row */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-wrap justify-center gap-4 mb-10"
+          >
+            <div className="w-14 h-14 rounded-full bg-white shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+              <GoogleIcon className="w-7 h-7" />
+            </div>
+            <div className="w-14 h-14 rounded-full bg-white shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+              <FacebookIcon className="w-7 h-7" />
+            </div>
+            <div className="w-14 h-14 rounded-full bg-white shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+              <AmazonIcon className="w-7 h-7" />
+            </div>
+            <div className="w-14 h-14 rounded-full bg-white shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+              <FlipkartIcon className="w-7 h-7" />
+            </div>
+            <div className="w-14 h-14 rounded-full bg-white shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+              <JustDialIcon className="w-7 h-7" />
+            </div>
+            <div className="w-14 h-14 rounded-full bg-white shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+              <SwiggyIcon className="w-7 h-7" />
+            </div>
+            <div className="w-14 h-14 rounded-full bg-white shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+              <ZomatoIcon className="w-7 h-7" />
+            </div>
+          </motion.div>
+          
+          {/* Benefits - Horizontal on desktop, 2 columns on mobile */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10 max-w-3xl mx-auto"
+          >
+            {[
+              { icon: Eye, text: "Monitor reputation" },
+              { icon: Shield, text: "Route negative to dashboard" },
+              { icon: TrendingUp, text: "Boost ratings" },
+              { icon: ShoppingCart, text: "Boost sales" },
+              { icon: Layout, text: "All-in-one platform" },
+              { icon: BadgeCheck, text: "Build credibility" }
+            ].map((benefit, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/10"
+              >
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <benefit.icon className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-white/90 font-medium text-sm">{benefit.text}</span>
+              </div>
+            ))}
+          </motion.div>
+          
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+          >
+            <Button
+              onClick={handleGoogleLogin}
+              size="lg"
+              className="rounded-full px-8 py-6 bg-white text-indigo-700 hover:bg-white/90 font-semibold shadow-lg hover:shadow-xl transition-all"
+              data-testid="grow-section-cta"
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Supported Platforms Card */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2 }}
-                  className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl"
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
-                      <Globe className="w-4 h-4 text-white" />
-                    </div>
-                    <p className="text-sm font-semibold text-slate-800">7 Platforms</p>
-                  </div>
-                  <div className="grid grid-cols-4 gap-2">
-                    <div className="aspect-square rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 hover:border-indigo-300 transition-all">
-                      <GoogleIcon className="w-4 h-4" />
-                    </div>
-                    <div className="aspect-square rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 hover:border-blue-300 transition-all">
-                      <FacebookIcon className="w-4 h-4" />
-                    </div>
-                    <div className="aspect-square rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 hover:border-orange-300 transition-all">
-                      <AmazonIcon className="w-4 h-4" />
-                    </div>
-                    <div className="aspect-square rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 hover:border-blue-300 transition-all">
-                      <FlipkartIcon className="w-4 h-4" />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2 mt-2">
-                    <div className="aspect-square rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 hover:border-yellow-300 transition-all">
-                      <JustDialIcon className="w-4 h-4" />
-                    </div>
-                    <div className="aspect-square rounded-lg bg-orange-500 flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">S</span>
-                    </div>
-                    <div className="aspect-square rounded-lg bg-red-500 flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">Z</span>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Real-time Analytics Card */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 }}
-                  className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl"
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
-                      <BarChart3 className="w-4 h-4 text-white" />
-                    </div>
-                    <p className="text-sm font-semibold text-slate-800">Analytics</p>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-50">
-                      <span className="text-xs text-slate-600">New Reviews</span>
-                      <span className="text-sm font-bold text-emerald-600">+47</span>
-                    </div>
-                    <div className="flex items-center justify-between p-2 rounded-lg bg-amber-50">
-                      <span className="text-xs text-slate-600">Avg Rating</span>
-                      <span className="text-sm font-bold text-amber-600">4.8★</span>
-                    </div>
-                    <div className="flex items-center justify-between p-2 rounded-lg bg-sky-50">
-                      <span className="text-xs text-slate-600">Response Rate</span>
-                      <span className="text-sm font-bold text-sky-600">98%</span>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* AI Response Card */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.4 }}
-                  className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl"
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
-                      <Sparkles className="w-4 h-4 text-white" />
-                    </div>
-                    <p className="text-sm font-semibold text-slate-800">AI Replies</p>
-                  </div>
-                  <div className="p-3 rounded-xl bg-violet-50 border border-violet-100">
-                    <p className="text-xs text-slate-600 leading-relaxed">
-                      &quot;Thank you for your wonderful feedback! We&apos;re thrilled you enjoyed your experience...&quot;
-                    </p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-xs text-violet-600 font-medium">AI Generated</span>
-                      <CheckCircle2 className="w-3 h-3 text-violet-500" />
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Negative Feedback Routing Card */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.5 }}
-                  className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl"
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center">
-                      <Shield className="w-4 h-4 text-white" />
-                    </div>
-                    <p className="text-sm font-semibold text-slate-800">Protected</p>
-                  </div>
-                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-100">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Star className="w-3 h-3 text-slate-400" />
-                      <Star className="w-3 h-3 text-slate-400" />
-                      <span className="text-xs text-rose-600">Negative</span>
-                    </div>
-                    <p className="text-xs text-slate-600">Routed to dashboard for private resolution</p>
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
-
-            {/* Right Content - Text */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="order-1 lg:order-2 text-white text-center lg:text-left"
+              Get Started Free
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+            <Button
+              onClick={handleDemoMode}
+              size="lg"
+              variant="outline"
+              className="rounded-full px-8 py-6 bg-transparent border-2 border-white/30 text-white hover:bg-white/10 font-semibold transition-all"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white/90 text-sm font-medium mb-4 sm:mb-6 border border-white/20">
-                <Rocket className="w-4 h-4" />
-                Why Choose Us
-              </div>
-              
-              <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold tracking-tight leading-tight mb-4 sm:mb-6">
-                We help you grow
-                <span className="block text-white/90">faster and better</span>
-              </h2>
-              
-              <p className="text-base sm:text-lg text-white/80 leading-relaxed mb-3 sm:mb-4 max-w-lg mx-auto lg:mx-0">
-                If you&apos;re struggling with negative feedback affecting your business growth, <span className="font-bold text-white">Review Master</span> is here to help.
-              </p>
-              
-              <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-6 sm:mb-10 max-w-lg mx-auto lg:mx-0 hidden sm:block">
-                Manage your online presence across 7 platforms, route negative feedback to your dashboard, and boost your credibility with positive reviews.
-              </p>
-              
-              {/* Benefits List - 6 items in 2x3 grid */}
-              <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-10 max-w-lg mx-auto lg:mx-0">
-                {[
-                  { icon: Eye, text: "Monitor reputation" },
-                  { icon: Shield, text: "Route negative to dashboard" },
-                  { icon: TrendingUp, text: "Boost ratings" },
-                  { icon: ShoppingCart, text: "Boost sales" },
-                  { icon: Layout, text: "All-in-one platform" },
-                  { icon: BadgeCheck, text: "Build credibility" }
-                ].map((benefit, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.4 + index * 0.1 }}
-                    className="flex items-center gap-3 bg-white/5 backdrop-blur-sm rounded-xl p-2.5 sm:p-3 border border-white/10"
-                  >
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 flex-shrink-0">
-                      <benefit.icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                    </div>
-                    <span className="text-white/90 font-medium text-sm sm:text-base">{benefit.text}</span>
-                  </motion.div>
-                ))}
-              </div>
-              
-              {/* CTAs - Responsive */}
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
-                <Button
-                  onClick={handleGoogleLogin}
-                  size="lg"
-                  className="rounded-full px-6 sm:px-8 py-5 sm:py-6 bg-white text-indigo-700 hover:bg-white/90 font-semibold shadow-lg hover:shadow-xl transition-all"
-                  data-testid="grow-section-cta"
-                >
-                  Get Started Free
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-                <Button
-                  onClick={handleDemoMode}
-                  size="lg"
-                  variant="outline"
-                  className="rounded-full px-6 sm:px-8 py-5 sm:py-6 bg-transparent border-2 border-white/30 text-white hover:bg-white/10 font-semibold transition-all"
-                >
-                  <Play className="w-5 h-5 mr-2" />
-                  Watch Demo
-                </Button>
-              </div>
-            </motion.div>
-          </div>
+              <Play className="w-5 h-5 mr-2" />
+              Watch Demo
+            </Button>
+          </motion.div>
         </div>
       </section>
 
