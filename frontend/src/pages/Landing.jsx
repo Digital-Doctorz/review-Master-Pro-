@@ -1421,11 +1421,17 @@ export default function Landing() {
                 className="glass-card rounded-xl sm:rounded-3xl p-4 sm:p-8 hover:shadow-xl hover:-translate-y-1 transition-all group"
                 data-testid={`feature-card-${index}`}
               >
-                <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-3 sm:mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
+                <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform shadow-lg`}>
                   <feature.icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                 </div>
-                <h3 className="text-sm sm:text-xl font-semibold text-slate-900 mb-1 sm:mb-3 leading-tight">{feature.title}</h3>
-                <p className="text-xs sm:text-base text-slate-600 leading-relaxed hidden sm:block">{feature.description}</p>
+                <h3 className="text-sm sm:text-xl font-bold text-slate-900 mb-1 sm:mb-2 leading-tight">{feature.title}</h3>
+                {/* Benefit Badge */}
+                <div className="mb-2 sm:mb-3">
+                  <span className="inline-block px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-semibold bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-full">
+                    {feature.benefit}
+                  </span>
+                </div>
+                <p className="text-xs sm:text-base text-slate-600 leading-relaxed">{feature.description}</p>
               </motion.div>
             ))}
           </div>
