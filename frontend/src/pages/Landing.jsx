@@ -468,7 +468,7 @@ export default function Landing() {
     {
       name: "Fitness Centers",
       icon: TrendingUp,
-      impact: "-22% Churn Rate",
+      impact: "+22% Retention",
       description: "Post-class QR codes capture emotional highs. Consistent 4.8+ ratings overcome gym-hesitation. Recent reviews drive trial class sign-ups—critical for paid memberships.",
       color: "from-green-500 to-emerald-500",
     },
