@@ -69,30 +69,23 @@ const AmazonIcon = ({ className = "w-6 h-6" }) => (
   </svg>
 );
 
-// Flipkart Icon - Official blue/yellow logo
+// Flipkart Icon - Uses actual logo image
 const FlipkartIcon = ({ className = "w-6 h-6" }) => (
-  <svg className={className} viewBox="0 0 24 24">
-    <rect fill="#2874F0" width="24" height="24" rx="3"/>
-    <path fill="#FFFFFF" d="M7 6h4.5c1.66 0 3 1.34 3 3s-1.34 3-3 3H9v4.5H7V6z"/>
-    <circle fill="#FFE500" cx="9" cy="6" r="1.5"/>
-    <path fill="#FFFFFF" d="M9 9.5h2.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5H9V9.5z"/>
-  </svg>
+  <img src="/logos/flipkart.png" alt="Flipkart" className={`${className} rounded-full object-cover`} />
 );
 
-// JustDial Icon - Official blue/orange colors
+// JustDial Icon - Official red/white colors
 const JustDialIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
-    <rect fill="#2C3E50" width="24" height="24" rx="3"/>
-    <text x="3.5" y="12" fill="#3498DB" fontSize="6" fontWeight="bold" fontFamily="Arial">Just</text>
-    <text x="3.5" y="18" fill="#E67E22" fontSize="6" fontWeight="bold" fontFamily="Arial">Dial</text>
+    <rect fill="#E31E25" width="24" height="24" rx="12"/>
+    <text x="12" y="15" textAnchor="middle" fill="white" fontSize="8" fontWeight="bold" fontFamily="Arial">JD</text>
   </svg>
 );
 
 // Swiggy Icon - Official orange with white text
 const SwiggyIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
-    <rect fill="#FC8019" width="24" height="24" rx="4"/>
-    <circle fill="rgba(255,255,255,0.2)" cx="12" cy="12" r="7"/>
+    <rect fill="#FC8019" width="24" height="24" rx="12"/>
     <text x="12" y="16" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="Arial">S</text>
   </svg>
 );
@@ -100,8 +93,8 @@ const SwiggyIcon = ({ className = "w-6 h-6" }) => (
 // Zomato Icon - Official red with white text
 const ZomatoIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
-    <rect fill="#E23744" width="24" height="24" rx="4"/>
-    <text x="12" y="15" textAnchor="middle" fill="white" fontSize="6" fontWeight="bold" fontFamily="Arial">zomato</text>
+    <rect fill="#E23744" width="24" height="24" rx="12"/>
+    <text x="12" y="16" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="Arial">Z</text>
   </svg>
 );
 
