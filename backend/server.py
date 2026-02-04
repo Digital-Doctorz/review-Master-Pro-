@@ -3868,17 +3868,48 @@ async def razorpay_webhook(request: Request):
         logger.info(f"Processing Razorpay webhook: {event_type}")
         
         if event_type == "subscription.activated":
-            subscription_id = event["payload"]["subscription"]["entity"]["id"]
-            await db.subscriptions.update_one(
-                {"subscription_id": subscription_id},
-                {"$set": {"status": "active", "activated_at": datetime.now(timezone.utc)}}
-            )
-            logger.info(f"Subscription activated: {subscription_id}")
+            subscription_entity = event["payload"]["subscription"]["entity"]
+            subscription_id = subscription_entity["id"]
+            plan_id = subscription_entity.get("plan_id")
+            customer_email = event["payload"].get("subscription", {}).get("entity", {}).get("customer_details", {}).get("email") or \
+                             event["payload"].get("subscription", {}).get("entity", {}).get("notes", {}).get("email")
+            
+            # Determine plan name from plan_id
+            plan_name = "starter"  # Default
+            for pname, config in PRICING_CONFIG.items():
+                if config.get("razorpay_plan_id") == plan_id:
+                    plan_name = pname
+                    break
+            
+            # Check if we have an existing subscription record
+            existing_sub = await db.subscriptions.find_one({"subscription_id": subscription_id})
+            
+            if existing_sub:
+                # Update existing subscription
+                await db.subscriptions.update_one(
+                    {"subscription_id": subscription_id},
+                    {"$set": {"status": "active", "activated_at": datetime.now(timezone.utc)}}
+                )
+            else:
+                # New subscription - store for activation after login
+                await db.pending_subscriptions.insert_one({
+                    "subscription_id": subscription_id,
+                    "plan_id": plan_id,
+                    "plan_name": plan_name,
+                    "customer_email": customer_email,
+                    "status": "pending_activation",
+                    "created_at": datetime.now(timezone.utc)
+                })
+            
+            logger.info(f"Subscription activated: {subscription_id}, plan: {plan_name}")
             
         elif event_type == "subscription.charged":
-            subscription_id = event["payload"]["subscription"]["entity"]["id"]
+            subscription_entity = event["payload"]["subscription"]["entity"]
+            subscription_id = subscription_entity["id"]
             payment_id = event["payload"]["payment"]["entity"]["id"]
             amount = event["payload"]["payment"]["entity"].get("amount", 0) / 100  # Convert paise to rupees
+            customer_email = subscription_entity.get("customer_details", {}).get("email") or \
+                             subscription_entity.get("notes", {}).get("email")
             
             # Get subscription details
             sub = await db.subscriptions.find_one({"subscription_id": subscription_id})
@@ -3933,6 +3964,30 @@ async def razorpay_webhook(request: Request):
                     logger.warning(f"Failed to send renewal email: {e}")
                 
                 logger.info(f"Subscription renewed: {subscription_id}, payment: {payment_id}")
+            else:
+                # New subscription payment - store for later linking
+                # Get plan name from plan_id
+                plan_id = subscription_entity.get("plan_id")
+                plan_name = "starter"
+                for pname, config in PRICING_CONFIG.items():
+                    if config.get("razorpay_plan_id") == plan_id:
+                        plan_name = pname
+                        break
+                
+                # Store pending subscription with payment info
+                await db.pending_subscriptions.update_one(
+                    {"subscription_id": subscription_id},
+                    {"$set": {
+                        "plan_name": plan_name,
+                        "payment_id": payment_id,
+                        "amount": amount,
+                        "customer_email": customer_email,
+                        "status": "paid_pending_login",
+                        "paid_at": datetime.now(timezone.utc)
+                    }},
+                    upsert=True
+                )
+                logger.info(f"Subscription payment stored for activation: {subscription_id}")
                 
         elif event_type == "subscription.cancelled":
             subscription_id = event["payload"]["subscription"]["entity"]["id"]
