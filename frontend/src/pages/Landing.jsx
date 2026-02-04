@@ -1467,8 +1467,8 @@ export default function Landing() {
             </div>
           </div>
 
-          {/* Pricing Cards */}
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
+          {/* Pricing Cards - Stack on small mobile, 2 cols on larger mobile, 3 on desktop */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto px-2 sm:px-0">
             {pricingPlans.map((plan, index) => {
               const isGrowth = plan.name === "Growth";
               const displayPrice = billingCycle === "monthly" ? plan.monthlyPrice : plan.yearlyPrice;
@@ -1483,9 +1483,9 @@ export default function Landing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className={`relative rounded-3xl p-6 sm:p-8 ${
+                className={`relative rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 ${
                   isGrowth
-                    ? "bg-gradient-to-br from-violet-600 to-purple-700 text-white shadow-2xl shadow-violet-500/30 md:scale-105 ring-4 ring-violet-300/30"
+                    ? "bg-gradient-to-br from-violet-600 to-purple-700 text-white shadow-2xl shadow-violet-500/30 lg:scale-105 ring-2 sm:ring-4 ring-violet-300/30"
                     : "glass-card hover:shadow-xl transition-shadow"
                 }`}
               >
