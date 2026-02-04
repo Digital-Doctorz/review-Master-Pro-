@@ -1462,153 +1462,293 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Dashboard Screenshots Section - Enhanced */}
-      <section className="py-12 sm:py-20 px-4 sm:px-6 bg-gradient-to-b from-white/50 to-indigo-50/50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-10 sm:mb-16">
+      {/* Dashboard Preview Section - Premium Design */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-slate-50 via-white to-indigo-50/30 relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute top-0 left-1/4 w-72 h-72 bg-indigo-200/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-purple-200/30 rounded-full blur-3xl" />
+        
+        <div className="max-w-7xl mx-auto relative">
+          <div className="text-center mb-12 sm:mb-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 text-sm font-medium mb-4"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 text-sm font-semibold mb-5 shadow-sm"
             >
               <Eye className="w-4 h-4" />
               See It In Action
             </motion.div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight mb-3 sm:mb-4">
-              Powerful Dashboard,
-              <span className="block text-gradient">Simple Interface</span>
-            </h2>
-            <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto px-4">
-              Everything you need to manage reviews in one beautiful dashboard
-            </p>
-          </div>
-
-          {/* Dashboard Preview Grid - Mobile Optimized */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {/* Analytics Card */}
-            <motion.div
+            <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 hover:shadow-xl transition-all border border-white/60"
+              className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 sm:mb-5"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-sky-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-sky-500/30">
-                  <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              Your Command Center for
+              <span className="block text-gradient mt-1">5-Star Dominance</span>
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto px-4"
+            >
+              From real-time analytics to AI-powered responses — manage all 7 platforms, generate smart QR codes, and watch your ratings soar. All in one beautifully designed dashboard.
+            </motion.p>
+          </div>
+
+          {/* Dashboard Preview Grid - 2x2 on mobile, 4 columns on desktop */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            
+            {/* Card 1: Smart Analytics */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0 }}
+              className="group bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-indigo-200 relative overflow-hidden"
+            >
+              {/* Glow effect on hover */}
+              <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              
+              <div className="relative">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-sky-500/30 group-hover:scale-110 transition-transform">
+                    <BarChart3 className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-base sm:text-lg">Smart Analytics</h3>
+                    <p className="text-xs sm:text-sm text-slate-500">Real-time insights</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-slate-900 text-sm sm:text-base">Analytics Dashboard</h3>
-                  <p className="text-xs text-slate-500">Track your growth</p>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 sm:p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="w-4 h-4 text-emerald-600" />
+                      <span className="text-xs sm:text-sm text-slate-700 font-medium">This Month</span>
+                    </div>
+                    <span className="font-bold text-emerald-600 text-sm sm:text-base">+127</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 sm:p-4 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100">
+                    <div className="flex items-center gap-2">
+                      <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                      <span className="text-xs sm:text-sm text-slate-700 font-medium">Avg Rating</span>
+                    </div>
+                    <span className="font-bold text-amber-600 text-sm sm:text-base">4.8 ★</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 sm:p-4 rounded-xl bg-gradient-to-r from-sky-50 to-indigo-50 border border-sky-100">
+                    <div className="flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-sky-600" />
+                      <span className="text-xs sm:text-sm text-slate-700 font-medium">Response</span>
+                    </div>
+                    <span className="font-bold text-sky-600 text-sm sm:text-base">2 min</span>
+                  </div>
                 </div>
-              </div>
-              <div className="space-y-2.5 sm:space-y-3">
-                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
-                  <span className="text-sm text-slate-600">This Month</span>
-                  <span className="font-bold text-emerald-600">+127 reviews</span>
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
-                  <span className="text-sm text-slate-600">Avg Rating</span>
-                  <span className="font-bold text-amber-600">4.7 ★</span>
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
-                  <span className="text-sm text-slate-600">Response Time</span>
-                  <span className="font-bold text-sky-600">2 mins</span>
+                
+                <div className="mt-4 pt-4 border-t border-slate-100">
+                  <p className="text-xs text-slate-500 text-center">
+                    Track growth across all 7 platforms
+                  </p>
                 </div>
               </div>
             </motion.div>
 
-            {/* Reviews Management Card */}
+            {/* Card 2: Review Hub */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 hover:shadow-xl transition-all border border-white/60"
+              className="group bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-purple-200 relative overflow-hidden"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center shadow-lg shadow-violet-500/30">
-                  <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-slate-900 text-sm sm:text-base">Review Management</h3>
-                  <p className="text-xs text-slate-500">All reviews in one place</p>
-                </div>
-              </div>
-              <div className="space-y-2.5 sm:space-y-3">
-                {[
-                  { name: "Amit K.", stars: 5, text: "Best restaurant in town!" },
-                  { name: "Neha S.", stars: 4, text: "Great food, nice ambiance" },
-                  { name: "Raj P.", stars: 5, text: "Amazing experience!" },
-                ].map((review, i) => (
-                  <div key={i} className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-br from-slate-50 to-white border border-slate-100">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs sm:text-sm font-medium text-slate-900">{review.name}</span>
-                      <div className="flex">
-                        {[...Array(review.stars)].map((_, j) => (
-                          <Star key={j} className="w-3 h-3 fill-amber-400 text-amber-400" />
-                        ))}
-                      </div>
-                    </div>
-                    <p className="text-xs text-slate-600">{review.text}</p>
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              
+              <div className="relative">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center shadow-lg shadow-violet-500/30 group-hover:scale-110 transition-transform">
+                    <MessageSquare className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                   </div>
-                ))}
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-base sm:text-lg">Review Hub</h3>
+                    <p className="text-xs sm:text-sm text-slate-500">Unified inbox</p>
+                  </div>
+                </div>
+                
+                <div className="space-y-2.5">
+                  {[
+                    { name: "Priya M.", stars: 5, text: "Absolutely loved it! Best experience ever.", platform: "Google" },
+                    { name: "Rahul S.", stars: 5, text: "Quick delivery, great quality!", platform: "Amazon" },
+                    { name: "Ankit K.", stars: 4, text: "Food was amazing, will visit again", platform: "Zomato" },
+                  ].map((review, i) => (
+                    <div key={i} className="p-3 rounded-xl bg-gradient-to-br from-slate-50 to-violet-50/50 border border-slate-100 hover:border-violet-200 transition-colors">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs sm:text-sm font-semibold text-slate-900">{review.name}</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-600">{review.platform}</span>
+                        </div>
+                        <div className="flex">
+                          {[...Array(review.stars)].map((_, j) => (
+                            <Star key={j} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                          ))}
+                        </div>
+                      </div>
+                      <p className="text-[11px] sm:text-xs text-slate-600 line-clamp-1">{review.text}</p>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="mt-4 pt-4 border-t border-slate-100">
+                  <p className="text-xs text-slate-500 text-center">
+                    All platforms in one unified view
+                  </p>
+                </div>
               </div>
             </motion.div>
 
-            {/* QR Code Card - Enhanced with all platforms */}
+            {/* Card 3: AI Reply Generator */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 hover:shadow-xl transition-all border border-white/60 sm:col-span-2 lg:col-span-1"
+              className="group bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-pink-200 relative overflow-hidden"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
-                  <QrCode className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-rose-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              
+              {/* NEW badge */}
+              <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] font-bold shadow-sm">
+                AI POWERED
+              </div>
+              
+              <div className="relative">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-lg shadow-pink-500/30 group-hover:scale-110 transition-transform">
+                    <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-base sm:text-lg">AI Reply Magic</h3>
+                    <p className="text-xs sm:text-sm text-slate-500">1-click responses</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-slate-900 text-sm sm:text-base">QR Code Generator</h3>
-                  <p className="text-xs text-slate-500">Collect reviews on 7 platforms</p>
+                
+                <div className="space-y-3">
+                  {/* Incoming review */}
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-xs font-semibold text-slate-700">Customer Review:</span>
+                    </div>
+                    <p className="text-[11px] sm:text-xs text-slate-600 italic">"Service was slow but food was great!"</p>
+                  </div>
+                  
+                  {/* AI Generated Reply */}
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-pink-50 to-rose-50 border border-pink-200 relative">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <Sparkles className="w-3 h-3 text-pink-500" />
+                      <span className="text-xs font-semibold text-pink-700">AI Generated:</span>
+                    </div>
+                    <p className="text-[11px] sm:text-xs text-slate-700">"Thank you for your feedback! We're glad you enjoyed the food. We're working on improving..."</p>
+                  </div>
+                  
+                  {/* Tone options */}
+                  <div className="flex gap-1.5 flex-wrap">
+                    {['Friendly', 'Professional', 'Apologetic'].map((tone, i) => (
+                      <span key={i} className={`text-[10px] px-2 py-1 rounded-full cursor-pointer transition-colors ${i === 0 ? 'bg-pink-500 text-white' : 'bg-slate-100 text-slate-600 hover:bg-pink-100'}`}>
+                        {tone}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="mt-4 pt-4 border-t border-slate-100">
+                  <p className="text-xs text-slate-500 text-center">
+                    3 tone options • 10x faster replies
+                  </p>
                 </div>
               </div>
-              <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-br from-slate-50 to-emerald-50/30 border border-slate-100">
-                <div className="flex justify-center mb-3">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-xl border-2 border-slate-200 flex items-center justify-center shadow-sm">
-                    <QrCode className="w-10 h-10 sm:w-12 sm:h-12 text-slate-400" />
+            </motion.div>
+
+            {/* Card 4: Smart QR Codes */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="group bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-emerald-200 relative overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              
+              <div className="relative">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform">
+                    <QrCode className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-base sm:text-lg">Smart QR Codes</h3>
+                    <p className="text-xs sm:text-sm text-slate-500">7-platform support</p>
                   </div>
                 </div>
-                <p className="text-xs text-center text-slate-500 mb-3">Customer scans & selects platform:</p>
-                <div className="grid grid-cols-7 gap-1.5 mb-3">
-                  <div className="aspect-square rounded-lg bg-white flex items-center justify-center border border-slate-200 hover:border-blue-300 transition-colors">
-                    <GoogleIcon className="w-4 h-4" />
+                
+                <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100">
+                  <div className="flex justify-center mb-3">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-xl border-2 border-emerald-200 flex items-center justify-center shadow-inner p-2">
+                      <QrCode className="w-full h-full text-emerald-600" />
+                    </div>
                   </div>
-                  <div className="aspect-square rounded-lg bg-white flex items-center justify-center border border-slate-200 hover:border-blue-300 transition-colors">
-                    <FacebookIcon className="w-4 h-4" />
-                  </div>
-                  <div className="aspect-square rounded-lg bg-white flex items-center justify-center border border-slate-200 hover:border-amber-300 transition-colors">
-                    <AmazonIcon className="w-4 h-4" />
-                  </div>
-                  <div className="aspect-square rounded-lg bg-white flex items-center justify-center border border-slate-200 hover:border-yellow-300 transition-colors">
-                    <FlipkartIcon className="w-4 h-4" />
-                  </div>
-                  <div className="aspect-square rounded-lg bg-white flex items-center justify-center border border-slate-200 hover:border-yellow-300 transition-colors">
-                    <JustDialIcon className="w-4 h-4" />
-                  </div>
-                  <div className="aspect-square rounded-lg bg-orange-500 flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">S</span>
-                  </div>
-                  <div className="aspect-square rounded-lg bg-red-500 flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">Z</span>
+                  <p className="text-[10px] sm:text-xs text-center text-slate-500 mb-2.5">Customer selects platform:</p>
+                  <div className="grid grid-cols-7 gap-1">
+                    <div className="aspect-square rounded-lg bg-white flex items-center justify-center border border-slate-200 hover:border-blue-400 hover:scale-110 transition-all cursor-pointer">
+                      <GoogleIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                    </div>
+                    <div className="aspect-square rounded-lg bg-white flex items-center justify-center border border-slate-200 hover:border-blue-600 hover:scale-110 transition-all cursor-pointer">
+                      <FacebookIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                    </div>
+                    <div className="aspect-square rounded-lg bg-white flex items-center justify-center border border-slate-200 hover:border-amber-500 hover:scale-110 transition-all cursor-pointer">
+                      <AmazonIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                    </div>
+                    <div className="aspect-square rounded-lg bg-white flex items-center justify-center border border-slate-200 hover:border-yellow-500 hover:scale-110 transition-all cursor-pointer overflow-hidden">
+                      <FlipkartIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                    </div>
+                    <div className="aspect-square rounded-lg bg-white flex items-center justify-center border border-slate-200 hover:border-red-400 hover:scale-110 transition-all cursor-pointer">
+                      <JustDialIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                    </div>
+                    <div className="aspect-square rounded-lg bg-gradient-to-br from-orange-400 to-orange-500 flex items-center justify-center hover:scale-110 transition-all cursor-pointer shadow-sm">
+                      <span className="text-white text-[10px] sm:text-xs font-bold">S</span>
+                    </div>
+                    <div className="aspect-square rounded-lg bg-gradient-to-br from-red-400 to-red-500 flex items-center justify-center hover:scale-110 transition-all cursor-pointer shadow-sm">
+                      <span className="text-white text-[10px] sm:text-xs font-bold">Z</span>
+                    </div>
                   </div>
                 </div>
-                <Button size="sm" className="w-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg shadow-emerald-500/25 text-xs">
-                  Generate QR Code
-                </Button>
+                
+                <div className="mt-4 pt-4 border-t border-slate-100">
+                  <p className="text-xs text-slate-500 text-center">
+                    Print for tables, receipts & displays
+                  </p>
+                </div>
               </div>
             </motion.div>
           </div>
+
+          {/* Bottom CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-12 text-center"
+          >
+            <Button
+              onClick={handleDemoMode}
+              size="lg"
+              className="rounded-full px-8 py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold shadow-xl shadow-indigo-500/25 hover:shadow-2xl transition-all"
+            >
+              <Play className="w-5 h-5 mr-2" />
+              Try Interactive Demo
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+            <p className="mt-3 text-sm text-slate-500">No signup required • See real dashboard</p>
+          </motion.div>
         </div>
       </section>
 
