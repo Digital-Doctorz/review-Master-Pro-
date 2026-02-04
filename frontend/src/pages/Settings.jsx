@@ -1,4 +1,5 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { toast } from "sonner";
@@ -22,6 +23,12 @@ import {
   Save,
   User,
   RefreshCw,
+  CreditCard,
+  Crown,
+  Zap,
+  ChevronRight,
+  CheckCircle2,
+  Calendar,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 
