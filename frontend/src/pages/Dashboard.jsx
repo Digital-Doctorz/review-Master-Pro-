@@ -759,10 +759,11 @@ export default function Dashboard() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 + index * 0.1 }}
-                    className="flex items-start gap-4 p-4 rounded-xl bg-white border border-slate-100 hover:shadow-md transition-all"
+                    className="group flex items-start gap-4 p-4 rounded-xl bg-white border border-slate-100 hover:shadow-lg hover:border-indigo-200 transition-all cursor-pointer"
+                    onClick={() => openReplyModal(review)}
                     data-testid={`review-item-${index}`}
                   >
-                    <Avatar className="w-10 h-10">
+                    <Avatar className="w-10 h-10 flex-shrink-0">
                       <AvatarImage src={review.author_avatar} />
                       <AvatarFallback className="bg-sky-100 text-sky-600">
                         {review.author_name?.charAt(0)}
@@ -803,12 +804,38 @@ export default function Dashboard() {
                       <p className="text-sm text-slate-600 line-clamp-2">
                         {review.text}
                       </p>
-                      {review.response && (
-                        <div className="mt-2 text-xs text-green-600 flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                          Responded
+                      
+                      {/* Response Status & Reply Button */}
+                      <div className="mt-3 flex items-center justify-between">
+                        {review.response ? (
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5 text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                              <CheckCircle2 className="w-3 h-3" />
+                              Responded
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-7 text-xs text-slate-500 hover:text-indigo-600"
+                              onClick={(e) => { e.stopPropagation(); openReplyModal(review); }}
+                            >
+                              Edit Reply
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            size="sm"
+                            className="h-8 text-xs bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={(e) => { e.stopPropagation(); openReplyModal(review); }}
+                          >
+                            <Reply className="w-3 h-3 mr-1" />
+                            Reply with AI
+                          </Button>
+                        )}
+                        <div className="text-xs text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                          Click to respond
                         </div>
-                      )}
+                      </div>
                     </div>
                   </motion.div>
                 ))
