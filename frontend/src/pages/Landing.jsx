@@ -1369,10 +1369,10 @@ export default function Landing() {
               viewport={{ once: true }}
               className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight mb-3 sm:mb-4"
             >
-              Industries That <span className="text-gradient">Win With Reviews</span>
+              Industries That Benefit & <span className="text-gradient">How They Gain Competitive Advantage</span>
             </motion.h2>
-            <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
-              From restaurants to real estate, businesses across sectors are transforming their growth with Review Master
+            <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto">
+              From restaurants to real estate, see exactly how businesses in your sector transform reviews into revenue with Review Master
             </p>
           </div>
         </div>
@@ -1388,21 +1388,26 @@ export default function Landing() {
             {[...industriesData.slice(0, 6), ...industriesData.slice(0, 6)].map((industry, index) => (
               <div
                 key={`row1-${index}`}
-                className="flex-shrink-0 w-72 sm:w-80 mx-2 sm:mx-3"
+                className="flex-shrink-0 w-80 sm:w-96 mx-2 sm:mx-3"
               >
-                <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-lg border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all h-full">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${industry.color} flex items-center justify-center flex-shrink-0 shadow-lg`}>
+                <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-lg border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all h-full group">
+                  <div className="flex items-start gap-4 mb-3">
+                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${industry.color} flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform`}>
                       <industry.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                     </div>
-                    <div>
-                      <h3 className="font-bold text-slate-900 text-sm sm:text-base mb-1">{industry.name}</h3>
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-slate-900 text-sm sm:text-base mb-1 leading-tight">{industry.name}</h3>
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-sm">
                         {industry.impact}
                       </span>
                     </div>
                   </div>
-                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed line-clamp-4">{industry.description}</p>
+                  <div className="mb-3 pl-0">
+                    <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">
+                      Impact: {industry.impactType}
+                    </span>
+                  </div>
+                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed line-clamp-5">{industry.description}</p>
                 </div>
               </div>
             ))}
@@ -1413,21 +1418,26 @@ export default function Landing() {
             {[...industriesData.slice(6, 12), ...industriesData.slice(6, 12)].map((industry, index) => (
               <div
                 key={`row2-${index}`}
-                className="flex-shrink-0 w-72 sm:w-80 mx-2 sm:mx-3"
+                className="flex-shrink-0 w-80 sm:w-96 mx-2 sm:mx-3"
               >
-                <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-lg border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all h-full">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${industry.color} flex items-center justify-center flex-shrink-0 shadow-lg`}>
+                <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-lg border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all h-full group">
+                  <div className="flex items-start gap-4 mb-3">
+                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${industry.color} flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform`}>
                       <industry.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                     </div>
-                    <div>
-                      <h3 className="font-bold text-slate-900 text-sm sm:text-base mb-1">{industry.name}</h3>
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-slate-900 text-sm sm:text-base mb-1 leading-tight">{industry.name}</h3>
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-sm">
                         {industry.impact}
                       </span>
                     </div>
                   </div>
-                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed line-clamp-4">{industry.description}</p>
+                  <div className="mb-3 pl-0">
+                    <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">
+                      Impact: {industry.impactType}
+                    </span>
+                  </div>
+                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed line-clamp-5">{industry.description}</p>
                 </div>
               </div>
             ))}
