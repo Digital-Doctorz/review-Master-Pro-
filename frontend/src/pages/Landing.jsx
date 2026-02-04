@@ -691,30 +691,58 @@ export default function Landing() {
                   ))}
                 </div>
 
-                {/* Platform Status - All 7 Platforms - Round logos without checkmarks */}
+                {/* Platform Status - All 7 Platforms - Round logos with labels */}
                 <div className="mb-6">
-                  <p className="text-xs text-slate-500 mb-3 font-medium">Connected Platforms</p>
-                  <div className="flex flex-wrap justify-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
-                      <GoogleIcon className="w-5 h-5" />
+                  <p className="text-xs text-slate-500 mb-4 font-medium text-center">Connected Platforms</p>
+                  <div className="grid grid-cols-7 gap-2">
+                    {/* Google */}
+                    <div className="flex flex-col items-center">
+                      <div className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
+                        <GoogleIcon className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] text-slate-600 mt-1">Google</span>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
-                      <FacebookIcon className="w-5 h-5" />
+                    {/* Facebook */}
+                    <div className="flex flex-col items-center">
+                      <div className="w-10 h-10 rounded-full bg-[#1877F2] shadow-md flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
+                        <FacebookIcon className="w-5 h-5 text-white" />
+                      </div>
+                      <span className="text-[10px] text-slate-600 mt-1">Facebook</span>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
-                      <AmazonIcon className="w-5 h-5" />
+                    {/* Amazon */}
+                    <div className="flex flex-col items-center">
+                      <div className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
+                        <AmazonIcon className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] text-slate-600 mt-1">Amazon</span>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
-                      <FlipkartIcon className="w-5 h-5" />
+                    {/* Flipkart */}
+                    <div className="flex flex-col items-center">
+                      <div className="w-10 h-10 rounded-full bg-[#2874F0] shadow-md flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
+                        <FlipkartIcon className="w-5 h-5 text-white" />
+                      </div>
+                      <span className="text-[10px] text-slate-600 mt-1">Flipkart</span>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
-                      <JustDialIcon className="w-5 h-5" />
+                    {/* JustDial */}
+                    <div className="flex flex-col items-center">
+                      <div className="w-10 h-10 rounded-full bg-[#FFD700] shadow-md flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
+                        <JustDialIcon className="w-5 h-5 text-slate-800" />
+                      </div>
+                      <span className="text-[10px] text-slate-600 mt-1">JustDial</span>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
-                      <SwiggyIcon className="w-5 h-5" />
+                    {/* Swiggy */}
+                    <div className="flex flex-col items-center">
+                      <div className="w-10 h-10 rounded-full bg-[#FC8019] shadow-md flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
+                        <SwiggyIcon className="w-5 h-5 text-white" />
+                      </div>
+                      <span className="text-[10px] text-slate-600 mt-1">Swiggy</span>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
-                      <ZomatoIcon className="w-5 h-5" />
+                    {/* Zomato */}
+                    <div className="flex flex-col items-center">
+                      <div className="w-10 h-10 rounded-full bg-[#E23744] shadow-md flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
+                        <ZomatoIcon className="w-5 h-5 text-white" />
+                      </div>
+                      <span className="text-[10px] text-slate-600 mt-1">Zomato</span>
                     </div>
                   </div>
                 </div>
