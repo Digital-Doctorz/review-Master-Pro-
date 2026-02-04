@@ -197,7 +197,7 @@ export default function Layout({ children }) {
 
       {/* Mobile Full Screen Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-40 bg-white/98 backdrop-blur-xl pt-16 safe-area-top overflow-y-auto">
+        <div className="md:hidden fixed inset-0 z-40 bg-white/98 backdrop-blur-xl pt-16 safe-area-top overflow-y-auto pb-8">
           {/* User Profile Section */}
           <div className="p-4 border-b border-slate-100">
             <div className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50">
@@ -214,6 +214,11 @@ export default function Layout({ children }) {
                 <p className="text-sm text-slate-500 truncate">
                   {business?.name || "Demo Business"}
                 </p>
+                {isDemo && (
+                  <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs font-medium">
+                    Demo Mode
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -241,19 +246,22 @@ export default function Layout({ children }) {
             })}
           </nav>
 
-          {/* Logout Button - Fixed at bottom of menu, not hidden */}
-          <div className="p-4 mt-auto border-t border-slate-100">
+          {/* Sign Out Button - Prominent and always visible */}
+          <div className="p-4 border-t border-slate-100 mt-4">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
                 handleLogout();
               }}
-              className="flex items-center justify-center gap-3 w-full px-4 py-3.5 rounded-xl bg-red-50 text-red-600 font-medium hover:bg-red-100 active:bg-red-200 transition-colors"
+              className="flex items-center justify-center gap-3 w-full px-4 py-4 rounded-xl bg-gradient-to-r from-red-500 to-rose-600 text-white font-semibold shadow-lg shadow-red-500/25 hover:from-red-600 hover:to-rose-700 active:scale-[0.98] transition-all"
               data-testid="mobile-logout-btn"
             >
               <LogOut className="w-5 h-5" />
-              {isDemo ? "Exit Demo" : "Log out"}
+              {isDemo ? "Exit Demo Mode" : "Sign Out"}
             </button>
+            <p className="text-center text-xs text-slate-400 mt-2">
+              {isDemo ? "Return to landing page" : "You can always sign back in"}
+            </p>
           </div>
         </div>
       )}
