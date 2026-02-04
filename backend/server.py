@@ -468,6 +468,74 @@ async def create_session(request: Request, response: Response):
     await db.user_sessions.delete_many({"user_id": user_id})
     await db.user_sessions.insert_one(session_doc)
     
+    # Check for pending subscription (from Razorpay subscription link payment)
+    pending_sub = await db.pending_subscriptions.find_one({
+        "customer_email": {"$regex": f"^{email}$", "$options": "i"},
+        "status": {"$in": ["pending_activation", "paid_pending_login"]}
+    })
+    
+    if pending_sub:
+        # Activate the subscription for this user
+        plan_name = pending_sub.get("plan_name", "starter")
+        subscription_id = pending_sub["subscription_id"]
+        
+        plan_configs_sub = {
+            "starter": {"max_locations": 1, "features": ["google_reviews", "qr_codes", "ai_responses", "email_alerts", "basic_analytics"]},
+            "growth": {"max_locations": 3, "features": ["google_reviews", "facebook_reviews", "swiggy_reviews", "zomato_reviews", "unlimited_qr", "ai_responses", "whatsapp_alerts", "advanced_analytics", "private_feedback", "custom_branding"]},
+            "enterprise": {"max_locations": 999, "features": ["all_platforms", "unlimited_qr", "ai_responses", "dedicated_manager", "custom_analytics", "api_access", "white_label", "priority_support"]}
+        }
+        
+        config_sub = plan_configs_sub.get(plan_name, plan_configs_sub["starter"])
+        expires_at_sub = datetime.now(timezone.utc) + timedelta(days=30)
+        
+        # Create/Update user plan
+        await db.user_plans.update_one(
+            {"user_id": user_id},
+            {"$set": {
+                "plan_id": plan_name,
+                "plan_name": plan_name,
+                "subscription_id": subscription_id,
+                "billing_cycle": "monthly",
+                "is_subscription": True,
+                "is_active": True,
+                "activated_at": datetime.now(timezone.utc),
+                "expires_at": expires_at_sub,
+                "max_locations": config_sub["max_locations"],
+                "features": config_sub["features"]
+            }},
+            upsert=True
+        )
+        
+        # Update user document
+        await db.users.update_one(
+            {"user_id": user_id},
+            {"$set": {
+                "plan": plan_name,
+                "plan_expires_at": expires_at_sub,
+                "max_locations": config_sub["max_locations"],
+                "features": config_sub["features"]
+            }}
+        )
+        
+        # Create subscription record
+        await db.subscriptions.insert_one({
+            "subscription_id": subscription_id,
+            "user_id": user_id,
+            "plan_name": plan_name,
+            "status": "active",
+            "activated_at": datetime.now(timezone.utc),
+            "created_at": pending_sub.get("created_at", datetime.now(timezone.utc))
+        })
+        
+        # Mark pending subscription as activated
+        await db.pending_subscriptions.update_one(
+            {"_id": pending_sub["_id"]},
+            {"$set": {"status": "activated", "user_id": user_id, "activated_at": datetime.now(timezone.utc)}}
+        )
+        
+        selected_plan = plan_name
+        logger.info(f"Activated pending subscription {subscription_id} for user {user_id}")
+    
     # Set cookie
     response.set_cookie(
         key="session_token",
@@ -479,12 +547,17 @@ async def create_session(request: Request, response: Response):
         max_age=7 * 24 * 60 * 60  # 7 days
     )
     
+    # Check if user has active plan after potential subscription activation
+    final_user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    final_plan = final_user.get("plan", "free") if final_user else "free"
+    
     user_data = {
         "user_id": user_id,
         "email": email,
         "name": name,
         "picture": picture,
-        "plan": selected_plan
+        "plan": final_plan,
+        "has_lifetime_access": has_lifetime_access
     }
     
     return {"user": user_data, "session_token": session_token}
