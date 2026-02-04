@@ -3247,6 +3247,20 @@ async def get_payment_config():
         }
     }
 
+@api_router.get("/payment/subscription-link/{plan_name}")
+async def get_subscription_link(plan_name: str):
+    """Get the Razorpay subscription link for a specific plan (for monthly recurring)"""
+    plan_name = plan_name.lower()
+    
+    if plan_name not in PRICING_CONFIG:
+        raise HTTPException(status_code=400, detail="Invalid plan name")
+    
+    return {
+        "plan_name": plan_name,
+        "subscription_link": PRICING_CONFIG[plan_name]["razorpay_subscription_link"],
+        "monthly_price": PRICING_CONFIG[plan_name]["monthly"]
+    }
+
 @api_router.post("/payment/create-order")
 async def create_payment_order(order_data: PaymentOrderRequest, user: User = Depends(get_current_user)):
     """Create a Razorpay order for one-time payment (yearly plans)"""
