@@ -411,7 +411,7 @@ export default function Settings() {
               </div>
               
               <Button
-                onClick={() => navigate('/dashboard/subscription')}
+                onClick={() => navigate('/subscription')}
                 variant="outline"
                 className="h-11 px-6 rounded-xl border-slate-200 hover:bg-slate-50"
                 data-testid="manage-subscription-btn"
