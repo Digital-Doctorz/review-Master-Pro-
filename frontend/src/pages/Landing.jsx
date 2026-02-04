@@ -731,8 +731,8 @@ export default function Landing() {
                     </div>
                     {/* Flipkart */}
                     <div className="flex flex-col items-center">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#2874F0] shadow-md flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
-                        <span className="text-white font-bold text-xs sm:text-sm italic">f</span>
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-md flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all overflow-hidden">
+                        <img src="/logos/flipkart.png" alt="Flipkart" className="w-full h-full object-cover" />
                       </div>
                       <span className="text-[9px] sm:text-[10px] text-slate-600 mt-1">Flipkart</span>
                     </div>
