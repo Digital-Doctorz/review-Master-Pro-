@@ -945,6 +945,129 @@ async def connect_zomato_location(
         "restaurant_name": restaurant_name
     }
 
+# ============ AMAZON INTEGRATION ============
+
+@api_router.post("/amazon/connect-location/{location_id}")
+async def connect_amazon_location(
+    location_id: str,
+    data: dict,
+    user: User = Depends(get_current_user)
+):
+    """Connect Amazon to a specific location"""
+    location = await db.locations.find_one(
+        {"location_id": location_id, "user_id": user.user_id, "is_active": True},
+        {"_id": 0}
+    )
+    
+    if not location:
+        raise HTTPException(status_code=404, detail="Location not found")
+    
+    amazon_link = data.get("amazon_link", "").strip()
+    seller_name = data.get("seller_name") or location.get("name", "Store")
+    
+    if not amazon_link:
+        raise HTTPException(status_code=400, detail="Amazon link is required")
+    
+    seller_id = f"amazon_{uuid.uuid4().hex[:8]}"
+    
+    # Update location with Amazon info
+    await db.locations.update_one(
+        {"location_id": location_id, "user_id": user.user_id},
+        {"$set": {
+            "amazon_seller_id": seller_id,
+            "amazon_seller_name": seller_name,
+            "amazon_link": amazon_link
+        }}
+    )
+    
+    return {
+        "message": "Amazon connected to location",
+        "amazon_link": amazon_link,
+        "seller_name": seller_name
+    }
+
+# ============ FLIPKART INTEGRATION ============
+
+@api_router.post("/flipkart/connect-location/{location_id}")
+async def connect_flipkart_location(
+    location_id: str,
+    data: dict,
+    user: User = Depends(get_current_user)
+):
+    """Connect Flipkart to a specific location"""
+    location = await db.locations.find_one(
+        {"location_id": location_id, "user_id": user.user_id, "is_active": True},
+        {"_id": 0}
+    )
+    
+    if not location:
+        raise HTTPException(status_code=404, detail="Location not found")
+    
+    flipkart_link = data.get("flipkart_link", "").strip()
+    seller_name = data.get("seller_name") or location.get("name", "Store")
+    
+    if not flipkart_link:
+        raise HTTPException(status_code=400, detail="Flipkart link is required")
+    
+    seller_id = f"flipkart_{uuid.uuid4().hex[:8]}"
+    
+    # Update location with Flipkart info
+    await db.locations.update_one(
+        {"location_id": location_id, "user_id": user.user_id},
+        {"$set": {
+            "flipkart_seller_id": seller_id,
+            "flipkart_seller_name": seller_name,
+            "flipkart_link": flipkart_link
+        }}
+    )
+    
+    return {
+        "message": "Flipkart connected to location",
+        "flipkart_link": flipkart_link,
+        "seller_name": seller_name
+    }
+
+# ============ JUSTDIAL INTEGRATION ============
+
+@api_router.post("/justdial/connect-location/{location_id}")
+async def connect_justdial_location(
+    location_id: str,
+    data: dict,
+    user: User = Depends(get_current_user)
+):
+    """Connect JustDial to a specific location"""
+    location = await db.locations.find_one(
+        {"location_id": location_id, "user_id": user.user_id, "is_active": True},
+        {"_id": 0}
+    )
+    
+    if not location:
+        raise HTTPException(status_code=404, detail="Location not found")
+    
+    justdial_link = data.get("justdial_link", "").strip()
+    business_name = data.get("business_name") or location.get("name", "Business")
+    
+    if not justdial_link:
+        raise HTTPException(status_code=400, detail="JustDial link is required")
+    
+    business_id = f"justdial_{uuid.uuid4().hex[:8]}"
+    
+    # Update location with JustDial info
+    await db.locations.update_one(
+        {"location_id": location_id, "user_id": user.user_id},
+        {"$set": {
+            "justdial_business_id": business_id,
+            "justdial_business_name": business_name,
+            "justdial_link": justdial_link
+        }}
+    )
+    
+    return {
+        "message": "JustDial connected to location",
+        "justdial_link": justdial_link,
+        "business_name": business_name
+    }
+
 # ============ PLATFORM CONNECTION ENDPOINTS ============
 
 @api_router.get("/platforms")
