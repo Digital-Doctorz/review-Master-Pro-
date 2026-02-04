@@ -207,21 +207,38 @@ export default function Landing() {
     )}`;
   };
 
-  // Handle Razorpay payment - Direct to payment gateway (no login required)
-  const handlePayment = useCallback(async (planKey) => {
+  // Handle Razorpay payment - Redirect to subscription link for monthly, order for yearly
+  const handlePayment = useCallback(async (planKey, subscriptionLink) => {
     if (!paymentConfig?.payment_enabled) {
       toast.error("Payment processing is not configured yet. Please contact support.");
-      return;
-    }
-
-    if (!window.Razorpay) {
-      toast.error("Payment system is loading. Please try again.");
       return;
     }
 
     setUpgrading(true);
 
     try {
+      // For MONTHLY billing - redirect to Razorpay subscription link
+      if (billingCycle === "monthly" && subscriptionLink) {
+        toast.info("Redirecting to Razorpay subscription...");
+        
+        // Store plan info for activation after payment
+        sessionStorage.setItem('pending_subscription', JSON.stringify({
+          plan_name: planKey,
+          billing_cycle: 'monthly'
+        }));
+        
+        // Redirect to Razorpay subscription page
+        window.location.href = subscriptionLink;
+        return;
+      }
+
+      // For YEARLY billing - use one-time payment order
+      if (!window.Razorpay) {
+        toast.error("Payment system is loading. Please try again.");
+        setUpgrading(false);
+        return;
+      }
+
       // Create order without authentication (guest payment)
       const orderResponse = await axios.post(
         `${API}/payment/guest/create-order`,
