@@ -64,30 +64,23 @@ const AmazonIcon = ({ className = "w-6 h-6" }) => (
   </svg>
 );
 
-// Flipkart Icon - Official blue/yellow
+// Flipkart Icon - Uses actual logo image
 const FlipkartIcon = ({ className = "w-6 h-6" }) => (
-  <svg className={className} viewBox="0 0 24 24">
-    <rect fill="#2874F0" width="24" height="24" rx="3"/>
-    <path fill="#FFFFFF" d="M6 7h5.5c1.38 0 2.5 1.12 2.5 2.5S12.88 12 11.5 12H8v5H6V7z"/>
-    <circle fill="#FFE500" cx="8" cy="7" r="1.5"/>
-    <path fill="#FFFFFF" d="M8 9.5h3.5c.55 0 1 .45 1 1s-.45 1-1 1H8V9.5z"/>
-  </svg>
+  <img src="/logos/flipkart.png" alt="Flipkart" className={`${className} rounded-full object-cover`} />
 );
 
-// JustDial Icon - Blue/Orange official colors
+// JustDial Icon - Red/White official colors
 const JustDialIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
-    <rect fill="#FFFFFF" width="24" height="24" rx="3"/>
-    <rect fill="#2C3E50" x="1" y="1" width="22" height="22" rx="2"/>
-    <text x="4" y="15" fill="#3498DB" fontSize="8" fontWeight="bold" fontFamily="Arial">Just</text>
-    <text x="4" y="20" fill="#E67E22" fontSize="6" fontWeight="bold" fontFamily="Arial">Dial</text>
+    <rect fill="#E31E25" width="24" height="24" rx="12"/>
+    <text x="12" y="15" textAnchor="middle" fill="white" fontSize="8" fontWeight="bold" fontFamily="Arial">JD</text>
   </svg>
 );
 
 // Swiggy Icon - Official orange with white arc
 const SwiggyIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
-    <rect fill="#FC8019" width="24" height="24" rx="4"/>
+    <rect fill="#FC8019" width="24" height="24" rx="12"/>
     <path fill="#FFFFFF" d="M12 4C7.58 4 4 7.58 4 12s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/>
     <path fill="#FFFFFF" d="M12 8v8M8 12h8" strokeWidth="1.5" stroke="#FC8019"/>
     <circle fill="#FFFFFF" cx="12" cy="12" r="3"/>
