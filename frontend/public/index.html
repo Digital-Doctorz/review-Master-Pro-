@@ -3,22 +3,115 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#000000" />
-        <meta name="description" content="Review Master - Smart Review Management Platform. Collect, manage, and boost your online reviews across Google, Facebook, Swiggy, and Zomato." />
-        <!--
-        manifest.json provides metadata used when your web app is installed on a
-        user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-        -->
-        <!--
-        Notice the use of %PUBLIC_URL% in the tags above.
-        It will be replaced with the URL of the `public` folder during the build.
-        Only files inside the `public` folder can be referenced from the HTML.
-
-        Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-        work correctly both with client-side routing and a non-root public URL.
-        Learn how to configure a non-root public URL by running `npm run build`.
-        -->
-        <title>Review Master | Smart Review Management</title>
+        <meta name="theme-color" content="#6366f1" />
+        
+        <!-- Primary Meta Tags -->
+        <title>Review Master | #1 Online Review Management Platform for India</title>
+        <meta name="title" content="Review Master | #1 Online Review Management Platform for India" />
+        <meta name="description" content="Collect, manage & boost reviews from Google, Facebook, Amazon, Flipkart, JustDial, Swiggy & Zomato. AI-powered responses, QR code collection, smart analytics. Trusted by 2500+ Indian businesses. Start free today!" />
+        <meta name="keywords" content="review management software, google reviews management, facebook reviews, amazon seller reviews, flipkart reviews, swiggy reviews, zomato reviews, justdial reviews, online reputation management, review collection, QR code reviews, AI review responses, business reviews India, restaurant review management, hotel review management, retail review management" />
+        <meta name="author" content="Review Master" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <meta name="googlebot" content="index, follow" />
+        <link rel="canonical" href="https://reviewmaster.in" />
+        
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://reviewmaster.in/" />
+        <meta property="og:title" content="Review Master | #1 Online Review Management Platform" />
+        <meta property="og:description" content="Collect reviews from 7 major platforms - Google, Facebook, Amazon, Flipkart, JustDial, Swiggy & Zomato. AI-powered responses & smart analytics. Trusted by 2500+ businesses." />
+        <meta property="og:image" content="https://reviewmaster.in/og-image.png" />
+        <meta property="og:site_name" content="Review Master" />
+        <meta property="og:locale" content="en_IN" />
+        
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://reviewmaster.in/" />
+        <meta property="twitter:title" content="Review Master | #1 Online Review Management Platform" />
+        <meta property="twitter:description" content="Collect reviews from 7 major platforms - Google, Facebook, Amazon, Flipkart, JustDial, Swiggy & Zomato. AI-powered responses & smart analytics." />
+        <meta property="twitter:image" content="https://reviewmaster.in/og-image.png" />
+        
+        <!-- Additional SEO Meta Tags -->
+        <meta name="geo.region" content="IN" />
+        <meta name="geo.placename" content="India" />
+        <meta name="language" content="English" />
+        <meta name="rating" content="general" />
+        <meta name="distribution" content="global" />
+        <meta name="revisit-after" content="7 days" />
+        
+        <!-- Structured Data - Organization -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "Review Master",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Web",
+            "offers": {
+                "@type": "AggregateOffer",
+                "lowPrice": "499",
+                "highPrice": "2499",
+                "priceCurrency": "INR",
+                "offerCount": "3"
+            },
+            "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.8",
+                "ratingCount": "2500",
+                "bestRating": "5",
+                "worstRating": "1"
+            },
+            "description": "Review Master is India's #1 online review management platform. Collect, manage and boost reviews from Google, Facebook, Amazon, Flipkart, JustDial, Swiggy and Zomato with AI-powered responses.",
+            "featureList": [
+                "7 Platform Integration (Google, Facebook, Amazon, Flipkart, JustDial, Swiggy, Zomato)",
+                "AI-Powered Review Responses",
+                "QR Code Review Collection",
+                "Smart Analytics Dashboard",
+                "Real-time Notifications",
+                "Reputation Protection"
+            ]
+        }
+        </script>
+        
+        <!-- Structured Data - FAQ -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "What platforms does Review Master support?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Review Master supports 7 major platforms: Google Reviews, Facebook Reviews, Amazon Seller Reviews, Flipkart Reviews, JustDial Reviews, Swiggy Reviews, and Zomato Reviews."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How much does Review Master cost?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Review Master offers three plans: Starter at ₹499/month (100 reviews, 1 location), Growth at ₹999/month (500 reviews, 3 locations), and Enterprise at ₹2,499/month (unlimited reviews and locations)."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Does Review Master have AI features?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes! Review Master includes AI-powered review response generation that helps you craft professional, personalized responses to customer reviews in seconds."
+                    }
+                }
+            ]
+        }
+        </script>
+        
+        <!-- Preconnect to external domains for performance -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="preconnect" href="https://checkout.razorpay.com" />
+        
         <script src="https://assets.emergent.sh/scripts/emergent-main.js"></script>
         <!--
         These two scripts have been added for the Visual Edits, please do not edit or remove them
