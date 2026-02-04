@@ -550,12 +550,6 @@ export default function Landing() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              {/* Limited Offer Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 text-white text-sm font-medium mb-6 animate-pulse">
-                <Gift className="w-4 h-4" />
-                Limited Time: 50% OFF All Plans!
-              </div>
-
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight mb-6">
                 Turn Every Review Into
                 <span className="block text-gradient">₹10,000+ Revenue</span>
