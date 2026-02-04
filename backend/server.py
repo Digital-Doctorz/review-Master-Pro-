@@ -81,6 +81,13 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Lifetime Free Access Emails - These users bypass payment and get Enterprise access
+LIFETIME_FREE_EMAILS = [
+    "trademeindia.sales@gmail.com",
+    "digitaldoctors.sales@gmail.com",
+    "fo.optm@gmail.com"
+]
+
 
 # ============ TRIAL CLEANUP FUNCTIONS ============
 
