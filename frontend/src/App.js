@@ -348,10 +348,10 @@ function ProtectedRoute({ children }) {
       } catch (error) {
         // If we just came from auth callback, retry a few times before giving up
         // This handles race condition where cookie might not be set yet
-        if (retryCount < 2) {
+        if (retryCount < 3) {
           setTimeout(() => {
             setRetryCount(prev => prev + 1);
-          }, 500);
+          }, 800);
           return;
         }
         // Not authenticated after retries
