@@ -2312,6 +2312,9 @@ async def get_public_business(qr_code_id: str):
             "google_review_link": "https://g.page/demo-coffee-shop",
             "facebook_page_id": "demo_facebook_page",
             "facebook_page_url": "https://facebook.com/demo-coffee-shop",
+            "amazon_link": "https://www.amazon.in/sp?seller=DEMO_SELLER_123",
+            "flipkart_link": "https://www.flipkart.com/seller/demo-coffee-shop-store",
+            "justdial_link": "https://www.justdial.com/City/Demo-Coffee-Shop",
             "swiggy_link": "https://www.swiggy.com/restaurants/demo-coffee-shop-city-123456",
             "zomato_link": "https://www.zomato.com/city/demo-coffee-shop-locality",
             "is_demo": True,
@@ -2323,6 +2326,18 @@ async def get_public_business(qr_code_id: str):
                 "facebook": {
                     "connected": True,
                     "review_link": "https://facebook.com/demo-coffee-shop/reviews"
+                },
+                "amazon": {
+                    "connected": True,
+                    "review_link": "https://www.amazon.in/sp?seller=DEMO_SELLER_123"
+                },
+                "flipkart": {
+                    "connected": True,
+                    "review_link": "https://www.flipkart.com/seller/demo-coffee-shop-store"
+                },
+                "justdial": {
+                    "connected": True,
+                    "review_link": "https://www.justdial.com/City/Demo-Coffee-Shop"
                 },
                 "swiggy": {
                     "connected": True,
