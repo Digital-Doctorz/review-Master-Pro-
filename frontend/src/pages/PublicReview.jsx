@@ -309,6 +309,12 @@ export default function PublicReview() {
       link = business?.facebook_page_url 
         || business?.platforms?.facebook?.review_link 
         || business?.platforms?.facebook?.page_url;
+    } else if (platform === "amazon") {
+      link = business?.amazon_link || business?.platforms?.amazon?.review_link;
+    } else if (platform === "flipkart") {
+      link = business?.flipkart_link || business?.platforms?.flipkart?.review_link;
+    } else if (platform === "justdial") {
+      link = business?.justdial_link || business?.platforms?.justdial?.review_link;
     } else if (platform === "swiggy") {
       link = business?.swiggy_link || business?.platforms?.swiggy?.review_link;
     } else if (platform === "zomato") {
@@ -326,7 +332,35 @@ export default function PublicReview() {
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     // Platform-specific handling
-    if (platform === "swiggy") {
+    if (platform === "amazon") {
+      // Amazon - open web link
+      window.open(link, "_blank");
+      toast.success("Opening Amazon... Paste your review there! 📋", { duration: 5000 });
+    }
+    else if (platform === "flipkart") {
+      // Flipkart - try app on mobile
+      if (isMobile) {
+        if (isAndroid) {
+          try {
+            const intentUrl = `intent://www.flipkart.com${new URL(link).pathname}#Intent;scheme=https;package=com.flipkart.android;end`;
+            window.location.href = intentUrl;
+          } catch {
+            window.open(link, "_blank");
+          }
+        } else {
+          window.open(link, "_blank");
+        }
+      } else {
+        window.open(link, "_blank");
+      }
+      toast.success("Opening Flipkart... Paste your review there! 📋", { duration: 5000 });
+    }
+    else if (platform === "justdial") {
+      // JustDial - open web link
+      window.open(link, "_blank");
+      toast.success("Opening JustDial... Paste your review there! 📋", { duration: 5000 });
+    }
+    else if (platform === "swiggy") {
       // Swiggy deep link - try app first, then web
       if (isMobile) {
         // Try to open Swiggy app with the restaurant link
