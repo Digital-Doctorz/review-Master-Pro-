@@ -1321,17 +1321,36 @@ async def get_plan_status(user: User = Depends(get_current_user)):
     if not user_doc:
         raise HTTPException(status_code=404, detail="User not found")
     
+    # Check if user has lifetime access
+    has_lifetime_access = user_doc.get("has_lifetime_access", False)
+    
+    # Also check by email
+    if not has_lifetime_access and user_doc.get("email"):
+        has_lifetime_access = user_doc["email"].lower() in [e.lower() for e in LIFETIME_FREE_EMAILS]
+        # Update user doc if lifetime access detected
+        if has_lifetime_access:
+            await db.users.update_one(
+                {"user_id": user.user_id},
+                {"$set": {
+                    "has_lifetime_access": True,
+                    "plan": "enterprise",
+                    "max_locations": 999,
+                    "features": ["all_platforms", "unlimited_qr", "ai_responses", "dedicated_manager", "custom_analytics", "api_access", "white_label", "priority_support"]
+                }}
+            )
+    
     # Check for active subscription
     user_plan = await db.user_plans.find_one({"user_id": user.user_id, "is_active": True}, {"_id": 0})
     
-    has_active_plan = user_plan is not None and user_plan.get("is_active", False)
+    has_active_plan = (user_plan is not None and user_plan.get("is_active", False)) or has_lifetime_access
     
     return {
         "has_active_plan": has_active_plan,
-        "plan": user_doc.get("plan", "free"),
+        "has_lifetime_access": has_lifetime_access,
+        "plan": "enterprise" if has_lifetime_access else user_doc.get("plan", "free"),
         "is_subscription": user_plan.get("is_subscription", False) if user_plan else False,
-        "expires_at": user_plan.get("expires_at") if user_plan else None,
-        "max_locations": user_doc.get("max_locations", 0),
+        "expires_at": None if has_lifetime_access else (user_plan.get("expires_at") if user_plan else None),
+        "max_locations": 999 if has_lifetime_access else user_doc.get("max_locations", 0),
         "features": user_doc.get("features", [])
     }
 
