@@ -1,12 +1,20 @@
 import { useState, useEffect, useContext, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
+import { toast } from "sonner";
 import { AuthContext } from "../App";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { Textarea } from "../components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog";
 import {
   Star,
   TrendingUp,
@@ -29,6 +37,12 @@ import {
   Clock,
   Crown,
   CreditCard,
+  Send,
+  Reply,
+  CheckCircle2,
+  Loader2,
+  Copy,
+  ExternalLink,
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
