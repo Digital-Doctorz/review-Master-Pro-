@@ -268,10 +268,10 @@ export default function Layout({ children }) {
 
       {/* Premium Mobile Bottom Nav - Only 4 essential items */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 safe-area-bottom"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 safe-area-bottom pb-safe"
         data-testid="mobile-bottom-nav"
       >
-        <div className="mx-3 mb-3 bg-white/95 backdrop-blur-xl rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-100 p-1.5">
+        <div className="mx-3 mb-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-100 p-1.5">
           <div className="flex items-center justify-around">
             {bottomNavItems.map((item) => {
               const isActive = location.pathname === item.path;
@@ -279,14 +279,14 @@ export default function Layout({ children }) {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`relative flex flex-col items-center justify-center py-2.5 px-5 rounded-xl transition-all duration-200 ${
+                  className={`relative flex flex-col items-center justify-center py-2 px-4 rounded-xl transition-all duration-200 ${
                     isActive
                       ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-md shadow-indigo-500/30"
                       : "text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/50 active:scale-95"
                   }`}
                 >
                   <item.icon className={`w-5 h-5 ${isActive ? "drop-shadow-sm" : ""}`} />
-                  <span className={`text-[10px] font-medium mt-1 ${isActive ? "text-white/90" : ""}`}>
+                  <span className={`text-[10px] font-medium mt-0.5 ${isActive ? "text-white/90" : ""}`}>
                     {item.label}
                   </span>
                 </Link>
@@ -295,17 +295,18 @@ export default function Layout({ children }) {
             {/* Menu button in bottom nav */}
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="flex flex-col items-center justify-center py-2.5 px-5 rounded-xl text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/50 active:scale-95 transition-all duration-200"
+              className="flex flex-col items-center justify-center py-2 px-4 rounded-xl text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/50 active:scale-95 transition-all duration-200"
+              data-testid="mobile-more-menu"
             >
               <Menu className="w-5 h-5" />
-              <span className="text-[10px] font-medium mt-1">More</span>
+              <span className="text-[10px] font-medium mt-0.5">More</span>
             </button>
           </div>
         </div>
       </nav>
 
-      {/* Main Content */}
-      <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0 min-h-screen">
+      {/* Main Content - with proper spacing for mobile header and bottom nav */}
+      <main className="md:ml-64 pt-16 md:pt-0 pb-28 md:pb-0 min-h-screen">
         <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
           <ErrorBoundary>
             {children}
