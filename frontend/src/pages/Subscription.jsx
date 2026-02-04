@@ -118,6 +118,11 @@ export default function Subscription() {
   };
 
   const handleCancelSubscription = async () => {
+    if (isDemo) {
+      toast.info("Demo mode - subscription actions are disabled");
+      return;
+    }
+    
     if (!window.confirm("Are you sure you want to cancel your subscription? You will lose access at the end of your current billing period.")) {
       return;
     }
@@ -135,6 +140,11 @@ export default function Subscription() {
   };
 
   const handleUpdatePaymentMethod = async () => {
+    if (isDemo) {
+      toast.info("Demo mode - payment method updates are disabled");
+      return;
+    }
+    
     try {
       const response = await axios.post(`${API}/api/subscription/update-payment-method`, {}, { withCredentials: true });
       if (response.data.payment_link) {
