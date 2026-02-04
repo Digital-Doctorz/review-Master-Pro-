@@ -680,37 +680,30 @@ export default function Landing() {
                   ))}
                 </div>
 
-                {/* Platform Status - All 7 Platforms */}
+                {/* Platform Status - All 7 Platforms - Round logos without checkmarks */}
                 <div className="mb-6">
-                  <p className="text-xs text-slate-500 mb-2 font-medium">Connected Platforms (7)</p>
-                  <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
-                    <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
+                  <p className="text-xs text-slate-500 mb-3 font-medium">Connected Platforms</p>
+                  <div className="flex flex-wrap justify-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
                       <GoogleIcon className="w-5 h-5" />
-                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                     </div>
-                    <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
                       <FacebookIcon className="w-5 h-5" />
-                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                     </div>
-                    <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
                       <AmazonIcon className="w-5 h-5" />
-                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                     </div>
-                    <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
                       <FlipkartIcon className="w-5 h-5" />
-                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                     </div>
-                    <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
                       <JustDialIcon className="w-5 h-5" />
-                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                     </div>
-                    <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-orange-50 hover:bg-orange-100 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
                       <SwiggyIcon className="w-5 h-5" />
-                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                     </div>
-                    <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-red-50 hover:bg-red-100 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center hover:shadow-lg hover:scale-110 transition-all">
                       <ZomatoIcon className="w-5 h-5" />
-                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                     </div>
                   </div>
                 </div>
