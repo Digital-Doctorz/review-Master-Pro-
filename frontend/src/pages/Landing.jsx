@@ -1437,7 +1437,7 @@ export default function Landing() {
                 {/* Payment Button Section */}
                 <div className="space-y-3">
                   <Button
-                    onClick={() => handlePayment(plan.planKey)}
+                    onClick={() => handlePayment(plan.planKey, plan.subscriptionLink)}
                     disabled={upgrading}
                     className={`w-full rounded-xl py-5 sm:py-6 font-semibold text-base transition-all ${
                       isGrowth
@@ -1451,7 +1451,7 @@ export default function Landing() {
                     ) : billingCycle === "monthly" ? (
                       <>
                         <CreditCard className="w-4 h-4 mr-2 inline" />
-                        Pay ₹{displayPrice.toLocaleString('en-IN')}/month
+                        Subscribe ₹{displayPrice.toLocaleString('en-IN')}/month
                         <ArrowRight className="w-4 h-4 ml-2 inline" />
                       </>
                     ) : (
