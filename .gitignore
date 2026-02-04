@@ -96,3 +96,7 @@ frontend/node_modules/.cache/default-development/13.pack
 
 # Note: .env files should be committed for Emergent deployment
 # They will be automatically updated with production values during deployment
+-e 
+# Environment files
+*.env
+*.env.*
