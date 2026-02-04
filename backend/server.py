@@ -2369,9 +2369,10 @@ async def get_analytics_overview(user: User = Depends(get_current_user)):
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
     
+    # Optimized query - fetch only required fields for analytics
     reviews = await db.reviews.find(
         {"business_id": business["business_id"]},
-        {"_id": 0}
+        {"_id": 0, "rating": 1, "sentiment": 1, "platform": 1, "response": 1, "is_private": 1}
     ).to_list(1000)
     
     if not reviews:
