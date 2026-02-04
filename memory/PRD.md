@@ -5,7 +5,46 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## What's Been Implemented (February 2025)
 
-### Latest - v5.6 UI/UX Polish & End-to-End Verification (February 4, 2025):
+### Latest - v6.0 Razorpay Subscription Integration (February 4, 2025):
+
+**Razorpay Subscription Integration:**
+- [x] Integrated real Razorpay subscription links for monthly billing:
+  - Starter: ₹499/month - https://rzp.io/rzp/fR9e0RT
+  - Growth: ₹999/month - https://rzp.io/rzp/BCcu4Hg2  
+  - Enterprise: ₹2,499/month - https://rzp.io/rzp/ZJxoGkn
+- [x] Monthly payments redirect to Razorpay subscription page (auto-renew)
+- [x] Yearly payments use one-time order (20% discount)
+- [x] Updated pricing to match Razorpay plans (removed 50% discount messaging)
+
+**Lifetime Free Access:**
+- [x] Three emails bypass payment and get Enterprise access:
+  - trademeindia.sales@gmail.com
+  - digitaldoctors.sales@gmail.com
+  - fo.optm@gmail.com
+- [x] Automatic detection on Google login - instant dashboard access
+- [x] No payment required - full Enterprise features unlocked
+
+**Authentication & Access Control:**
+- [x] Google Auth only (Emergent-managed)
+- [x] Payment-first flow for new users (pay → login → dashboard)
+- [x] Auto-activation of subscription after login (webhook handles)
+- [x] Pending subscription detection by email match
+
+**Backend Changes:**
+- [x] `PRICING_CONFIG` updated with `razorpay_plan_id` and `razorpay_subscription_link`
+- [x] `LIFETIME_FREE_EMAILS` list for bypass users
+- [x] `/api/payment/subscription-link/{plan}` endpoint for redirect URLs
+- [x] Enhanced webhook handler for `subscription.activated`, `subscription.charged`
+- [x] `pending_subscriptions` collection for tracking new subscription payments
+- [x] Auth session auto-activates pending subscriptions by email match
+
+**Frontend Changes:**
+- [x] Removed "50% OFF" promotional badge from hero and pricing sections
+- [x] Updated pricing cards to show actual Razorpay prices
+- [x] Monthly button text changed to "Subscribe ₹X/month"
+- [x] Monthly clicks redirect to Razorpay subscription link (external page)
+
+### v5.6 UI/UX Polish & End-to-End Verification (February 4, 2025):
 
 **Mobile UI Improvements:**
 - [x] Sign Out / Exit Demo button is now prominent (red gradient, full-width)
