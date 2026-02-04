@@ -414,6 +414,94 @@ export default function Landing() {
     },
   ];
 
+  // Industries data for carousel
+  const industriesData = [
+    {
+      name: "Restaurants & Cafés",
+      icon: ShoppingCart,
+      impact: "+25-40% Footfall",
+      description: "Integrate Swiggy/Zomato/Google reviews in one dashboard. Use table QR codes for instant post-meal feedback. Higher ratings = top placement in food delivery apps → 30-50% more visibility.",
+      color: "from-orange-500 to-red-500",
+    },
+    {
+      name: "Hotels & Hospitality",
+      icon: Building2,
+      impact: "+15-30% Bookings",
+      description: "Manage Google/Facebook reviews alongside OTA feedback. AI responses within hours signal attentive management. A 0.5-star increase can justify 8-12% room rate premium.",
+      color: "from-blue-500 to-indigo-500",
+    },
+    {
+      name: "Salons & Spas",
+      icon: Sparkles,
+      impact: "+20-35% Retention",
+      description: "QR codes at checkout prompt reviews while satisfaction peaks. AI personalizes appreciation. A jump from 4.1→4.7 stars converts hesitant first-timers into loyal clients.",
+      color: "from-pink-500 to-rose-500",
+    },
+    {
+      name: "Healthcare Clinics",
+      icon: Shield,
+      impact: "+25% New Patients",
+      description: "89% of patients research doctors online. Private feedback routing resolves billing issues before complaints damage reputation. Timely AI responses show empathy and professionalism.",
+      color: "from-emerald-500 to-teal-500",
+    },
+    {
+      name: "Automotive Services",
+      icon: Zap,
+      impact: "+30% Retention",
+      description: "Post-service QR codes capture feedback when quality is fresh. Negative reviews about delays are routed privately. Public 5-star reviews mentioning 'honest pricing' counter skepticism.",
+      color: "from-slate-600 to-slate-800",
+    },
+    {
+      name: "Retail Stores",
+      icon: ShoppingCart,
+      impact: "+18-25% Footfall",
+      description: "Bridge online-offline trust. Collect Google/Facebook reviews in-store via QR codes while managing Amazon/Flipkart ratings. 4.5+ star presence signals reliability.",
+      color: "from-violet-500 to-purple-600",
+    },
+    {
+      name: "Home Services",
+      icon: Target,
+      impact: "+40% Conversions",
+      description: "High-stakes urgent services rely entirely on review trust. One 1-star review about 'overcharging' can kill business. Reputation Shield catches complaints instantly.",
+      color: "from-amber-500 to-orange-500",
+    },
+    {
+      name: "Fitness Centers",
+      icon: TrendingUp,
+      impact: "-22% Churn Rate",
+      description: "Post-class QR codes capture emotional highs. Consistent 4.8+ ratings overcome gym-hesitation. Recent reviews drive trial class sign-ups—critical for paid memberships.",
+      color: "from-green-500 to-emerald-500",
+    },
+    {
+      name: "Real Estate",
+      icon: Building2,
+      impact: "+35% Faster Closures",
+      description: "Client testimonials directly influence buyer trust. AI-crafted responses become social proof assets. Agencies with 50+ recent 5-star reviews get 3x more inbound leads.",
+      color: "from-cyan-500 to-blue-500",
+    },
+    {
+      name: "E-commerce Sellers",
+      icon: ShoppingCart,
+      impact: "+15-20% Conversions",
+      description: "Centralized Amazon/Flipkart monitoring identifies product issues early. Professional responses to negatives improve accountability. 4.3+ stars rank higher in search.",
+      color: "from-yellow-500 to-amber-500",
+    },
+    {
+      name: "Educational Institutes",
+      icon: Users,
+      impact: "+30% Enrollment",
+      description: "Parents intensely research via Google reviews. Public Q&A responses build transparency. Recent 5-star reviews mentioning 'caring teachers' drive admission inquiries.",
+      color: "from-indigo-500 to-blue-600",
+    },
+    {
+      name: "Travel & Tours",
+      icon: Globe,
+      impact: "+25% Premium Pricing",
+      description: "Travel decisions hinge on recent experiences. AI responses thanking reviewers create aspirational social proof. 100+ recent 5-star reviews command 10-15% higher fees.",
+      color: "from-sky-500 to-cyan-500",
+    },
+  ];
+
   const pricingPlans = [
     {
       name: "Starter",
