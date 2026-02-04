@@ -403,7 +403,7 @@ export default function Landing() {
       name: "Starter",
       icon: Rocket,
       monthlyPrice: 499,
-      yearlyPrice: 4788, // ₹4,788 for full year
+      yearlyPrice: 4788, // ₹4,788 for full year (₹399/mo)
       originalYearly: 499 * 12, // ₹5,988 (monthly × 12)
       reviews: 100,
       color: "from-sky-500 to-cyan-500",
@@ -419,13 +419,13 @@ export default function Landing() {
       ],
       cta: "Subscribe Now",
       planKey: "starter",
-      subscriptionButtonId: "pl_SA9GKQvxfKaKl1",
+      subscriptionLink: "https://rzp.io/rzp/fR9e0RT",
     },
     {
       name: "Growth",
       icon: TrendingUp,
       monthlyPrice: 999,
-      yearlyPrice: 9588, // ₹9,588 for full year
+      yearlyPrice: 9588, // ₹9,588 for full year (₹799/mo)
       originalYearly: 999 * 12, // ₹11,988 (monthly × 12)
       reviews: 500,
       color: "from-violet-500 to-purple-600",
@@ -444,13 +444,13 @@ export default function Landing() {
       ],
       cta: "Subscribe Now",
       planKey: "growth",
-      subscriptionButtonId: "pl_SAA7mNmnVmBhD7",
+      subscriptionLink: "https://rzp.io/rzp/BCcu4Hg2",
     },
     {
       name: "Enterprise",
       icon: Building2,
       monthlyPrice: 2499,
-      yearlyPrice: 23988, // ₹23,988 for full year
+      yearlyPrice: 23988, // ₹23,988 for full year (₹1,999/mo)
       originalYearly: 2499 * 12, // ₹29,988 (monthly × 12)
       reviews: "Unlimited",
       color: "from-amber-500 to-orange-500",
@@ -469,7 +469,7 @@ export default function Landing() {
       ],
       cta: "Subscribe Now",
       planKey: "enterprise",
-      subscriptionButtonId: "pl_SAA8s9qROChnZS",
+      subscriptionLink: "https://rzp.io/rzp/ZJxoGkn",
     },
   ];
 
