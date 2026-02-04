@@ -1548,6 +1548,145 @@ async def update_payment_method(user: User = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail="Failed to generate payment update link")
 
 
+@api_router.post("/subscription/send-renewal-reminder")
+async def send_renewal_reminder_manual(user: User = Depends(get_current_user)):
+    """Manually trigger renewal reminder email for testing or on-demand"""
+    user_doc = await db.users.find_one({"user_id": user.user_id}, {"_id": 0})
+    user_plan = await db.user_plans.find_one({"user_id": user.user_id}, {"_id": 0})
+    
+    if not user_plan or not user_plan.get("is_active"):
+        raise HTTPException(status_code=404, detail="No active subscription found")
+    
+    expires_at = user_plan.get("expires_at")
+    if not expires_at:
+        raise HTTPException(status_code=400, detail="No renewal date found")
+    
+    # Calculate days until renewal
+    if isinstance(expires_at, str):
+        expires_at = datetime.fromisoformat(expires_at.replace('Z', '+00:00'))
+    days_until = (expires_at - datetime.now(timezone.utc)).days
+    
+    try:
+        from services.email_service import send_subscription_renewal_reminder
+        
+        # Get plan pricing
+        plan_name = user_doc.get("plan", "starter")
+        plan_config = PRICING_CONFIG.get(plan_name, {})
+        amount = plan_config.get("monthly", 499)
+        
+        await send_subscription_renewal_reminder(
+            user_doc["email"],
+            user_doc.get("name", "Customer"),
+            plan_name,
+            amount,
+            expires_at.strftime("%B %d, %Y"),
+            max(1, days_until)
+        )
+        
+        return {
+            "success": True,
+            "message": f"Renewal reminder email sent to {user_doc['email']}",
+            "days_until_renewal": days_until
+        }
+    except Exception as e:
+        logger.error(f"Failed to send renewal reminder: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to send reminder: {str(e)}")
+
+
+async def check_and_send_renewal_reminders():
+    """
+    Background task to check for subscriptions expiring soon and send reminders.
+    Call this periodically (e.g., daily via cron or scheduled task).
+    """
+    try:
+        now = datetime.now(timezone.utc)
+        three_days_from_now = now + timedelta(days=3)
+        
+        # Find users whose plans expire within 3 days
+        expiring_plans = await db.user_plans.find({
+            "is_active": True,
+            "is_subscription": True,
+            "expires_at": {
+                "$gte": now,
+                "$lte": three_days_from_now
+            }
+        }).to_list(100)
+        
+        from services.email_service import send_subscription_renewal_reminder
+        
+        sent_count = 0
+        for plan in expiring_plans:
+            user_id = plan["user_id"]
+            user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+            
+            if not user or not user.get("email"):
+                continue
+            
+            # Check if we already sent a reminder recently
+            recent_reminder = await db.email_logs.find_one({
+                "user_id": user_id,
+                "email_type": "renewal_reminder",
+                "sent_at": {"$gte": now - timedelta(days=2)}
+            })
+            
+            if recent_reminder:
+                continue  # Skip if already reminded
+            
+            expires_at = plan["expires_at"]
+            if isinstance(expires_at, str):
+                expires_at = datetime.fromisoformat(expires_at.replace('Z', '+00:00'))
+            
+            days_until = (expires_at - now).days
+            plan_name = user.get("plan", "starter")
+            plan_config = PRICING_CONFIG.get(plan_name, {})
+            amount = plan_config.get("monthly", 499)
+            
+            try:
+                await send_subscription_renewal_reminder(
+                    user["email"],
+                    user.get("name", "Customer"),
+                    plan_name,
+                    amount,
+                    expires_at.strftime("%B %d, %Y"),
+                    max(1, days_until)
+                )
+                
+                # Log the reminder
+                await db.email_logs.insert_one({
+                    "user_id": user_id,
+                    "email": user["email"],
+                    "email_type": "renewal_reminder",
+                    "sent_at": now
+                })
+                
+                sent_count += 1
+                logger.info(f"Renewal reminder sent to {user['email']}")
+                
+            except Exception as e:
+                logger.error(f"Failed to send renewal reminder to {user['email']}: {e}")
+        
+        return {"sent_count": sent_count}
+        
+    except Exception as e:
+        logger.error(f"Error in renewal reminder task: {e}")
+        return {"error": str(e)}
+
+
+@api_router.post("/admin/send-renewal-reminders")
+async def trigger_renewal_reminders(
+    admin_key: str = Body(..., embed=True)
+):
+    """Admin endpoint to trigger renewal reminder emails"""
+    # Simple admin key check (you may want to enhance this)
+    expected_key = os.environ.get("ADMIN_SECRET_KEY", "review-master-admin-2025")
+    
+    if admin_key != expected_key:
+        raise HTTPException(status_code=403, detail="Invalid admin key")
+    
+    result = await check_and_send_renewal_reminders()
+    return result
+
+
 # Keep old endpoint for backwards compatibility
 @api_router.get("/user/trial-status")
 async def get_trial_status(user: User = Depends(get_current_user)):
