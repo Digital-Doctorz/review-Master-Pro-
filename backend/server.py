@@ -1443,6 +1443,25 @@ async def get_user_subscription(user: User = Depends(get_current_user)):
     if not user_doc:
         raise HTTPException(status_code=404, detail="User not found")
     
+    # Check for lifetime access
+    has_lifetime_access = user_doc.get("has_lifetime_access", False)
+    if not has_lifetime_access and user_doc.get("email"):
+        has_lifetime_access = user_doc["email"].lower() in [e.lower() for e in LIFETIME_FREE_EMAILS]
+    
+    if has_lifetime_access:
+        return {
+            "plan": "enterprise",
+            "is_active": True,
+            "is_subscription": False,
+            "billing_cycle": None,
+            "subscription_id": None,
+            "activated_at": user_doc.get("created_at"),
+            "expires_at": None,
+            "cancelled_at": None,
+            "status": "lifetime",
+            "has_lifetime_access": True
+        }
+    
     # Get user plan
     user_plan = await db.user_plans.find_one({"user_id": user.user_id}, {"_id": 0})
     
@@ -1463,7 +1482,8 @@ async def get_user_subscription(user: User = Depends(get_current_user)):
         "activated_at": user_plan.get("activated_at") if user_plan else None,
         "expires_at": user_plan.get("expires_at") if user_plan else None,
         "cancelled_at": subscription.get("cancelled_at") if subscription else None,
-        "status": subscription.get("status") if subscription else "inactive"
+        "status": subscription.get("status") if subscription else "inactive",
+        "has_lifetime_access": False
     }
 
 
