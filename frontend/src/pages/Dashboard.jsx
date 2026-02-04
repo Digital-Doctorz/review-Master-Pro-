@@ -1026,6 +1026,187 @@ export default function Dashboard() {
           </motion.div>
         </div>
       </div>
+
+      {/* Reply Modal */}
+      <Dialog open={replyModalOpen} onOpenChange={setReplyModalOpen}>
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Reply className="w-5 h-5 text-indigo-600" />
+              Reply to Review
+            </DialogTitle>
+          </DialogHeader>
+          
+          {selectedReview && (
+            <div className="space-y-5">
+              {/* Original Review */}
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <div className="flex items-start gap-3">
+                  <Avatar className="w-10 h-10">
+                    <AvatarImage src={selectedReview.author_avatar} />
+                    <AvatarFallback className="bg-sky-100 text-sky-600">
+                      {selectedReview.author_name?.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <span className="font-semibold text-slate-900">
+                        {selectedReview.author_name}
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className={`text-xs ${getPlatformBadge(selectedReview.platform)}`}
+                      >
+                        {selectedReview.platform}
+                      </Badge>
+                    </div>
+                    <div className="flex gap-0.5 mb-2">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${
+                            i <= selectedReview.rating
+                              ? "fill-amber-400 text-amber-400"
+                              : "text-slate-300"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <p className="text-sm text-slate-700">{selectedReview.text}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* AI Tone Options */}
+              <div>
+                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                  Generate AI Response
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { key: "professional", label: "Professional", icon: "💼", color: "from-blue-500 to-indigo-500" },
+                    { key: "friendly", label: "Friendly", icon: "😊", color: "from-amber-500 to-orange-500" },
+                    { key: "apologetic", label: "Apologetic", icon: "🙏", color: "from-rose-500 to-pink-500" }
+                  ].map((tone) => (
+                    <Button
+                      key={tone.key}
+                      variant="outline"
+                      size="sm"
+                      disabled={generatingAI}
+                      onClick={() => generateAIResponse(tone.key)}
+                      className={`rounded-full transition-all ${
+                        selectedTone === tone.key && generatingAI 
+                          ? `bg-gradient-to-r ${tone.color} text-white border-0` 
+                          : "hover:bg-slate-50"
+                      }`}
+                    >
+                      {generatingAI && selectedTone === tone.key ? (
+                        <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                      ) : (
+                        <span className="mr-1">{tone.icon}</span>
+                      )}
+                      {tone.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Reply Text Area */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-medium text-slate-700">
+                    Your Reply
+                  </label>
+                  {replyText && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={copyReplyToClipboard}
+                      className="h-7 text-xs text-slate-500 hover:text-indigo-600"
+                    >
+                      <Copy className="w-3 h-3 mr-1" />
+                      Copy
+                    </Button>
+                  )}
+                </div>
+                <Textarea
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  placeholder="Write your response to this review..."
+                  className="min-h-[120px] resize-none rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500"
+                />
+                <p className="text-xs text-slate-400 mt-1">
+                  {replyText.length} characters
+                </p>
+              </div>
+
+              {/* Platform Info */}
+              <div className="p-3 rounded-lg bg-indigo-50 border border-indigo-100">
+                <div className="flex items-start gap-2">
+                  <Info className="w-4 h-4 text-indigo-600 mt-0.5 flex-shrink-0" />
+                  <div className="text-xs text-indigo-700">
+                    <p className="font-medium mb-1">Response will be saved to:</p>
+                    <div className="flex items-center gap-2">
+                      <Badge className={`${getPlatformBadge(selectedReview.platform)}`}>
+                        {selectedReview.platform}
+                      </Badge>
+                      <span className="text-indigo-600">
+                        {selectedReview.platform === "google" || selectedReview.platform === "facebook" 
+                          ? "• Connect API to post live"
+                          : "• Saved in your dashboard"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-between pt-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setReplyModalOpen(false)}
+                  className="rounded-full"
+                >
+                  Cancel
+                </Button>
+                <div className="flex items-center gap-2">
+                  {selectedReview.platform === "google" && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-full text-xs"
+                      onClick={() => {
+                        copyReplyToClipboard();
+                        window.open("https://business.google.com", "_blank");
+                      }}
+                    >
+                      <ExternalLink className="w-3 h-3 mr-1" />
+                      Open Google Business
+                    </Button>
+                  )}
+                  <Button
+                    onClick={sendReply}
+                    disabled={sendingReply || !replyText.trim()}
+                    className="rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6"
+                  >
+                    {sendingReply ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4 mr-2" />
+                        Send Reply
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
