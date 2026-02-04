@@ -3282,13 +3282,6 @@ PRICING_CONFIG = {
     }
 }
 
-# Lifetime Free Access Emails - These users bypass payment
-LIFETIME_FREE_EMAILS = [
-    "trademeindia.sales@gmail.com",
-    "digitaldoctors.sales@gmail.com",
-    "fo.optm@gmail.com"
-]
-
 class PaymentOrderRequest(BaseModel):
     plan_name: str
     billing_cycle: str  # "monthly" or "yearly"
