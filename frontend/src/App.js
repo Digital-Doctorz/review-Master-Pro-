@@ -58,7 +58,9 @@ if (process.env.NODE_ENV === 'development') {
         event.error?.displayMessage ||
         event.message?.includes('Network Error') ||
         event.message?.includes('401') ||
-        event.message?.includes('Request failed')) {
+        event.message?.includes('404') ||
+        event.message?.includes('Request failed') ||
+        event.message?.includes('AxiosError')) {
       event.preventDefault();
       return true;
     }
@@ -70,13 +72,12 @@ if (process.env.NODE_ENV === 'development') {
         event.reason?.displayMessage ||
         event.reason?.response?.status === 401 ||
         event.reason?.response?.status === 404 ||
+        event.reason?.response?.status === 400 ||
         String(event.reason).includes('[object Object]') ||
-        String(event.reason).includes('Request failed')) {
+        String(event.reason).includes('Request failed') ||
+        String(event.reason).includes('AxiosError') ||
+        String(event.reason).includes('Network Error')) {
       event.preventDefault();
-      // Only log non-401 errors for debugging
-      if (event.reason?.response?.status !== 401) {
-        console.log("Suppressed promise rejection:", event.reason?.displayMessage || "API error");
-      }
       return true;
     }
   });
