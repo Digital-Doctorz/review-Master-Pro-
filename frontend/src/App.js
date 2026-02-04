@@ -312,6 +312,7 @@ function ProtectedRoute({ children }) {
   const [loading, setLoading] = useState(true);
   const [isDemo, setIsDemo] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
 
   useEffect(() => {
     // Check for demo mode
@@ -322,6 +323,7 @@ function ProtectedRoute({ children }) {
       setBusiness(DEMO_BUSINESS);
       setIsAuthenticated(true);
       setIsDemo(true);
+      setHasActiveSubscription(true);
       setLoading(false);
       return;
     }
@@ -333,6 +335,20 @@ function ProtectedRoute({ children }) {
         });
         setUser(response.data);
         setIsAuthenticated(true);
+
+        // Check if user has active plan or lifetime access
+        try {
+          const planResponse = await axios.get(`${API}/user/plan-status`, {
+            withCredentials: true,
+          });
+          const hasAccess = planResponse.data.has_active_plan || 
+                           planResponse.data.has_lifetime_access ||
+                           (planResponse.data.plan && planResponse.data.plan !== 'free');
+          setHasActiveSubscription(hasAccess);
+        } catch (planError) {
+          console.warn("Failed to check plan status:", planError);
+          setHasActiveSubscription(false);
+        }
 
         try {
           const bizResponse = await axios.get(`${API}/business`, {
@@ -377,6 +393,11 @@ function ProtectedRoute({ children }) {
 
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;
+  }
+
+  // If user doesn't have an active subscription, redirect to pricing
+  if (!hasActiveSubscription && !isDemo) {
+    return <Navigate to="/#pricing" replace />;
   }
 
   if (!business && !isDemo && window.location.pathname !== "/onboarding") {
