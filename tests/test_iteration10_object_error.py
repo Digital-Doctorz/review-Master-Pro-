@@ -6,7 +6,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://reviewmaster-8.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://reviewmaster-9.preview.emergentagent.com')
 SESSION_TOKEN = "test_session_1768237933810"
 BUSINESS_ID = "biz_test_1768237947117"
 QR_CODE_ID = "qr_mkbf7w1a"

@@ -1,57 +1,45 @@
 <analysis>**original_problem_statement:** The user wants to build Review Master, a production-ready SaaS platform for businesses to manage online reviews.
 
-Recent user requests have focused on refining the payment and subscription system, fixing authentication flows, and preparing the application for deployment. The most recent and critical request is to overhaul the user acquisition flow to be **Pay First, Then Login,** where a new user completes payment *before* creating an account.
+Initial requirements included a Pay First, Then Login flow, true recurring subscriptions, and various UI/UX enhancements.
 
-Other recent requests included:
-- Implementing true, auto-renewing monthly subscriptions with Razorpay.
-- Adding a Login button to the landing page for existing users.
-- Removing all free trial functionality, making the service fully paid.
-- Adding a Manage Subscription page and an Upgrade button in the user dashboard.
-- Fixing various bugs related to payment, authentication, and deployment.
-- Correcting the yearly savings calculation on the pricing page.
+Recent user requests have focused on expanding the platform's integrations and refining the landing page UI:
+- Integrate Amazon, Flipkart, and JustDial for review collection.
+- Update the landing page to reflect all 7 supported platforms (Google, Facebook, Swiggy, Zomato, Amazon, Flipkart, JustDial) across all relevant sections (hero, features, QR code info).
+- Overhaul the We help you grow section by removing specific feature cards and cleaning up the layout.
+- Change the platform logos to be round and remove checkmarks for a more professional look.
+- Fix mobile layout issues, ensuring no content is cut off and that a visible sign-out button is present.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack application using React (frontend), FastAPI (backend), and MongoDB.
-- **Frontend:** A detailed landing page with a monthly/yearly pricing toggle, a demo mode, and legal pages. A user dashboard exists for managing reviews and integrations. A new, partially-built page for subscription management () has been added.
-- **Backend:** A monolithic  handles all API logic, including user authentication (Google login + JWT), Razorpay payment processing (currently using one-time orders for both monthly and yearly plans), and webhook handling. An endpoint for unauthenticated payments has just been created to support the new user flow.
-- **Integrations:** Razorpay for payments, Resend for email notifications, and Emergent-managed Google Auth.
+A full-stack application (React, FastAPI, MongoDB) with a complete user acquisition flow (Pay First, Then Login). The app supports 7 review platforms (Google, Facebook, Swiggy, Zomato, and newly added Amazon, Flipkart, JustDial). The UI for the landing page, dashboard, and integrations page has been significantly updated to reflect these 7 platforms. The QR code generation flow allows customers to select any of the 7 platforms to leave a review. The backend supports storing user-provided review links for the new platforms.
 
 **Last working item**:
--   **Last item agent was working:** The agent was in the middle of implementing a new user flow where users pay *before* they log in or create an account. This was a direct request from the user to change the existing login first, then pay model. The agent had just created a new backend endpoint  in  and was about to modify the frontend payment logic in .
--   **Status:** IN PROGRESS
--   **Agent Testing Done:** N
--   **Which testing method agent to use?** both. The backend endpoint should be tested via . The full end-to-end flow requires the  to verify that a user can pay, is then redirected to login, and that the payment is correctly associated with their new account.
+-   **Last item agent was working:** The agent was refining the landing page UI based on specific user feedback to: 1) Make the platform logos in the hero section round and remove checkmarks. 2) Remove the four feature cards (7 Platforms, Analytics, AI Replies, Protected) from the We help you grow section.
+-   **Status:** USER VERIFICATION PENDING
+-   **Agent Testing Done:** Y
+-   **Which testing method agent to use?** screenshot tool
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
 -   **Issue 1:** The user wants true, automatically recurring monthly subscriptions. (P1)
-    -   **Attempted fixes:** The agent tried implementing this using Razorpay's Subscription API but was blocked by a fee bearer is customer error, which requires a change in the user's Razorpay account settings. The agent then tried embedding Razorpay's subscription button widgets, but this failed due to technical issues with executing external scripts in React. As a stable workaround, the agent configured all monthly plans to use one-time orders, just like the yearly plans.
+    -   **Attempted fixes:** The agent tried implementing this using Razorpay's Subscription API but was blocked by a fee bearer is customer error, which requires a change in the user's Razorpay account settings. The agent then tried embedding Razorpay's subscription button widgets, but this failed due to technical issues with executing external scripts in React. As a stable workaround, the agent configured all monthly plans to use one-time orders.
     -   **Next debug checklist:**
         1.  Advise the user to contact Razorpay support to change the fee bearer setting on their account to platform.
         2.  Once confirmed, re-enable the backend logic that uses .
-        3.  Alternatively, investigate a React-compatible library for embedding Razorpay's subscription buttons.
     -   **Why fix this issue and what will be achieved with the fix?** This is essential for the SaaS recurring revenue model.
-    -   **Status:** BLOCKED (on user action for Razorpay account settings or finding a new frontend implementation method).
+    -   **Status:** BLOCKED
     -   **Is recurring issue?** Y
     -   **Should Test frontend/backend/both after fix?** both
     -   **Blocked on other issue:** None.
 
 **In progress Task List**:
--   **Task 1:** Complete the Pay First, Then Login user flow. (P0)
-    -   **Where to resume:** The backend endpoint  has been created in . The next steps are:
-        1.  Modify the  function in  to use this new endpoint for unauthenticated users.
-        2.  Update the  backend endpoint to handle verifications that do not have a  yet. It should create a temporary record (e.g., in a new collection) that links the payment to a temporary token.
-        3.  Update the frontend's  function in  to check for this temporary token after login and make a backend call to associate the completed payment with the newly created user account.
-    -   **What will be achieved with this?** This will implement the user's specified primary acquisition and monetization flow.
-    -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** both
-    -   **Blocked on something:** None
+None.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **(P1) Complete Subscription Management UI:** The  page and backend endpoints () have been created but need to be fully tested. The UI needs to display plan details, and the cancel/update payment functionality must be verified.
+    -   **(P0) User Verification of UI Changes:** Confirm with the user that the latest UI updates (round logos, removed feature cards) meet their expectations.
+    -   **(P1) Complete Subscription Management UI:** The  page and backend endpoints () exist but need to be fully tested. The UI needs to display plan details, and the cancel/update payment functionality must be verified.
     -   **(P2) SEO Optimization:** Improve search engine ranking by optimizing keywords on the landing and legal pages.
 -   **Future Tasks:**
     -   Manual review import via screenshot OCR.
@@ -62,84 +50,87 @@ A full-stack application using React (frontend), FastAPI (backend), and MongoDB.
     -   Refactor the large  into smaller, manageable components.
 
 **Completed work in this session**
--   **Critical Authentication Bug Fix:** Resolved 401 Unauthorized errors on payment endpoints by correcting the session cookie name from  to .
--   **Deployment Blocker Resolution:** Fixed a deployment failure by removing  from the  file, ensuring environment variables are available during the build process.
--   **Free Trial Removal:** Eliminated all 7-day free trial logic and UI elements from the application, making it a fully paid service from the start.
--   **Login Button & Upgrade Banner:** Added a Login button to the main navigation bar and an Upgrade Plan banner to the dashboard for existing users.
--   **Email Integration:** Integrated the user's Resend API key and enhanced the Razorpay webhook handler to send payment confirmation emails.
--   **Pricing Calculation Fix:** Corrected the dynamic calculation and display of savings for yearly plans on the landing page.
--   **Payment Flow Stabilization:** Reverted multiple failing attempts at implementing recurring subscriptions and stabilized the payment flow by using reliable one-time orders for all plans as a temporary measure.
+-   **Pay First, Then Login Flow:** Successfully implemented and tested the entire flow where unauthenticated users pay first and the payment is linked to their account after sign-up.
+-   **7-Platform Integration (Amazon, Flipkart, JustDial):**
+    -   Added UI on the Integrations page to connect Amazon, Flipkart, and JustDial by saving a review link.
+    -   Created backend endpoints to support this functionality.
+    -   Updated the QR code review page to show all 7 platforms.
+-   **Landing Page Overhaul:**
+    -   Updated all text and icons to reflect the 7 supported platforms.
+    -   Removed the four feature cards from the We help you grow section as requested.
+    -   Redesigned the platform logos to be round and removed checkmarks.
+-   **UI/UX & Layout Fixes:**
+    -   Resolved mobile layout issues where content was being cut off.
+    -   Added a more prominent Exit Demo button to the mobile navigation menu for better usability.
+-   **End-to-End Testing:** Performed a full-stack test using the testing agent, which passed, confirming the stability of all major user flows.
 
 **Earlier issues found/mentioned but not fixed**
 None.
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork:** The  on login did not recur.
--   **Recurrence count:** 0
--   **Status:** RESOLVED
--   **Note:** The payment and subscription flow has become a new source of recurring issues and changes, driven by both user requests and technical limitations with third-party integrations.
+-   **Issue recurrence in previous fork:** Razorpay recurring subscriptions.
+-   **Recurrence count:** 2+
+-   **Status:** BLOCKED (on user action with Razorpay support).
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
 -   **Backend:** FastAPI, MongoDB (Motor), Pydantic
--   **Frontend:** React, React Router, Tailwind CSS, Axios
+-   **Frontend:** React, React Router, Tailwind CSS, Axios, Framer Motion
 -   **Authentication:** Emergent-managed Google social login with a custom JWT session system.
 -   **Payments:** Razorpay (currently using one-time Orders; Subscription API is blocked).
--   **Email:** Resend API for transactional emails.
+-   **Soft Integrations:** Storing user-provided URLs for platforms like Amazon/Flipkart to be used in the QR code flow.
 
 **key DB schema**
--   **users:** Stores user profile information.
--   **sessions:** Manages JWT-based user sessions.
--   **user_plans:** Links users to their selected plan and stores Razorpay payment details (, ).
--   **subscriptions:** Intended for recurring subscriptions, currently less used due to the switch to one-time orders.
+-   **locations:** Stores connection details for each platform linked to a business, including , , and .
+-   **pending_payments:** Temporarily stores payment details for unauthenticated users before account creation.
+-   **users:** Stores user profile information and plan status.
+-   **user_plans:** Links users to their selected plan and payment details.
 
 **changes in tech stack**
 None.
 
 **All files of reference**
--   : The core backend file. Modified for auth fixes, new subscription management endpoints, and the new unauthenticated payment endpoint.
--   : The primary frontend file. Modified for UI changes (Login button, pricing text), multiple payment logic attempts, and is the target for the next phase of the Pay First flow.
--   : Updated to include an Upgrade Plan banner.
--   : Updated with the new  route.
--   : New file for the subscription management UI.
--   : Updated with the .
--   : Updated to fix a deployment blocker.
+-   : Modified for guest payments, new platform connection endpoints (Amazon, Flipkart, JustDial), and updating the demo QR code data.
+-   : Major overhaul of UI, text, and component structure based on multiple user requests.
+-   : Updated with new integration cards, connection modals, and logic for the 3 new platforms.
+-   : Updated to display all 7 platforms for customers leaving reviews.
+-   : Fixed mobile layout issues and added a more prominent logout button.
+-   : Modified the  component to handle activating pending payments post-login.
 
 **Areas that need refactoring**:
--   : Urgently needs to be broken down from a 3000+ line monolith into a modular structure (e.g., routers, services, models).
--   : Extremely large and complex. Should be broken into smaller components (e.g., , ).
+-   : This monolithic file is now over 3,300 lines and should be broken down into routers, services, and models.
+-   : This component is over 1,300 lines and should be refactored into smaller, reusable components.
 
 **key api endpoints**
--    (POST): Creates a Razorpay order for an authenticated user.
--    (POST): **(NEW)** Creates a Razorpay order for an unauthenticated user.
--    (POST): Verifies a completed payment. **(Needs modification)**.
--    (GET/DELETE): **(NEW)** Endpoints for viewing and canceling a subscription.
--    (POST): Handles webhook events from Razorpay (e.g., ).
+-    (POST): Creates a Razorpay order for a guest user.
+-    (POST): Links a guest payment to a new user account after login.
+-    (POST): (NEW) Saves the user-provided review URL for the new platforms.
+-    (GET): Returns business data for the public QR review page (updated to include all 7 platforms).
 
 **Critical Info for New Agent**
--   **Top Priority is the Pay First, Then Login Flow:** Do not continue with any other task. The user has specified a new acquisition flow that must be implemented. Resume by modifying the frontend  to use the new unauthenticated payment endpoint and then tackle the logic for associating the payment with a new user account post-login.
--   **Avoid Razorpay Subscription API:** Do not attempt to use  in the backend. It is blocked by a fee bearer setting in the user's Razorpay account. The stable, working approach for payments is using the **one-time Order API** () for *all* plans, including monthly ones.
--   **Deployment  Issue:** The  file was recently fixed to stop ignoring  files. Be aware that environment variables must be correctly configured for deployment to succeed.
+-   **Top Priority is User Verification:** Before starting any new task, you must confirm with the user that the latest UI changes (round logos, removed feature cards) are satisfactory.
+-   **Razorpay Subscriptions are BLOCKED:** Do not attempt to implement recurring subscriptions. The issue is blocked pending a change in the user's Razorpay account. All payments should continue to use the one-time Order API.
+-   **New Integrations are Soft:** The integrations for Amazon, Flipkart, and JustDial only store a user-provided URL. They do not involve complex API calls to fetch reviews. The implementation reflects this simplicity.
 
 **documents and test reports created in this job**
--    (updated)
--   Test reports up to .
+-   
+-   
+-   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Requests to use direct Razorpay subscription buttons with provided HTML snippets. (Agent attempts and fails due to technical limitations).
-2.  **User:** Reports the implemented subscription button links are broken (provides screenshot). (Agent reverts the change).
-3.  **User:** Reports the payment flow is still broken for logged-in users and asks for an Upgrade button on the dashboard (provides screenshot). (Agent fixes this).
-4.  **User:** Approves the agent's plan to add the upgrade button and fix the logged-in payment flow.
-5.  **User:** **(LATEST CRITICAL REQUEST)** Specifies a completely new user flow: Pay first, then redirect to Google login to create an account.
-6.  **User:** Awaiting implementation of the new Pay First, Then Login flow.
+1.  **User:** Requests integration of Amazon, Flipkart, JustDial, updates to the We help you grow section, and removal of specific UI elements.
+2.  **User:** Requests a fix for the QR code review flow not showing all platforms and reiterates the removal of four feature boxes.
+3.  **User:** Asks for end-to-end integration of the new platforms, proper logo alignment, and updates to the QR code channels.
+4.  **User:** Reports broken mobile layout (content cut off) and requests a visible logout button, along with a full end-to-end scan of the application.
+5.  **User:** **(LATEST)** Provides final UI feedback: make platform logos round, remove checkmarks, and remove the four feature cards (7 Platforms, Analytics, AI Replies, Protected).
 
 **Project Health Check:**
--   **Broken:**
-    -   The primary user payment/acquisition flow is currently broken as it is in the middle of a major refactoring based on the user's latest request.
+-   **Broken:** None.
 -   **Mocked:**
-    -   **Recurring Subscriptions:** True auto-renewing subscriptions are not implemented. Monthly plans are handled as one-time, non-recurring payments.
+    -   **Recurring Subscriptions:** True auto-renewing subscriptions are mocked with one-time monthly payments due to a block on the Razorpay API.
+    -   **Amazon/Flipkart/JustDial Integration:** This is a soft integration that only stores a user-provided review link, rather than a deep API connection.
 
 **3rd Party Integrations**
 -   **Gemini 3 Flash:** (AI replies) Uses Emergent LLM Key.
@@ -148,15 +139,15 @@ None.
 -   **Resend:** (Email) Requires User API Key.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES
+-   **Testing agent used after significant changes:** YES (twice, for major feature completion and end-to-end verification).
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** []
--   **Known regressions:** The payment flow has regressed multiple times during the session due to repeated changes and technical challenges, but the agent has consistently reverted to a stable (one-time payment) state before starting the next change.
+-   **Test files created:** None
+-   **Known regressions:** None in this session.
 
 **Credentials to test flow:**
 -   User login is handled via Emergent-managed Google Auth.
 -   The See A Demo button on the landing page provides access to a pre-filled dashboard.
--   Razorpay is configured with the user's live keys: . Use Razorpay's test mode for transactions.
+-   Use Razorpay's test mode for any payment-related testing.
 
 **What agent forgot to execute**
-The agent has been actively working on the user's requests. The current incomplete state is a direct result of being in the middle of the user's latest, most critical request to overhaul the payment flow. The agent has not forgotten any tasks but has left the primary user flow in a non-functional state at the end of the session.</analysis>
+Nothing. The agent successfully completed a large volume of complex user requests, including major features, integrations, and multiple UI/UX overhauls.</analysis>
