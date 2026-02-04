@@ -914,6 +914,84 @@ export default function PublicReview() {
                       </motion.button>
                     )}
 
+                    {/* Amazon Option */}
+                    {(business?.amazon_link || business?.platforms?.amazon?.review_link) && (
+                      <motion.button
+                        type="button"
+                        onClick={() => setSelectedPlatform("amazon")}
+                        className={`w-full p-4 rounded-xl border-2 transition-all text-left flex items-center gap-4 ${
+                          selectedPlatform === "amazon"
+                            ? "border-amber-500 bg-amber-50"
+                            : "border-slate-200 hover:border-amber-200 hover:bg-amber-50/50"
+                        }`}
+                        whileTap={{ scale: 0.98 }}
+                        data-testid="platform-amazon"
+                      >
+                        <div className="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center shadow-sm">
+                          <AmazonIcon className="w-7 h-7" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-slate-900">Amazon</p>
+                          <p className="text-sm text-slate-500">Rate your purchase</p>
+                        </div>
+                        {selectedPlatform === "amazon" && (
+                          <CheckCircle2 className="w-6 h-6 text-amber-500" />
+                        )}
+                      </motion.button>
+                    )}
+
+                    {/* Flipkart Option */}
+                    {(business?.flipkart_link || business?.platforms?.flipkart?.review_link) && (
+                      <motion.button
+                        type="button"
+                        onClick={() => setSelectedPlatform("flipkart")}
+                        className={`w-full p-4 rounded-xl border-2 transition-all text-left flex items-center gap-4 ${
+                          selectedPlatform === "flipkart"
+                            ? "border-blue-500 bg-blue-50"
+                            : "border-slate-200 hover:border-blue-200 hover:bg-blue-50/50"
+                        }`}
+                        whileTap={{ scale: 0.98 }}
+                        data-testid="platform-flipkart"
+                      >
+                        <div className="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center shadow-sm">
+                          <FlipkartIcon className="w-7 h-7" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-slate-900">Flipkart</p>
+                          <p className="text-sm text-slate-500">Rate your order</p>
+                        </div>
+                        {selectedPlatform === "flipkart" && (
+                          <CheckCircle2 className="w-6 h-6 text-blue-500" />
+                        )}
+                      </motion.button>
+                    )}
+
+                    {/* JustDial Option */}
+                    {(business?.justdial_link || business?.platforms?.justdial?.review_link) && (
+                      <motion.button
+                        type="button"
+                        onClick={() => setSelectedPlatform("justdial")}
+                        className={`w-full p-4 rounded-xl border-2 transition-all text-left flex items-center gap-4 ${
+                          selectedPlatform === "justdial"
+                            ? "border-yellow-500 bg-yellow-50"
+                            : "border-slate-200 hover:border-yellow-200 hover:bg-yellow-50/50"
+                        }`}
+                        whileTap={{ scale: 0.98 }}
+                        data-testid="platform-justdial"
+                      >
+                        <div className="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center shadow-sm">
+                          <JustDialIcon className="w-7 h-7" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-slate-900">JustDial</p>
+                          <p className="text-sm text-slate-500">Rate on JustDial</p>
+                        </div>
+                        {selectedPlatform === "justdial" && (
+                          <CheckCircle2 className="w-6 h-6 text-yellow-500" />
+                        )}
+                      </motion.button>
+                    )}
+
                     {/* Swiggy Option */}
                     {(business?.swiggy_link || business?.platforms?.swiggy?.review_link) && (
                       <motion.button
