@@ -1,0 +1,39 @@
+# robots.txt for Review Master
+# https://reviewmaster.in
+
+# Allow all search engine crawlers
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://reviewmaster.in/sitemap.xml
+
+# Allow specific search engine bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Yahoo! Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Disallow admin/dashboard routes from indexing
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /onboarding
+Disallow: /subscription
+Disallow: /api/
+
+# Disallow auth callback routes
+Disallow: /auth/*
+Disallow: /callback
+
+# Allow public review pages
+Allow: /review/
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
