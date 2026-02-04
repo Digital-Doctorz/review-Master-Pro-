@@ -224,21 +224,33 @@ export default function Subscription() {
               <div className="space-y-4">
                 <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Billing</h3>
                 <div className="space-y-3">
-                  <div className="flex items-center gap-3 text-slate-700">
-                    <Calendar className="w-5 h-5 text-slate-400" />
-                    <div>
-                      <p className="text-sm text-slate-500">Next billing date</p>
-                      <p className="font-medium">{formatDate(subscription?.expires_at)}</p>
-                    </div>
-                  </div>
-                  {subscription?.subscription_id && (
-                    <div className="flex items-center gap-3 text-slate-700">
-                      <CreditCard className="w-5 h-5 text-slate-400" />
+                  {subscription?.has_lifetime_access ? (
+                    <div className="flex items-center gap-3 text-emerald-600">
+                      <Shield className="w-5 h-5" />
                       <div>
-                        <p className="text-sm text-slate-500">Subscription ID</p>
-                        <p className="font-mono text-xs">{subscription.subscription_id}</p>
+                        <p className="font-medium">Lifetime Access</p>
+                        <p className="text-sm text-slate-500">No renewal needed</p>
                       </div>
                     </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-3 text-slate-700">
+                        <Calendar className="w-5 h-5 text-slate-400" />
+                        <div>
+                          <p className="text-sm text-slate-500">Next billing date</p>
+                          <p className="font-medium">{formatDate(subscription?.expires_at)}</p>
+                        </div>
+                      </div>
+                      {subscription?.subscription_id && (
+                        <div className="flex items-center gap-3 text-slate-700">
+                          <CreditCard className="w-5 h-5 text-slate-400" />
+                          <div>
+                            <p className="text-sm text-slate-500">Subscription ID</p>
+                            <p className="font-mono text-xs">{subscription.subscription_id}</p>
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
