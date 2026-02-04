@@ -1673,6 +1673,198 @@ export default function Integrations() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Amazon Setup Modal */}
+      <Dialog open={amazonModal.open} onOpenChange={(open) => {
+        if (!open) {
+          setAmazonModal({ open: false, locationId: null });
+          setAmazonLink("");
+        }
+      }}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <AmazonIcon className="w-6 h-6" />
+              Connect Amazon
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            <div className="p-4 rounded-xl bg-amber-50 border border-amber-100">
+              <h4 className="font-semibold text-amber-900 mb-3 flex items-center gap-2">
+                <Info className="w-4 h-4" />
+                How to get your Amazon link
+              </h4>
+              
+              <ol className="list-decimal list-inside space-y-2 text-sm text-amber-700">
+                <li>Go to your <strong>Amazon Seller Central</strong></li>
+                <li>Navigate to your <strong>Storefront</strong> or <strong>Product page</strong></li>
+                <li>Copy the <strong>store URL</strong> or <strong>product URL</strong></li>
+                <li>Paste the link below</li>
+              </ol>
+
+              <div className="mt-3 p-3 bg-white rounded-lg border border-amber-100">
+                <p className="text-xs text-amber-600">
+                  <strong>Tip:</strong> Customers can leave product reviews and seller feedback on Amazon.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">
+                Paste your Amazon store/product link:
+              </label>
+              <Input
+                value={amazonLink}
+                onChange={(e) => setAmazonLink(e.target.value)}
+                placeholder="https://www.amazon.in/sp?seller=..."
+                className="h-12 rounded-xl"
+              />
+            </div>
+
+            <Button
+              onClick={() => handleAmazonConnect(amazonModal.locationId)}
+              disabled={!amazonLink.trim()}
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white"
+            >
+              <CheckCircle2 className="w-5 h-5 mr-2" />
+              Connect Amazon
+            </Button>
+
+            <p className="text-xs text-center text-slate-500">
+              Customers scanning your QR will be able to review your products on Amazon.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Flipkart Setup Modal */}
+      <Dialog open={flipkartModal.open} onOpenChange={(open) => {
+        if (!open) {
+          setFlipkartModal({ open: false, locationId: null });
+          setFlipkartLink("");
+        }
+      }}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <FlipkartIcon className="w-6 h-6" />
+              Connect Flipkart
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            <div className="p-4 rounded-xl bg-blue-50 border border-blue-100">
+              <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                <Info className="w-4 h-4" />
+                How to get your Flipkart link
+              </h4>
+              
+              <ol className="list-decimal list-inside space-y-2 text-sm text-blue-700">
+                <li>Go to <strong>Flipkart Seller Hub</strong></li>
+                <li>Navigate to your <strong>Store page</strong> or <strong>Product listing</strong></li>
+                <li>Copy the <strong>store URL</strong> or <strong>product URL</strong></li>
+                <li>Paste the link below</li>
+              </ol>
+
+              <div className="mt-3 p-3 bg-white rounded-lg border border-blue-100">
+                <p className="text-xs text-blue-600">
+                  <strong>Tip:</strong> Customers can rate products and leave seller reviews on Flipkart.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">
+                Paste your Flipkart store/product link:
+              </label>
+              <Input
+                value={flipkartLink}
+                onChange={(e) => setFlipkartLink(e.target.value)}
+                placeholder="https://www.flipkart.com/seller/..."
+                className="h-12 rounded-xl"
+              />
+            </div>
+
+            <Button
+              onClick={() => handleFlipkartConnect(flipkartModal.locationId)}
+              disabled={!flipkartLink.trim()}
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
+            >
+              <CheckCircle2 className="w-5 h-5 mr-2" />
+              Connect Flipkart
+            </Button>
+
+            <p className="text-xs text-center text-slate-500">
+              Customers scanning your QR will be able to review your products on Flipkart.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* JustDial Setup Modal */}
+      <Dialog open={justdialModal.open} onOpenChange={(open) => {
+        if (!open) {
+          setJustdialModal({ open: false, locationId: null });
+          setJustdialLink("");
+        }
+      }}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <JustDialIcon className="w-6 h-6" />
+              Connect JustDial
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            <div className="p-4 rounded-xl bg-yellow-50 border border-yellow-100">
+              <h4 className="font-semibold text-yellow-900 mb-3 flex items-center gap-2">
+                <Info className="w-4 h-4" />
+                How to get your JustDial link
+              </h4>
+              
+              <ol className="list-decimal list-inside space-y-2 text-sm text-yellow-700">
+                <li>Go to <strong>justdial.com</strong> and search for your business</li>
+                <li>Open your <strong>business listing page</strong></li>
+                <li>Copy the <strong>URL from browser</strong></li>
+                <li>Paste the link below</li>
+              </ol>
+
+              <div className="mt-3 p-3 bg-white rounded-lg border border-yellow-100">
+                <p className="text-xs text-yellow-700">
+                  <strong>Tip:</strong> Claim your JustDial listing for free to manage reviews and respond to customers.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">
+                Paste your JustDial business link:
+              </label>
+              <Input
+                value={justdialLink}
+                onChange={(e) => setJustdialLink(e.target.value)}
+                placeholder="https://www.justdial.com/..."
+                className="h-12 rounded-xl"
+              />
+            </div>
+
+            <Button
+              onClick={() => handleJustdialConnect(justdialModal.locationId)}
+              disabled={!justdialLink.trim()}
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white"
+            >
+              <CheckCircle2 className="w-5 h-5 mr-2" />
+              Connect JustDial
+            </Button>
+
+            <p className="text-xs text-center text-slate-500">
+              Customers scanning your QR will be able to find and review you on JustDial.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
