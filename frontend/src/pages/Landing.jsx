@@ -909,8 +909,8 @@ export default function Landing() {
               viewport={{ once: true }}
               transition={{ delay: 0.15 }}
             >
-              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-[#2874F0] shadow-lg flex items-center justify-center hover:shadow-xl hover:scale-110 transition-all cursor-pointer">
-                <span className="text-white font-bold text-lg sm:text-xl md:text-2xl italic">f</span>
+              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full shadow-lg flex items-center justify-center hover:shadow-xl hover:scale-110 transition-all cursor-pointer overflow-hidden">
+                <img src="/logos/flipkart.png" alt="Flipkart" className="w-full h-full object-cover" />
               </div>
               <span className="text-xs sm:text-sm text-slate-700 font-semibold mt-2">Flipkart</span>
             </motion.div>
