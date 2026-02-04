@@ -825,6 +825,119 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Supported Platforms Section - Clean Grid with Labels */}
+      <section className="py-12 px-6 bg-white border-y border-slate-100">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-900 mb-2">
+              Collect Reviews From 7 Major Platforms
+            </h2>
+            <p className="text-slate-600">One dashboard to manage all your online reviews</p>
+          </div>
+          
+          {/* Platform Logos Grid - 7 columns on desktop, wrap on mobile */}
+          <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+            {/* Google */}
+            <motion.div 
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0 }}
+            >
+              <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white shadow-lg border border-slate-200 flex items-center justify-center hover:shadow-xl hover:scale-105 transition-all cursor-pointer">
+                <GoogleIcon className="w-7 h-7 md:w-8 md:h-8" />
+              </div>
+              <span className="text-xs md:text-sm text-slate-700 font-medium mt-2">Google</span>
+            </motion.div>
+            
+            {/* Facebook */}
+            <motion.div 
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.05 }}
+            >
+              <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#1877F2] shadow-lg flex items-center justify-center hover:shadow-xl hover:scale-105 transition-all cursor-pointer">
+                <FacebookIcon className="w-7 h-7 md:w-8 md:h-8 text-white" />
+              </div>
+              <span className="text-xs md:text-sm text-slate-700 font-medium mt-2">Facebook</span>
+            </motion.div>
+            
+            {/* Amazon */}
+            <motion.div 
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+            >
+              <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#FF9900] shadow-lg flex items-center justify-center hover:shadow-xl hover:scale-105 transition-all cursor-pointer">
+                <AmazonIcon className="w-7 h-7 md:w-8 md:h-8 text-slate-900" />
+              </div>
+              <span className="text-xs md:text-sm text-slate-700 font-medium mt-2">Amazon</span>
+            </motion.div>
+            
+            {/* Flipkart */}
+            <motion.div 
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.15 }}
+            >
+              <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#2874F0] shadow-lg flex items-center justify-center hover:shadow-xl hover:scale-105 transition-all cursor-pointer">
+                <FlipkartIcon className="w-7 h-7 md:w-8 md:h-8 text-white" />
+              </div>
+              <span className="text-xs md:text-sm text-slate-700 font-medium mt-2">Flipkart</span>
+            </motion.div>
+            
+            {/* JustDial */}
+            <motion.div 
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#FFD700] shadow-lg flex items-center justify-center hover:shadow-xl hover:scale-105 transition-all cursor-pointer">
+                <JustDialIcon className="w-7 h-7 md:w-8 md:h-8 text-slate-800" />
+              </div>
+              <span className="text-xs md:text-sm text-slate-700 font-medium mt-2">JustDial</span>
+            </motion.div>
+            
+            {/* Swiggy */}
+            <motion.div 
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.25 }}
+            >
+              <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#FC8019] shadow-lg flex items-center justify-center hover:shadow-xl hover:scale-105 transition-all cursor-pointer">
+                <SwiggyIcon className="w-7 h-7 md:w-8 md:h-8 text-white" />
+              </div>
+              <span className="text-xs md:text-sm text-slate-700 font-medium mt-2">Swiggy</span>
+            </motion.div>
+            
+            {/* Zomato */}
+            <motion.div 
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+            >
+              <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#E23744] shadow-lg flex items-center justify-center hover:shadow-xl hover:scale-105 transition-all cursor-pointer">
+                <ZomatoIcon className="w-7 h-7 md:w-8 md:h-8 text-white" />
+              </div>
+              <span className="text-xs md:text-sm text-slate-700 font-medium mt-2">Zomato</span>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Stats Section */}
       <section className="py-16 px-6">
         <div className="max-w-5xl mx-auto">
