@@ -1387,7 +1387,7 @@ export default function Landing() {
 
       {/* Features Section - Enhanced */}
       <section id="features" className="py-12 sm:py-20 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-10 sm:mb-16">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -1398,12 +1398,13 @@ export default function Landing() {
               Everything you need to
               <span className="block text-gradient">dominate reviews</span>
             </motion.h2>
-            <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto px-4">
+            <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto px-2">
               Built for business owners who want results, not complexity.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Features Grid - 2 columns on mobile, 3 on desktop */}
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
@@ -1411,14 +1412,14 @@ export default function Landing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="glass-card rounded-3xl p-8 hover:shadow-xl hover:-translate-y-1 transition-all group"
+                className="glass-card rounded-xl sm:rounded-3xl p-4 sm:p-8 hover:shadow-xl hover:-translate-y-1 transition-all group"
                 data-testid={`feature-card-${index}`}
               >
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
-                  <feature.icon className="w-7 h-7 text-white" />
+                <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-3 sm:mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
+                  <feature.icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-3">{feature.title}</h3>
-                <p className="text-slate-600 leading-relaxed">{feature.description}</p>
+                <h3 className="text-sm sm:text-xl font-semibold text-slate-900 mb-1 sm:mb-3 leading-tight">{feature.title}</h3>
+                <p className="text-xs sm:text-base text-slate-600 leading-relaxed hidden sm:block">{feature.description}</p>
               </motion.div>
             ))}
           </div>
