@@ -1288,15 +1288,6 @@ export default function Landing() {
       <section id="pricing" className="py-20 px-6 bg-gradient-to-b from-white to-indigo-50/50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 text-white text-sm font-medium mb-4"
-            >
-              <Gift className="w-4 h-4" />
-              Limited Time: 50% OFF All Plans!
-            </motion.div>
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4">
               Simple, Transparent Pricing
             </h2>
