@@ -964,7 +964,7 @@ async def get_platforms(user: User = Depends(get_current_user)):
 @api_router.post("/platforms/{platform}/disconnect")
 async def disconnect_platform(platform: str, user: User = Depends(get_current_user)):
     """Disconnect a platform"""
-    if platform not in ["google", "facebook", "swiggy", "zomato"]:
+    if platform not in ["google", "facebook", "amazon", "flipkart", "justdial", "swiggy", "zomato"]:
         raise HTTPException(status_code=400, detail="Invalid platform")
     
     business = await db.businesses.find_one({"user_id": user.user_id}, {"_id": 0})
