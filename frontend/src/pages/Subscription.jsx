@@ -188,6 +188,13 @@ export default function Subscription() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Demo Mode Banner */}
+      {isDemo && (
+        <div className="bg-amber-500 text-white py-2 px-4 text-center text-sm font-medium">
+          🎭 Demo Mode - Viewing sample subscription data. Actions are disabled.
+        </div>
+      )}
+      
       {/* Header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4">
