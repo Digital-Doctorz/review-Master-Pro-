@@ -158,6 +158,7 @@ function AuthCallback() {
 
       if (!sessionId) {
         setStatus("error");
+        setStatusMessage("No session found. Redirecting...");
         setTimeout(() => {
           window.location.href = "/";
         }, 1500);
@@ -174,10 +175,16 @@ function AuthCallback() {
         
         // Check for pending payment (new flow - pay first then login)
         const pendingPaymentStr = sessionStorage.getItem('pending_payment');
-        const pendingPayment = pendingPaymentStr ? JSON.parse(pendingPaymentStr) : null;
+        let pendingPayment = null;
+        try {
+          pendingPayment = pendingPaymentStr ? JSON.parse(pendingPaymentStr) : null;
+        } catch (e) {
+          console.warn("Failed to parse pending payment:", e);
+          sessionStorage.removeItem('pending_payment');
+        }
         
         // Create session
-        await axios.post(
+        const sessionResponse = await axios.post(
           `${API}/auth/session`,
           { 
             session_id: sessionId,
@@ -186,8 +193,12 @@ function AuthCallback() {
           { withCredentials: true }
         );
         
+        // Check if user has lifetime access or active plan
+        const hasLifetimeAccess = sessionResponse.data?.user?.has_lifetime_access;
+        const userPlan = sessionResponse.data?.user?.plan;
+        
         // If there's a pending payment, activate the plan
-        if (pendingPayment) {
+        if (pendingPayment && pendingPayment.guest_id) {
           setStatusMessage("Activating your plan...");
           try {
             const activateResponse = await axios.post(
@@ -218,29 +229,39 @@ function AuthCallback() {
         }
         
         setStatus("success");
-        setStatusMessage("Welcome back!");
+        
+        // Set appropriate message based on plan status
+        if (hasLifetimeAccess) {
+          setStatusMessage("Welcome! Enterprise access activated.");
+        } else if (userPlan && userPlan !== 'free') {
+          setStatusMessage("Welcome back!");
+        } else {
+          setStatusMessage("Signed in successfully!");
+        }
         
         // Small delay to show success state
         setTimeout(() => {
+          // Clear any stored plan info
+          sessionStorage.removeItem('selected_plan');
+          sessionStorage.removeItem('selected_billing_cycle');
+          sessionStorage.removeItem('pending_payment');
+          
           // If user had selected a plan before login, redirect to pricing to complete payment
-          if (selectedPlan && selectedBillingCycle) {
-            // Keep the plan info for the pricing page to pick up
+          if (selectedPlan && selectedBillingCycle && !hasLifetimeAccess && userPlan === 'free') {
             window.history.replaceState(null, "", "/#pricing");
             window.location.reload();
           } else {
-            // Clear the selected plan from session storage
-            sessionStorage.removeItem('selected_plan');
-            sessionStorage.removeItem('selected_billing_cycle');
             window.history.replaceState(null, "", "/dashboard");
             window.location.reload();
           }
-        }, 500);
+        }, 800);
       } catch (error) {
-        console.warn("Auth callback error - redirecting to home");
+        console.warn("Auth callback error:", error?.message || "Unknown error");
         setStatus("error");
+        setStatusMessage("Authentication failed. Redirecting...");
         setTimeout(() => {
           window.location.href = "/";
-        }, 1500);
+        }, 2000);
       }
     };
 
