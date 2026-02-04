@@ -281,53 +281,62 @@ export default function Subscription() {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-3 pt-4 border-t border-slate-200">
-              {subscription?.is_subscription && subscription?.is_active && !subscription?.cancelled_at && (
+              {subscription?.has_lifetime_access ? (
+                <div className="flex items-center gap-2 text-emerald-600">
+                  <CheckCircle2 className="w-5 h-5" />
+                  <span className="font-medium">Lifetime access - no actions needed</span>
+                </div>
+              ) : (
                 <>
+                  {subscription?.is_subscription && subscription?.is_active && !subscription?.cancelled_at && (
+                    <>
+                      <Button
+                        variant="outline"
+                        onClick={handleUpdatePaymentMethod}
+                        className="text-slate-700"
+                      >
+                        <CreditCard className="w-4 h-4 mr-2" />
+                        Update Payment Method
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={handleCancelSubscription}
+                        disabled={cancelling}
+                        className="text-red-600 border-red-200 hover:bg-red-50"
+                      >
+                        {cancelling ? (
+                          <>
+                            <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                            Cancelling...
+                          </>
+                        ) : (
+                          <>
+                            <XCircle className="w-4 h-4 mr-2" />
+                            Cancel Subscription
+                          </>
+                        )}
+                      </Button>
+                    </>
+                  )}
+                  {!subscription?.is_active && (
+                    <Button
+                      onClick={() => navigate('/#pricing')}
+                      className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+                    >
+                      <Crown className="w-4 h-4 mr-2" />
+                      Subscribe Now
+                    </Button>
+                  )}
                   <Button
-                    variant="outline"
-                    onClick={handleUpdatePaymentMethod}
-                    className="text-slate-700"
+                    variant="ghost"
+                    onClick={() => window.open('https://dashboard.razorpay.com', '_blank')}
+                    className="text-slate-600"
                   >
-                    <CreditCard className="w-4 h-4 mr-2" />
-                    Update Payment Method
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={handleCancelSubscription}
-                    disabled={cancelling}
-                    className="text-red-600 border-red-200 hover:bg-red-50"
-                  >
-                    {cancelling ? (
-                      <>
-                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                        Cancelling...
-                      </>
-                    ) : (
-                      <>
-                        <XCircle className="w-4 h-4 mr-2" />
-                        Cancel Subscription
-                      </>
-                    )}
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Razorpay Dashboard
                   </Button>
                 </>
               )}
-              {!subscription?.is_active && (
-                <Button
-                  onClick={() => navigate('/#pricing')}
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
-                >
-                  <Crown className="w-4 h-4 mr-2" />
-                  Subscribe Now
-                </Button>
-              )}
-              <Button
-                variant="ghost"
-                onClick={() => window.open('https://dashboard.razorpay.com', '_blank')}
-                className="text-slate-600"
-              >
-                <ExternalLink className="w-4 h-4 mr-2" />
-                Razorpay Dashboard
-              </Button>
             </div>
           </div>
         </motion.div>
