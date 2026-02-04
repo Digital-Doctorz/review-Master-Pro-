@@ -518,3 +518,308 @@ async def send_payment_confirmation(
     """
     
     return await send_email(to_email, subject, html)
+
+
+async def send_payment_failed_notification(
+    to_email: str,
+    user_name: str,
+    plan_name: str,
+    amount: float,
+    failure_reason: str = "Payment could not be processed"
+) -> Dict[str, Any]:
+    """Send notification email when subscription payment fails"""
+    subject = f"⚠️ Payment Failed - Action Required for Review Master"
+    
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #F8FAFC; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #F8FAFC; padding: 40px 20px;">
+            <tr>
+                <td align="center">
+                    <table width="100%" style="max-width: 600px; background-color: #FFFFFF; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                        <!-- Header -->
+                        <tr>
+                            <td style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); padding: 32px; text-align: center;">
+                                <h1 style="color: #FFFFFF; margin: 0; font-size: 24px; font-weight: 700;">
+                                    ⚠️ Payment Failed
+                                </h1>
+                            </td>
+                        </tr>
+                        
+                        <!-- Content -->
+                        <tr>
+                            <td style="padding: 32px;">
+                                <p style="color: #0F172A; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
+                                    Hi {user_name},
+                                </p>
+                                
+                                <div style="background-color: #FEF2F2; border: 1px solid #FECACA; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+                                    <p style="color: #991B1B; font-size: 14px; margin: 0;">
+                                        We couldn't process your subscription payment of <strong>₹{amount:,.0f}</strong> for the <strong>{plan_name.title()} Plan</strong>.
+                                    </p>
+                                </div>
+                                
+                                <p style="color: #64748B; font-size: 14px; line-height: 1.6; margin: 0 0 8px 0;">
+                                    <strong>Reason:</strong> {failure_reason}
+                                </p>
+                                
+                                <p style="color: #64748B; font-size: 14px; line-height: 1.6; margin: 0 0 24px 0;">
+                                    <strong>What happens next?</strong><br>
+                                    Your subscription access may be suspended if payment isn't resolved within 3 days. 
+                                    Please update your payment method to continue using Review Master.
+                                </p>
+                                
+                                <!-- Payment Details -->
+                                <div style="background-color: #F8FAFC; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+                                    <h3 style="color: #0F172A; font-size: 14px; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        Failed Payment Details
+                                    </h3>
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td style="color: #64748B; padding: 6px 0;">Plan</td>
+                                            <td style="color: #0F172A; font-weight: 600; text-align: right; padding: 6px 0;">{plan_name.title()}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #64748B; padding: 6px 0;">Amount</td>
+                                            <td style="color: #0F172A; font-weight: 600; text-align: right; padding: 6px 0;">₹{amount:,.0f}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #64748B; padding: 6px 0;">Status</td>
+                                            <td style="color: #EF4444; font-weight: 600; text-align: right; padding: 6px 0;">Failed ✗</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                
+                                <!-- CTA Button -->
+                                <a href="https://reviewmaster.trademeindi.com/subscription" style="display: inline-block; background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); color: #FFFFFF; text-decoration: none; padding: 14px 28px; border-radius: 9999px; font-weight: 600; font-size: 14px;">
+                                    Update Payment Method →
+                                </a>
+                                
+                                <p style="color: #94A3B8; font-size: 12px; margin: 24px 0 0 0;">
+                                    If you believe this is an error, please contact your bank or try a different payment method.
+                                </p>
+                            </td>
+                        </tr>
+                        
+                        <!-- Footer -->
+                        <tr>
+                            <td style="padding: 24px; background-color: #F8FAFC; text-align: center; border-top: 1px solid #E2E8F0;">
+                                <p style="color: #94A3B8; font-size: 12px; margin: 0;">
+                                    Review Master by Trade Me India<br>
+                                    Need help? Reply to this email or contact support@trademeindi.com
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>
+    """
+    
+    return await send_email(to_email, subject, html)
+
+
+async def send_subscription_renewal_reminder(
+    to_email: str,
+    user_name: str,
+    plan_name: str,
+    amount: float,
+    renewal_date: str,
+    days_until_renewal: int = 3
+) -> Dict[str, Any]:
+    """Send reminder email before subscription renewal"""
+    subject = f"🔔 Your Review Master subscription renews in {days_until_renewal} days"
+    
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #F8FAFC; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #F8FAFC; padding: 40px 20px;">
+            <tr>
+                <td align="center">
+                    <table width="100%" style="max-width: 600px; background-color: #FFFFFF; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                        <!-- Header -->
+                        <tr>
+                            <td style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); padding: 32px; text-align: center;">
+                                <h1 style="color: #FFFFFF; margin: 0; font-size: 24px; font-weight: 700;">
+                                    🔔 Subscription Renewal Reminder
+                                </h1>
+                            </td>
+                        </tr>
+                        
+                        <!-- Content -->
+                        <tr>
+                            <td style="padding: 32px;">
+                                <p style="color: #0F172A; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
+                                    Hi {user_name},
+                                </p>
+                                
+                                <p style="color: #64748B; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+                                    This is a friendly reminder that your <strong>{plan_name.title()} Plan</strong> subscription will automatically renew on <strong>{renewal_date}</strong>.
+                                </p>
+                                
+                                <!-- Renewal Details -->
+                                <div style="background-color: #FFFBEB; border: 1px solid #FCD34D; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+                                    <div style="text-align: center; margin-bottom: 16px;">
+                                        <span style="display: inline-block; background-color: #F59E0B; color: #FFFFFF; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 600;">
+                                            RENEWS IN {days_until_renewal} DAYS
+                                        </span>
+                                    </div>
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td style="color: #64748B; padding: 6px 0;">Plan</td>
+                                            <td style="color: #0F172A; font-weight: 600; text-align: right; padding: 6px 0;">{plan_name.title()}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #64748B; padding: 6px 0;">Renewal Amount</td>
+                                            <td style="color: #0F172A; font-weight: 600; text-align: right; padding: 6px 0;">₹{amount:,.0f}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #64748B; padding: 6px 0;">Renewal Date</td>
+                                            <td style="color: #0F172A; font-weight: 600; text-align: right; padding: 6px 0;">{renewal_date}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                
+                                <p style="color: #64748B; font-size: 14px; line-height: 1.6; margin: 0 0 24px 0;">
+                                    <strong>No action needed</strong> if you want to continue enjoying Review Master. Your subscription will renew automatically.
+                                </p>
+                                
+                                <!-- CTA Buttons -->
+                                <div style="margin-bottom: 16px;">
+                                    <a href="https://reviewmaster.trademeindi.com/subscription" style="display: inline-block; background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); color: #FFFFFF; text-decoration: none; padding: 14px 28px; border-radius: 9999px; font-weight: 600; font-size: 14px; margin-right: 12px;">
+                                        Manage Subscription →
+                                    </a>
+                                </div>
+                                
+                                <p style="color: #94A3B8; font-size: 12px; margin: 0;">
+                                    Want to change or cancel? Visit your subscription settings before the renewal date.
+                                </p>
+                            </td>
+                        </tr>
+                        
+                        <!-- Footer -->
+                        <tr>
+                            <td style="padding: 24px; background-color: #F8FAFC; text-align: center; border-top: 1px solid #E2E8F0;">
+                                <p style="color: #94A3B8; font-size: 12px; margin: 0;">
+                                    Review Master by Trade Me India<br>
+                                    Questions? Contact us at support@trademeindi.com
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>
+    """
+    
+    return await send_email(to_email, subject, html)
+
+
+async def send_subscription_cancelled_notification(
+    to_email: str,
+    user_name: str,
+    plan_name: str,
+    end_date: str
+) -> Dict[str, Any]:
+    """Send notification email when subscription is cancelled"""
+    subject = f"Your Review Master subscription has been cancelled"
+    
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #F8FAFC; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #F8FAFC; padding: 40px 20px;">
+            <tr>
+                <td align="center">
+                    <table width="100%" style="max-width: 600px; background-color: #FFFFFF; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                        <!-- Header -->
+                        <tr>
+                            <td style="background: linear-gradient(135deg, #64748B 0%, #475569 100%); padding: 32px; text-align: center;">
+                                <h1 style="color: #FFFFFF; margin: 0; font-size: 24px; font-weight: 700;">
+                                    Subscription Cancelled
+                                </h1>
+                            </td>
+                        </tr>
+                        
+                        <!-- Content -->
+                        <tr>
+                            <td style="padding: 32px;">
+                                <p style="color: #0F172A; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
+                                    Hi {user_name},
+                                </p>
+                                
+                                <p style="color: #64748B; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+                                    We're sorry to see you go! Your <strong>{plan_name.title()} Plan</strong> subscription has been cancelled as requested.
+                                </p>
+                                
+                                <!-- Important Notice -->
+                                <div style="background-color: #F1F5F9; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+                                    <h3 style="color: #0F172A; font-size: 14px; margin: 0 0 8px 0;">
+                                        📅 Your Access Ends: {end_date}
+                                    </h3>
+                                    <p style="color: #64748B; font-size: 14px; margin: 0;">
+                                        You'll continue to have full access to Review Master until this date. After that, your account will be downgraded.
+                                    </p>
+                                </div>
+                                
+                                <p style="color: #64748B; font-size: 14px; line-height: 1.6; margin: 0 0 24px 0;">
+                                    <strong>What you'll lose access to:</strong>
+                                </p>
+                                <ul style="color: #64748B; font-size: 14px; line-height: 1.8; margin: 0 0 24px 16px; padding: 0;">
+                                    <li>AI-powered review responses</li>
+                                    <li>Multi-platform review management</li>
+                                    <li>QR code generation</li>
+                                    <li>Private feedback collection</li>
+                                    <li>Analytics and insights</li>
+                                </ul>
+                                
+                                <!-- Re-subscribe CTA -->
+                                <p style="color: #0F172A; font-size: 14px; line-height: 1.6; margin: 0 0 16px 0;">
+                                    <strong>Changed your mind?</strong> You can resubscribe anytime to regain access.
+                                </p>
+                                
+                                <a href="https://reviewmaster.trademeindi.com/" style="display: inline-block; background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); color: #FFFFFF; text-decoration: none; padding: 14px 28px; border-radius: 9999px; font-weight: 600; font-size: 14px;">
+                                    Resubscribe Now →
+                                </a>
+                            </td>
+                        </tr>
+                        
+                        <!-- Footer -->
+                        <tr>
+                            <td style="padding: 24px; background-color: #F8FAFC; text-align: center; border-top: 1px solid #E2E8F0;">
+                                <p style="color: #64748B; font-size: 14px; margin: 0 0 8px 0;">
+                                    We'd love to hear your feedback on how we can improve.
+                                </p>
+                                <p style="color: #94A3B8; font-size: 12px; margin: 0;">
+                                    Review Master by Trade Me India<br>
+                                    support@trademeindi.com
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>
+    """
+    
+    return await send_email(to_email, subject, html)
