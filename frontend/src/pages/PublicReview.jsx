@@ -96,10 +96,38 @@ const FacebookIcon = ({ className = "w-6 h-6" }) => (
   </svg>
 );
 
+// Amazon icon component
+const AmazonIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <path fill="#FF9900" d="M13.958 10.09c0 1.232.029 2.256-.591 3.351-.502.891-1.301 1.438-2.186 1.438-1.214 0-1.922-.924-1.922-2.292 0-2.692 2.415-3.182 4.7-3.182v.685zm3.186 7.705c-.209.189-.512.201-.748.074-1.051-.872-1.238-1.276-1.814-2.106-1.736 1.77-2.965 2.3-5.209 2.3-2.66 0-4.731-1.641-4.731-4.925 0-2.565 1.391-4.309 3.37-5.164 1.715-.754 4.11-.891 5.942-1.095v-.41c0-.754.058-1.646-.385-2.297-.385-.579-1.124-.82-1.775-.82-1.205 0-2.277.618-2.54 1.897-.054.285-.261.566-.549.58l-3.061-.331c-.259-.056-.548-.266-.473-.66C6.03 2.97 8.476 2 10.637 2c1.104 0 2.543.295 3.413 1.132 1.104 1.027 1 2.397 1 3.889v3.522c0 1.06.439 1.524.851 2.098.145.201.177.445-.007.594-.461.384-1.281 1.099-1.733 1.499l-.017.06z"/>
+    <path fill="#FF9900" d="M21.112 16.504c-2.263 1.671-5.544 2.559-8.37 2.559-3.96 0-7.528-1.463-10.224-3.9-.212-.192-.023-.453.232-.304 2.912 1.693 6.513 2.712 10.231 2.712 2.507 0 5.264-.52 7.802-1.597.383-.165.703.251.329.53z"/>
+  </svg>
+);
+
+// Flipkart icon component
+const FlipkartIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <rect fill="#2874F0" width="24" height="24" rx="3"/>
+    <path fill="#FFFFFF" d="M6 7h5.5c1.38 0 2.5 1.12 2.5 2.5S12.88 12 11.5 12H8v5H6V7z"/>
+    <circle fill="#FFE500" cx="8" cy="7" r="1.5"/>
+    <path fill="#FFFFFF" d="M8 9.5h3.5c.55 0 1 .45 1 1s-.45 1-1 1H8V9.5z"/>
+  </svg>
+);
+
+// JustDial icon component
+const JustDialIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <rect fill="#2C3E50" width="24" height="24" rx="3"/>
+    <text x="4" y="13" fill="#3498DB" fontSize="7" fontWeight="bold" fontFamily="Arial">Just</text>
+    <text x="4" y="19" fill="#E67E22" fontSize="6" fontWeight="bold" fontFamily="Arial">Dial</text>
+  </svg>
+);
+
 // Swiggy icon component
 const SwiggyIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
     <rect fill="#FC8019" width="24" height="24" rx="4"/>
+    <circle fill="#FFFFFF" cx="12" cy="12" r="6" opacity="0.3"/>
     <text x="12" y="16" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="Arial">S</text>
   </svg>
 );
@@ -108,7 +136,7 @@ const SwiggyIcon = ({ className = "w-6 h-6" }) => (
 const ZomatoIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
     <rect fill="#E23744" width="24" height="24" rx="4"/>
-    <text x="12" y="16" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="Arial">Z</text>
+    <text x="12" y="16" textAnchor="middle" fill="white" fontSize="8" fontWeight="bold" fontFamily="Arial">zomato</text>
   </svg>
 );
 
