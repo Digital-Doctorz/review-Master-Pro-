@@ -4084,16 +4084,93 @@ async def razorpay_webhook(request: Request):
                 logger.info(f"Subscription payment stored for activation: {subscription_id}")
                 
         elif event_type == "subscription.cancelled":
-            subscription_id = event["payload"]["subscription"]["entity"]["id"]
-            await db.subscriptions.update_one(
-                {"subscription_id": subscription_id},
-                {"$set": {"status": "cancelled", "cancelled_at": datetime.now(timezone.utc)}}
-            )
+            subscription_entity = event["payload"]["subscription"]["entity"]
+            subscription_id = subscription_entity["id"]
+            
+            # Get subscription and user info
+            sub = await db.subscriptions.find_one({"subscription_id": subscription_id})
+            if sub:
+                user_id = sub["user_id"]
+                user = await db.users.find_one({"user_id": user_id})
+                user_plan = await db.user_plans.find_one({"user_id": user_id})
+                
+                # Update subscription status
+                await db.subscriptions.update_one(
+                    {"subscription_id": subscription_id},
+                    {"$set": {"status": "cancelled", "cancelled_at": datetime.now(timezone.utc)}}
+                )
+                
+                # Send cancellation email notification
+                if user and user.get("email"):
+                    try:
+                        from services.email_service import send_subscription_cancelled_notification
+                        end_date = user_plan.get("expires_at", datetime.now(timezone.utc) + timedelta(days=30)) if user_plan else datetime.now(timezone.utc) + timedelta(days=30)
+                        end_date_str = end_date.strftime("%B %d, %Y")
+                        await send_subscription_cancelled_notification(
+                            user["email"],
+                            user.get("name", "Customer"),
+                            sub.get("plan_name", "subscription"),
+                            end_date_str
+                        )
+                        logger.info(f"Cancellation email sent to {user['email']}")
+                    except Exception as e:
+                        logger.warning(f"Failed to send cancellation email: {e}")
+            else:
+                # Just update if exists without user
+                await db.subscriptions.update_one(
+                    {"subscription_id": subscription_id},
+                    {"$set": {"status": "cancelled", "cancelled_at": datetime.now(timezone.utc)}}
+                )
+            
             logger.info(f"Subscription cancelled: {subscription_id}")
             
         elif event_type == "payment.failed":
-            payment_id = event["payload"]["payment"]["entity"]["id"]
-            logger.warning(f"Payment failed: {payment_id}")
+            payment_entity = event["payload"]["payment"]["entity"]
+            payment_id = payment_entity["id"]
+            amount = payment_entity.get("amount", 0) / 100  # Convert paise to rupees
+            error_description = payment_entity.get("error_description", "Payment could not be processed")
+            
+            # Try to get subscription info
+            subscription_id = payment_entity.get("subscription_id")
+            customer_email = payment_entity.get("email")
+            
+            if subscription_id:
+                sub = await db.subscriptions.find_one({"subscription_id": subscription_id})
+                if sub:
+                    user_id = sub["user_id"]
+                    user = await db.users.find_one({"user_id": user_id})
+                    
+                    # Record failed payment
+                    await db.payment_history.insert_one({
+                        "user_id": user_id,
+                        "subscription_id": subscription_id,
+                        "payment_id": payment_id,
+                        "plan_name": sub.get("plan_name", "unknown"),
+                        "billing_cycle": "monthly",
+                        "amount": amount,
+                        "currency": "INR",
+                        "status": "failed",
+                        "error": error_description,
+                        "type": "renewal",
+                        "failed_at": datetime.now(timezone.utc)
+                    })
+                    
+                    # Send payment failed email notification
+                    if user and user.get("email"):
+                        try:
+                            from services.email_service import send_payment_failed_notification
+                            await send_payment_failed_notification(
+                                user["email"],
+                                user.get("name", "Customer"),
+                                sub.get("plan_name", "subscription"),
+                                amount,
+                                error_description
+                            )
+                            logger.info(f"Payment failed email sent to {user['email']}")
+                        except Exception as e:
+                            logger.warning(f"Failed to send payment failed email: {e}")
+            
+            logger.warning(f"Payment failed: {payment_id}, reason: {error_description}")
         
         return {"status": "ok"}
         
