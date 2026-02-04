@@ -2375,6 +2375,27 @@ async def get_public_business(qr_code_id: str):
                 "review_link": f"{fb_url}/reviews" if fb_url and not fb_url.endswith("/reviews") else fb_url
             }
         
+        # Check for Amazon connection
+        if location.get("amazon_link") or location.get("amazon_seller_id"):
+            platforms["amazon"] = {
+                "connected": True,
+                "review_link": location.get("amazon_link")
+            }
+        
+        # Check for Flipkart connection
+        if location.get("flipkart_link") or location.get("flipkart_seller_id"):
+            platforms["flipkart"] = {
+                "connected": True,
+                "review_link": location.get("flipkart_link")
+            }
+        
+        # Check for JustDial connection
+        if location.get("justdial_link") or location.get("justdial_business_id"):
+            platforms["justdial"] = {
+                "connected": True,
+                "review_link": location.get("justdial_link")
+            }
+        
         # Check for Swiggy connection
         if location.get("swiggy_link") or location.get("swiggy_restaurant_id"):
             platforms["swiggy"] = {
@@ -2404,6 +2425,9 @@ async def get_public_business(qr_code_id: str):
             "google_review_link": location.get("google_review_link"),
             "facebook_page_id": location.get("facebook_page_id"),
             "facebook_page_url": location.get("facebook_page_url"),
+            "amazon_link": location.get("amazon_link"),
+            "flipkart_link": location.get("flipkart_link"),
+            "justdial_link": location.get("justdial_link"),
             "swiggy_link": location.get("swiggy_link"),
             "zomato_link": location.get("zomato_link"),
             "platforms": platforms
