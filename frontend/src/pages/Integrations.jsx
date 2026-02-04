@@ -880,7 +880,7 @@ export default function Integrations() {
                 </div>
 
                 {/* Swiggy & Zomato Row */}
-                <div className="grid md:grid-cols-2 gap-4 mt-4">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-4">
                   {/* Swiggy Integration */}
                   <div className={`p-4 rounded-xl border-2 transition-all ${
                     location.swiggy_link 
