@@ -233,6 +233,105 @@ export default function Dashboard() {
   const [syncing, setSyncing] = useState(false);
   const [showDemoBanner, setShowDemoBanner] = useState(true);
   const [userPlan, setUserPlan] = useState(null);
+  
+  // Reply Modal State
+  const [replyModalOpen, setReplyModalOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState(null);
+  const [replyText, setReplyText] = useState("");
+  const [generatingAI, setGeneratingAI] = useState(false);
+  const [sendingReply, setSendingReply] = useState(false);
+  const [selectedTone, setSelectedTone] = useState("professional");
+
+  // Open reply modal for a review
+  const openReplyModal = (review) => {
+    setSelectedReview(review);
+    setReplyText(review.response || "");
+    setReplyModalOpen(true);
+  };
+
+  // Generate AI response
+  const generateAIResponse = async (tone = "professional") => {
+    if (!selectedReview) return;
+    
+    setGeneratingAI(true);
+    setSelectedTone(tone);
+    
+    try {
+      const response = await axios.post(
+        `${API}/ai/generate-response`,
+        {
+          review_text: selectedReview.text,
+          rating: selectedReview.rating,
+          tone: tone,
+          business_name: business?.name || "our business"
+        },
+        { withCredentials: true }
+      );
+      
+      setReplyText(response.data.response);
+      toast.success(`${tone.charAt(0).toUpperCase() + tone.slice(1)} response generated!`);
+    } catch (error) {
+      console.error("Failed to generate AI response:", error);
+      toast.error("Failed to generate AI response. Please try again.");
+    } finally {
+      setGeneratingAI(false);
+    }
+  };
+
+  // Send reply to review
+  const sendReply = async () => {
+    if (!selectedReview || !replyText.trim()) {
+      toast.error("Please enter a reply message");
+      return;
+    }
+    
+    setSendingReply(true);
+    
+    try {
+      const response = await axios.post(
+        `${API}/reviews/${selectedReview.review_id}/respond`,
+        { response_text: replyText },
+        { withCredentials: true }
+      );
+      
+      // Update the review in local state
+      setReviews(prevReviews => 
+        prevReviews.map(r => 
+          r.review_id === selectedReview.review_id 
+            ? { ...r, response: replyText, responded_at: new Date().toISOString() }
+            : r
+        )
+      );
+      
+      // Show success message with platform info
+      const platformName = selectedReview.platform?.charAt(0).toUpperCase() + selectedReview.platform?.slice(1);
+      if (response.data.posted_live) {
+        toast.success(`Reply posted to ${platformName}!`, {
+          description: "Your response is now visible on the platform."
+        });
+      } else {
+        toast.success(`Reply saved for ${platformName}!`, {
+          description: "Response saved. Connect platform API to post live."
+        });
+      }
+      
+      setReplyModalOpen(false);
+      setSelectedReview(null);
+      setReplyText("");
+      
+    } catch (error) {
+      console.error("Failed to send reply:", error);
+      toast.error("Failed to send reply. Please try again.");
+    } finally {
+      setSendingReply(false);
+    }
+  };
+
+  // Copy reply to clipboard
+  const copyReplyToClipboard = () => {
+    navigator.clipboard.writeText(replyText);
+    toast.success("Reply copied to clipboard!");
+  };
 
   // Fetch user plan info
   useEffect(() => {
