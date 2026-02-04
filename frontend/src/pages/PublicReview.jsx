@@ -104,30 +104,23 @@ const AmazonIcon = ({ className = "w-6 h-6" }) => (
   </svg>
 );
 
-// Flipkart icon component
+// Flipkart icon component - Uses actual logo
 const FlipkartIcon = ({ className = "w-6 h-6" }) => (
-  <svg className={className} viewBox="0 0 24 24">
-    <rect fill="#2874F0" width="24" height="24" rx="3"/>
-    <path fill="#FFFFFF" d="M6 7h5.5c1.38 0 2.5 1.12 2.5 2.5S12.88 12 11.5 12H8v5H6V7z"/>
-    <circle fill="#FFE500" cx="8" cy="7" r="1.5"/>
-    <path fill="#FFFFFF" d="M8 9.5h3.5c.55 0 1 .45 1 1s-.45 1-1 1H8V9.5z"/>
-  </svg>
+  <img src="/logos/flipkart.png" alt="Flipkart" className={`${className} rounded-full object-cover`} />
 );
 
 // JustDial icon component
 const JustDialIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
-    <rect fill="#2C3E50" width="24" height="24" rx="3"/>
-    <text x="4" y="13" fill="#3498DB" fontSize="7" fontWeight="bold" fontFamily="Arial">Just</text>
-    <text x="4" y="19" fill="#E67E22" fontSize="6" fontWeight="bold" fontFamily="Arial">Dial</text>
+    <rect fill="#E31E25" width="24" height="24" rx="12"/>
+    <text x="12" y="15" textAnchor="middle" fill="white" fontSize="8" fontWeight="bold" fontFamily="Arial">JD</text>
   </svg>
 );
 
 // Swiggy icon component
 const SwiggyIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
-    <rect fill="#FC8019" width="24" height="24" rx="4"/>
-    <circle fill="#FFFFFF" cx="12" cy="12" r="6" opacity="0.3"/>
+    <rect fill="#FC8019" width="24" height="24" rx="12"/>
     <text x="12" y="16" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="Arial">S</text>
   </svg>
 );
@@ -135,8 +128,8 @@ const SwiggyIcon = ({ className = "w-6 h-6" }) => (
 // Zomato icon component
 const ZomatoIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
-    <rect fill="#E23744" width="24" height="24" rx="4"/>
-    <text x="12" y="16" textAnchor="middle" fill="white" fontSize="8" fontWeight="bold" fontFamily="Arial">zomato</text>
+    <rect fill="#E23744" width="24" height="24" rx="12"/>
+    <text x="12" y="16" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="Arial">Z</text>
   </svg>
 );
 
