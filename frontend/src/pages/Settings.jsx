@@ -343,6 +343,86 @@ export default function Settings() {
           </CardContent>
         </Card>
       </motion.div>
+
+      {/* Subscription & Billing */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <Card className="glass-card border-0">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold flex items-center gap-2">
+              <CreditCard className="w-5 h-5 text-sky-500" />
+              Subscription & Billing
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
+                <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${
+                  planStatus?.plan === 'enterprise' 
+                    ? 'bg-gradient-to-br from-amber-500 to-orange-500' 
+                    : planStatus?.plan === 'growth' 
+                      ? 'bg-gradient-to-br from-violet-500 to-purple-600' 
+                      : 'bg-gradient-to-br from-sky-500 to-cyan-500'
+                }`}>
+                  {planStatus?.plan === 'enterprise' ? (
+                    <Building2 className="w-7 h-7 text-white" />
+                  ) : planStatus?.plan === 'growth' ? (
+                    <Crown className="w-7 h-7 text-white" />
+                  ) : (
+                    <Zap className="w-7 h-7 text-white" />
+                  )}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-semibold text-slate-900 capitalize">
+                      {planStatus?.plan || 'Free'} Plan
+                    </h3>
+                    {planStatus?.has_lifetime_access && (
+                      <span className="px-2 py-0.5 text-xs font-medium bg-emerald-100 text-emerald-700 rounded-full">
+                        Lifetime
+                      </span>
+                    )}
+                    {planStatus?.has_active_plan && !planStatus?.has_lifetime_access && (
+                      <span className="flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-emerald-100 text-emerald-700 rounded-full">
+                        <CheckCircle2 className="w-3 h-3" />
+                        Active
+                      </span>
+                    )}
+                  </div>
+                  {planStatus?.expires_at && !planStatus?.has_lifetime_access && (
+                    <p className="text-sm text-slate-500 flex items-center gap-1 mt-1">
+                      <Calendar className="w-4 h-4" />
+                      Renews {new Date(planStatus.expires_at).toLocaleDateString('en-IN', { 
+                        day: 'numeric', 
+                        month: 'short', 
+                        year: 'numeric' 
+                      })}
+                    </p>
+                  )}
+                  {planStatus?.has_lifetime_access && (
+                    <p className="text-sm text-emerald-600 mt-1">
+                      Lifetime access - no renewal needed
+                    </p>
+                  )}
+                </div>
+              </div>
+              
+              <Button
+                onClick={() => navigate('/dashboard/subscription')}
+                variant="outline"
+                className="h-11 px-6 rounded-xl border-slate-200 hover:bg-slate-50"
+                data-testid="manage-subscription-btn"
+              >
+                Manage Subscription
+                <ChevronRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 }
