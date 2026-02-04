@@ -842,23 +842,27 @@ export default function Dashboard() {
               <CardContent className="space-y-2">
                 {platforms.map((platform) => {
                   const platformColors = {
-                    google: { bg: "bg-blue-100", text: "text-blue-600", icon: "G" },
-                    facebook: { bg: "bg-indigo-100", text: "text-indigo-600", icon: "f" },
-                    amazon: { bg: "bg-amber-100", text: "text-amber-600", icon: "A" },
-                    flipkart: { bg: "bg-yellow-100", text: "text-yellow-700", icon: "F" },
-                    justdial: { bg: "bg-yellow-100", text: "text-yellow-800", icon: "JD" },
-                    swiggy: { bg: "bg-orange-100", text: "text-orange-600", icon: "S" },
-                    zomato: { bg: "bg-red-100", text: "text-red-600", icon: "Z" }
+                    google: { bg: "bg-blue-100", text: "text-blue-600", icon: "G", isImage: false },
+                    facebook: { bg: "bg-indigo-100", text: "text-indigo-600", icon: "f", isImage: false },
+                    amazon: { bg: "bg-amber-100", text: "text-amber-600", icon: "A", isImage: false },
+                    flipkart: { bg: "bg-blue-100", text: "text-blue-600", icon: "/logos/flipkart.png", isImage: true },
+                    justdial: { bg: "bg-red-100", text: "text-red-600", icon: "JD", isImage: false },
+                    swiggy: { bg: "bg-orange-100", text: "text-orange-600", icon: "S", isImage: false },
+                    zomato: { bg: "bg-red-100", text: "text-red-600", icon: "Z", isImage: false }
                   };
-                  const colors = platformColors[platform.platform] || { bg: "bg-slate-100", text: "text-slate-600", icon: "?" };
+                  const colors = platformColors[platform.platform] || { bg: "bg-slate-100", text: "text-slate-600", icon: "?", isImage: false };
                   return (
                     <div
                       key={platform.platform}
                       className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50"
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${colors.bg}`}>
-                          <span className={`${colors.text} font-bold text-xs`}>{colors.icon}</span>
+                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${colors.isImage ? '' : colors.bg} overflow-hidden`}>
+                          {colors.isImage ? (
+                            <img src={colors.icon} alt={platform.platform} className="w-full h-full object-cover rounded-lg" />
+                          ) : (
+                            <span className={`${colors.text} font-bold text-xs`}>{colors.icon}</span>
+                          )}
                         </div>
                         <span className="font-medium text-slate-700 capitalize text-sm">
                           {platform.platform}
