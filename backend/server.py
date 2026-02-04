@@ -3124,26 +3124,34 @@ async def test_platform_connection(
 # ============ RAZORPAY PAYMENT ENDPOINTS ============
 
 # Pricing configuration (in INR)
+# Pricing Config - Matches Razorpay Subscription Plans
 PRICING_CONFIG = {
     "starter": {
         "monthly": 499,
-        "yearly_per_month": 399,  # 20% discount applied
-        "original_monthly": 999,
-        "original_yearly_per_month": 799,
+        "yearly_per_month": 399,  # 20% discount on yearly
+        "razorpay_plan_id": "plan_SA5vLE7oFUZGQI",
+        "razorpay_subscription_link": "https://rzp.io/rzp/fR9e0RT",
     },
     "growth": {
         "monthly": 999,
-        "yearly_per_month": 799,
-        "original_monthly": 1999,
-        "original_yearly_per_month": 1599,
+        "yearly_per_month": 799,  # 20% discount on yearly
+        "razorpay_plan_id": "plan_S4RMtOHzOPR71L",
+        "razorpay_subscription_link": "https://rzp.io/rzp/BCcu4Hg2",
     },
     "enterprise": {
         "monthly": 2499,
-        "yearly_per_month": 1999,
-        "original_monthly": 4999,
-        "original_yearly_per_month": 3999,
+        "yearly_per_month": 1999,  # 20% discount on yearly
+        "razorpay_plan_id": "plan_S4RNaUcs2tVEaf",
+        "razorpay_subscription_link": "https://rzp.io/rzp/ZJxoGkn",
     }
 }
+
+# Lifetime Free Access Emails - These users bypass payment
+LIFETIME_FREE_EMAILS = [
+    "trademeindia.sales@gmail.com",
+    "digitaldoctors.sales@gmail.com",
+    "fo.optm@gmail.com"
+]
 
 class PaymentOrderRequest(BaseModel):
     plan_name: str
@@ -3176,9 +3184,8 @@ async def get_payment_config():
                 "monthly_price": config["monthly"],
                 "yearly_price": config["yearly_per_month"] * 12,  # Full year price with 20% discount
                 "yearly_per_month": config["yearly_per_month"],
-                "original_monthly": config["original_monthly"],
-                "original_yearly": config["original_yearly_per_month"] * 12,
                 "yearly_savings": (config["monthly"] * 12) - (config["yearly_per_month"] * 12),
+                "razorpay_subscription_link": config["razorpay_subscription_link"],
             }
             for plan_name, config in PRICING_CONFIG.items()
         }
