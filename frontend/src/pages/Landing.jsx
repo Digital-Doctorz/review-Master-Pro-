@@ -1377,70 +1377,87 @@ export default function Landing() {
           </div>
         </div>
         
-        {/* Auto-scrolling carousel */}
+        {/* Auto-scrolling carousel with manual scroll support */}
         <div className="relative">
           {/* Gradient overlays for smooth fade effect */}
-          <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
           
-          {/* Scrolling container - Row 1 */}
-          <div className="flex animate-scroll-left mb-4 sm:mb-6">
-            {[...industriesData.slice(0, 6), ...industriesData.slice(0, 6)].map((industry, index) => (
-              <div
-                key={`row1-${index}`}
-                className="flex-shrink-0 w-80 sm:w-96 mx-2 sm:mx-3"
-              >
-                <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-lg border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all h-full group">
-                  <div className="flex items-start gap-4 mb-3">
-                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${industry.color} flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform`}>
-                      <industry.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-slate-900 text-sm sm:text-base mb-1 leading-tight">{industry.name}</h3>
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-sm">
-                        {industry.impact}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="mb-3 pl-0">
-                    <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">
-                      Impact: {industry.impactType}
-                    </span>
-                  </div>
-                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed line-clamp-5">{industry.description}</p>
-                </div>
-              </div>
-            ))}
+          {/* Scroll hint */}
+          <div className="text-center mb-4">
+            <span className="text-xs text-slate-400 inline-flex items-center gap-1">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+              </svg>
+              Hover to pause • Scroll or drag to explore
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </span>
           </div>
           
-          {/* Scrolling container - Row 2 (reverse direction) */}
-          <div className="flex animate-scroll-right">
-            {[...industriesData.slice(6, 12), ...industriesData.slice(6, 12)].map((industry, index) => (
-              <div
-                key={`row2-${index}`}
-                className="flex-shrink-0 w-80 sm:w-96 mx-2 sm:mx-3"
-              >
-                <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-lg border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all h-full group">
-                  <div className="flex items-start gap-4 mb-3">
-                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${industry.color} flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform`}>
-                      <industry.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+          {/* Scrolling container - Row 1 (First 6 industries) */}
+          <div className="scroll-container overflow-x-auto pb-2 mb-4 sm:mb-6">
+            <div className="flex animate-scroll-left" style={{ width: 'max-content' }}>
+              {[...industriesData.slice(0, 6), ...industriesData.slice(0, 6)].map((industry, index) => (
+                <div
+                  key={`row1-${index}`}
+                  className="flex-shrink-0 w-80 sm:w-96 mx-2 sm:mx-3"
+                >
+                  <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-lg border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all h-full group cursor-grab active:cursor-grabbing">
+                    <div className="flex items-start gap-4 mb-3">
+                      <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${industry.color} flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform`}>
+                        <industry.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-slate-900 text-sm sm:text-base mb-1 leading-tight">{industry.name}</h3>
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-sm">
+                          {industry.impact}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-slate-900 text-sm sm:text-base mb-1 leading-tight">{industry.name}</h3>
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-sm">
-                        {industry.impact}
+                    <div className="mb-3 pl-0">
+                      <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">
+                        Impact: {industry.impactType}
                       </span>
                     </div>
+                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed line-clamp-5">{industry.description}</p>
                   </div>
-                  <div className="mb-3 pl-0">
-                    <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">
-                      Impact: {industry.impactType}
-                    </span>
-                  </div>
-                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed line-clamp-5">{industry.description}</p>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+          
+          {/* Scrolling container - Row 2 (Last 6 industries - reverse direction) */}
+          <div className="scroll-container overflow-x-auto pb-2">
+            <div className="flex animate-scroll-right" style={{ width: 'max-content' }}>
+              {[...industriesData.slice(6, 12), ...industriesData.slice(6, 12)].map((industry, index) => (
+                <div
+                  key={`row2-${index}`}
+                  className="flex-shrink-0 w-80 sm:w-96 mx-2 sm:mx-3"
+                >
+                  <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-lg border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all h-full group cursor-grab active:cursor-grabbing">
+                    <div className="flex items-start gap-4 mb-3">
+                      <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${industry.color} flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform`}>
+                        <industry.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-slate-900 text-sm sm:text-base mb-1 leading-tight">{industry.name}</h3>
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-sm">
+                          {industry.impact}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mb-3 pl-0">
+                      <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">
+                        Impact: {industry.impactType}
+                      </span>
+                    </div>
+                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed line-clamp-5">{industry.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
