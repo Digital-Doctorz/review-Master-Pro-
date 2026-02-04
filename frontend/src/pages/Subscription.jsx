@@ -47,8 +47,49 @@ export default function Subscription() {
   const [subscription, setSubscription] = useState(null);
   const [paymentHistory, setPaymentHistory] = useState([]);
   const [cancelling, setCancelling] = useState(false);
+  const [isDemo, setIsDemo] = useState(false);
 
   useEffect(() => {
+    // Check for demo mode
+    const demoMode = sessionStorage.getItem('demo_mode') === 'true';
+    setIsDemo(demoMode);
+    
+    if (demoMode) {
+      // Set demo subscription data
+      setSubscription({
+        plan: "growth",
+        is_active: true,
+        is_subscription: true,
+        billing_cycle: "monthly",
+        subscription_id: "sub_demo_001",
+        activated_at: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
+        expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        cancelled_at: null,
+        status: "active",
+        has_lifetime_access: false
+      });
+      setPaymentHistory([
+        {
+          id: "pay_demo_001",
+          amount: 999,
+          currency: "INR",
+          status: "success",
+          plan_name: "growth",
+          paid_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          id: "pay_demo_002",
+          amount: 999,
+          currency: "INR",
+          status: "success",
+          plan_name: "growth",
+          paid_at: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString()
+        }
+      ]);
+      setLoading(false);
+      return;
+    }
+    
     fetchSubscriptionDetails();
     fetchPaymentHistory();
   }, []);
