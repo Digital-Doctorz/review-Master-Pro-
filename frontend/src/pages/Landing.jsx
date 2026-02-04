@@ -69,36 +69,39 @@ const AmazonIcon = ({ className = "w-6 h-6" }) => (
   </svg>
 );
 
-// Flipkart Icon
+// Flipkart Icon - Official blue/yellow logo
 const FlipkartIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
-    <path fill="#2874F0" d="M3 3h18v18H3V3z"/>
-    <path fill="#FFFF00" d="M17.5 9.5c0-.83-.67-1.5-1.5-1.5H8c-.83 0-1.5.67-1.5 1.5v5c0 .83.67 1.5 1.5 1.5h8c.83 0 1.5-.67 1.5-1.5v-5z"/>
-    <text x="8" y="14" fill="#2874F0" fontSize="5" fontWeight="bold" fontFamily="Arial">F</text>
+    <rect fill="#2874F0" width="24" height="24" rx="3"/>
+    <path fill="#FFFFFF" d="M7 6h4.5c1.66 0 3 1.34 3 3s-1.34 3-3 3H9v4.5H7V6z"/>
+    <circle fill="#FFE500" cx="9" cy="6" r="1.5"/>
+    <path fill="#FFFFFF" d="M9 9.5h2.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5H9V9.5z"/>
   </svg>
 );
 
-// JustDial Icon
+// JustDial Icon - Official blue/orange colors
 const JustDialIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
-    <circle cx="12" cy="12" r="11" fill="#FFD700"/>
-    <text x="7" y="16" fill="#000" fontSize="8" fontWeight="bold" fontFamily="Arial">JD</text>
+    <rect fill="#2C3E50" width="24" height="24" rx="3"/>
+    <text x="3.5" y="12" fill="#3498DB" fontSize="6" fontWeight="bold" fontFamily="Arial">Just</text>
+    <text x="3.5" y="18" fill="#E67E22" fontSize="6" fontWeight="bold" fontFamily="Arial">Dial</text>
   </svg>
 );
 
-// Swiggy Icon
+// Swiggy Icon - Official orange with white text
 const SwiggyIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
-    <rect width="24" height="24" rx="4" fill="#FC8019"/>
-    <text x="7" y="16" fill="#FFF" fontSize="8" fontWeight="bold" fontFamily="Arial">S</text>
+    <rect fill="#FC8019" width="24" height="24" rx="4"/>
+    <circle fill="rgba(255,255,255,0.2)" cx="12" cy="12" r="7"/>
+    <text x="12" y="16" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="Arial">S</text>
   </svg>
 );
 
-// Zomato Icon
+// Zomato Icon - Official red with white text
 const ZomatoIcon = ({ className = "w-6 h-6" }) => (
   <svg className={className} viewBox="0 0 24 24">
-    <rect width="24" height="24" rx="4" fill="#E23744"/>
-    <text x="7" y="16" fill="#FFF" fontSize="8" fontWeight="bold" fontFamily="Arial">Z</text>
+    <rect fill="#E23744" width="24" height="24" rx="4"/>
+    <text x="12" y="15" textAnchor="middle" fill="white" fontSize="6" fontWeight="bold" fontFamily="Arial">zomato</text>
   </svg>
 );
 
