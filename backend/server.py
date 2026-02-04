@@ -388,34 +388,71 @@ async def create_session(request: Request, response: Response):
     picture = auth_data.get("picture")
     session_token = auth_data.get("session_token")
     
+    # Check if user has lifetime free access
+    has_lifetime_access = email.lower() in [e.lower() for e in LIFETIME_FREE_EMAILS]
+    
     # Check if user exists
     existing_user = await db.users.find_one({"email": email}, {"_id": 0})
     
     if existing_user:
         user_id = existing_user["user_id"]
-        # Update plan if user selected a new one
-        await db.users.update_one(
-            {"user_id": user_id},
-            {"$set": {
-                "plan": selected_plan,
-                "max_locations": plan_configs[selected_plan]["max_locations"],
-                "features": plan_configs[selected_plan]["features"],
-                "plan_updated_at": datetime.now(timezone.utc).isoformat()
-            }}
-        )
+        
+        # If user has lifetime access, grant enterprise plan
+        if has_lifetime_access:
+            await db.users.update_one(
+                {"user_id": user_id},
+                {"$set": {
+                    "plan": "enterprise",
+                    "max_locations": plan_configs["enterprise"]["max_locations"],
+                    "features": plan_configs["enterprise"]["features"],
+                    "has_lifetime_access": True,
+                    "plan_updated_at": datetime.now(timezone.utc).isoformat()
+                }}
+            )
+            selected_plan = "enterprise"
+        else:
+            # Update plan if user selected a new one (only if not already a paid user)
+            if existing_user.get("plan") == "free":
+                await db.users.update_one(
+                    {"user_id": user_id},
+                    {"$set": {
+                        "plan": selected_plan,
+                        "max_locations": plan_configs[selected_plan]["max_locations"],
+                        "features": plan_configs[selected_plan]["features"],
+                        "plan_updated_at": datetime.now(timezone.utc).isoformat()
+                    }}
+                )
     else:
-        # Create new user - no free trial, requires payment to access features
-        user_doc = {
-            "user_id": user_id,
-            "email": email,
-            "name": name,
-            "picture": picture,
-            "plan": "free",  # No plan until payment
-            "max_locations": 0,
-            "features": [],
-            "is_trial": False,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        }
+        # Create new user
+        if has_lifetime_access:
+            # Lifetime free access users get enterprise plan immediately
+            user_doc = {
+                "user_id": user_id,
+                "email": email,
+                "name": name,
+                "picture": picture,
+                "plan": "enterprise",
+                "max_locations": plan_configs["enterprise"]["max_locations"],
+                "features": plan_configs["enterprise"]["features"],
+                "has_lifetime_access": True,
+                "is_trial": False,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            selected_plan = "enterprise"
+        else:
+            # Regular users start with free plan - requires payment
+            user_doc = {
+                "user_id": user_id,
+                "email": email,
+                "name": name,
+                "picture": picture,
+                "plan": "free",  # No plan until payment
+                "max_locations": 0,
+                "features": [],
+                "has_lifetime_access": False,
+                "is_trial": False,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
         await db.users.insert_one(user_doc)
     
     # Create session
