@@ -995,7 +995,7 @@ export default function Integrations() {
                 </div>
 
                 {/* Amazon, Flipkart, JustDial Row */}
-                <div className="grid md:grid-cols-3 gap-4 mt-4">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mt-4">
                   {/* Amazon Integration */}
                   <div className={`p-4 rounded-xl border-2 transition-all ${
                     location.amazon_link 
