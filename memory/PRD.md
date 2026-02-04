@@ -5,7 +5,42 @@ Build Review Master - a zero-friction review management platform focused on Goog
 
 ## What's Been Implemented (February 2025)
 
-### Latest - v6.7 Landing Page UI Cleanup (February 4, 2025):
+### Latest - v6.8 Industries Enhancement & Transactional Emails (February 4, 2025):
+
+**Industries Section - Major Enhancement:**
+- [x] New title: "Industries That Benefit & How They Gain Competitive Advantage"
+- [x] Updated subtitle with clearer value proposition
+- [x] 12 industries with full competitive advantage descriptions
+- [x] New "Impact:" labels showing specific benefit type
+- [x] Gradient impact badges (green gradient)
+- [x] Wider cards (w-96) to accommodate detailed content
+- [x] Icon hover animation (scale 110%)
+- [x] Line-clamp-5 for longer descriptions
+
+**Industries with Detailed Competitive Advantage Info:**
+1. Restaurants, Cafés & QSRs - +25-40% Footfall
+2. Hotels & Hospitality - +15-30% Bookings  
+3. Salons, Spas & Beauty Clinics - +20-35% Retention
+4. Healthcare Clinics - +25% New Patients
+5. Automotive Services - +30% Retention
+6. Retail Stores - +18-25% Footfall
+7. Home Services - +40% Conversions
+8. Fitness Centers & Yoga Studios - +22% Retention
+9. Real Estate Agencies - +35% Faster Closures
+10. E-commerce Sellers - +15-20% Conversions
+11. Educational Institutes - +30% Enrollment
+12. Travel & Tour Operators - +25% Premium Pricing
+
+**Transactional Email Notifications via Resend (P2 Complete):**
+- [x] `send_payment_confirmation` - Already existed, sends after successful renewal
+- [x] `send_payment_failed_notification` - NEW: Red-themed, payment failure details, update CTA
+- [x] `send_subscription_renewal_reminder` - NEW: Orange-themed, countdown badge, renewal details
+- [x] `send_subscription_cancelled_notification` - NEW: Gray-themed, access end date info
+- [x] Webhook handlers updated to send emails on `subscription.cancelled` and `payment.failed`
+- [x] Admin endpoint `/api/admin/send-renewal-reminders` for batch reminders
+- [x] User endpoint `/api/subscription/send-renewal-reminder` for manual testing
+
+### v6.7 Landing Page UI Cleanup (February 4, 2025):
 
 **User-Requested Changes:**
 - [x] Confirmed "Fitness Centers & Yoga Studios" impact text is "+22% Retention"
